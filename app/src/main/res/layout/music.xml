@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view_music"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app:cardCornerRadius="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <ImageView
+                    android:id="@+id/music_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/timg" />
+
+                <LinearLayout
+                    android:id="@+id/seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/music_icon"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/time_left"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal" />
+
+                    <SeekBar
+                        android:id="@+id/seekbar_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="8" />
+
+
+                    <TextView
+                        android:id="@+id/time_right"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal" />
+                </LinearLayout>
+
+
+
+                <ImageView
+                    android:id="@+id/music_next"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_below="@id/seekbar"
+                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/next" />
+
+                <ImageView
+                    android:id="@+id/music_go"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_below="@id/seekbar"
+                    android:layout_marginRight="20dp"
+                    android:layout_toLeftOf="@id/music_next"
+                    android:src="@drawable/go" />
+
+                <TextView
+                    android:id="@+id/sing_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/seekbar"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/music_icon"
+                    android:text="QQ音乐"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/singer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/sing_name"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/music_icon"
+                    android:text="我的音乐"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/music_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FAFAFA">
+
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
