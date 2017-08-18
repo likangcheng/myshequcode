@@ -17,6 +17,7 @@ import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
 
 public class Book_Card_Activity extends AppCompatActivity {
     public static final String WEIXIN_DATA = "weixin data";
+    public int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class Book_Card_Activity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
