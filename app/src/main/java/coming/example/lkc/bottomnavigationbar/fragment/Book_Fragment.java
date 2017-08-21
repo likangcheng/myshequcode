@@ -230,19 +230,19 @@ public class Book_Fragment extends Fragment {
         adapter = new Book_rc_Adapter(weiXinNew.showapi_res_body.pagebean.contentlist);
         bookrecyclerView.setAdapter(adapter);
     }
-
-    private void CloseProgressDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
-        }
-    }
-
-    private void showProgressDialog() {
-        if (dialog == null) {
-            dialog = new CustomDialog(getActivity(), R.style.CustomDialog);
-            dialog.show();
-        }
-        dialog.show();
-    }
+//第一次请求加载数据dialog
+//    private void CloseProgressDialog() {
+//        if (dialog != null) {
+//            dialog.dismiss();
+//        }
+//    }
+//
+//    private void showProgressDialog() {
+//        if (dialog == null) {
+//            dialog = new CustomDialog(getActivity(), R.style.CustomDialog);
+//            dialog.show();
+//        }
+//        dialog.show();
+//    }
 
 }

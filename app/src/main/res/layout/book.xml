@@ -19,10 +19,10 @@
             app:type="follow">
 
             <android.support.v7.widget.RecyclerView
+                android:overScrollMode="never"
                 android:id="@+id/weixin_rc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fadingEdge="none"
                 android:scrollbars="vertical">
 
             </android.support.v7.widget.RecyclerView>
