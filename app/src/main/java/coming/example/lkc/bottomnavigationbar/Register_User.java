@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,7 +24,6 @@ import org.litepal.crud.DataSupport;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
-import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 
 public class Register_User extends AppCompatActivity {
     private EditText username, password, password_2;
@@ -150,5 +147,4 @@ public class Register_User extends AppCompatActivity {
         builder.create();
         builder.show();
     }
-
 }
