@@ -233,14 +233,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initBottomNavigationBar() {
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-        bottomNavigationBar.setMode(BottomNavigationBar.MODE_SHIFTING);
-        bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
+        bottomNavigationBar.setActiveColor(R.color.cardview_light_background).setBarBackgroundColor(R.color.fill);
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
+        bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE);
         bottomNavigationBar
-                .addItem(new BottomNavigationItem(R.drawable.home_fill, "Home").setInactiveIconResource(R.drawable.home).setActiveColorResource(R.color.fill).setInActiveColorResource(R.color.bule))
-                .addItem(new BottomNavigationItem(R.drawable.book_fill, "Book").setInactiveIconResource(R.drawable.book).setActiveColorResource(R.color.fill).setInActiveColorResource(R.color.bule))
-                .addItem(new BottomNavigationItem(R.drawable.music_fill, "Music").setInactiveIconResource(R.drawable.music).setActiveColorResource(R.color.fill).setInActiveColorResource(R.color.bule))
-                .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie&Tv").setInactiveIconResource(R.drawable.tv).setActiveColorResource(R.color.fill).setInActiveColorResource(R.color.bule))
-                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad).setActiveColorResource(R.color.fill).setInActiveColorResource(R.color.bule))
+                .addItem(new BottomNavigationItem(R.drawable.home_fill, "Home").setInactiveIconResource(R.drawable.home))
+                .addItem(new BottomNavigationItem(R.drawable.book_fill, "Book").setInactiveIconResource(R.drawable.book))
+                .addItem(new BottomNavigationItem(R.drawable.music_fill, "Music").setInactiveIconResource(R.drawable.music))
+                .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie&Tv").setInactiveIconResource(R.drawable.tv))
+                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad))
                 .setFirstSelectedPosition(0)
                 .initialise();
     }
