@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">#DA5380</item>
     </style>
 
     <style name="CustomDialog" parent="Theme.AppCompat.Dialog">
@@ -17,7 +17,7 @@
     <style name="Book_card_activity" parent="AppTheme"></style>
 
     <style name="Login_Activity" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorAccent">#3498db</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>

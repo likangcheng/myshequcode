@@ -1,9 +1,12 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -13,18 +16,32 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
@@ -46,6 +63,14 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     private RecyclerView musicrecyclerView;
     private GridLayoutManager gridLayoutManager;
     private Music_rc_Adapter madapter;
+    private final static String APP_ID = "wxd6ab7c22e73907b9";
+    private IWXAPI iwxapi;
+
+    private void regtoWX(Context context) {
+        iwxapi = WXAPIFactory.createWXAPI(context, APP_ID, true);
+        iwxapi.registerApp(APP_ID);
+    }
+
     private CustomDialog dialog;
     public static ImageView music_icon, music_next, music_go;
     private static TextView sing_name, singer, time_left, time_right;
@@ -73,6 +98,7 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.music, null);
         musicrecyclerView = (RecyclerView) view.findViewById(R.id.music_recyclerview);
         init(view);
+        regtoWX(view.getContext());
         gridLayoutManager = new GridLayoutManager(view.getContext(), 1);
         musicrecyclerView.setLayoutManager(gridLayoutManager);
         return view;
@@ -163,6 +189,12 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                             madapter = new Music_rc_Adapter(music);
                             musicrecyclerView.setAdapter(madapter);
                             CloseProgressDialog();
+                            madapter.setOnLongItemClickListenter(new Music_rc_Adapter.OnLongClick() {
+                                @Override
+                                public void FengXiang(View v, int Position) {
+                                    initFX(Position);
+                                }
+                            });
                             madapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
                                 @Override
                                 public void MusicData(int Position) {
@@ -182,6 +214,26 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
 
                     }
                 });
+            }
+        });
+    }
+
+    private void initFX(final int position) {
+        Glide.with(getActivity()).load(Singlist.get(position).albumpic_small).asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                WXMusicObject wxmusic = new WXMusicObject();
+                wxmusic.musicUrl = Singlist.get(position).musicurl;
+                WXMediaMessage mediaMessage = new WXMediaMessage();
+                mediaMessage.mediaObject = wxmusic;
+                mediaMessage.title = Singlist.get(position).songname;
+                mediaMessage.description = Singlist.get(position).singername;
+                mediaMessage.thumbData = Bitmap2Bytes(resource);
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.transaction = String.valueOf(System.currentTimeMillis());
+                req.message = mediaMessage;
+                req.scene = SendMessageToWX.Req.WXSceneSession;
+                iwxapi.sendReq(req);
             }
         });
     }
@@ -248,5 +300,9 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
-
+    public byte[] Bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
 }

@@ -28,6 +28,8 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
     private Context context;
     private Music music_1;
     private OnclickMusicData onclickMusicData = null;
+    private OnLongClick onLongClick = null;
+
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout layout;
@@ -51,6 +53,10 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
         void MusicData(int Position);
     }
 
+    public interface OnLongClick {
+        void FengXiang(View v, int Position);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (context == null) {
@@ -58,6 +64,16 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
         }
         View view = LayoutInflater.from(context).inflate(R.layout.music_rc_layout, parent, false);
         final ViewHolder holder = new ViewHolder(view);
+        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int position = holder.getAdapterPosition();
+                if (onLongClick != null) {
+                    onLongClick.FengXiang(v, position);
+                }
+                return true;
+            }
+        });
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +88,10 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
 
     public void setOnItemClickListener(OnclickMusicData musicData) {
         this.onclickMusicData = musicData;
+    }
+
+    public void setOnLongItemClickListenter(OnLongClick longClick) {
+        this.onLongClick = longClick;
     }
 
     @Override

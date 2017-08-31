@@ -3,6 +3,7 @@ package coming.example.lkc.bottomnavigationbar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 
@@ -29,8 +32,11 @@ public class Register_User extends AppCompatActivity {
     private EditText username, password, password_2;
     private Button regiset_button;
     private Animation shake;
+    private static final String USER_PARTTENR = "^[A-Za-z][A-Za-z1-9_-]+$";
+    private Pattern pattern = Pattern.compile(USER_PARTTENR);
     public static final String USERNAME_RESULT = "username";
     public static final String PASSWORD_RESULT = "password";
+    private TextInputLayout userinput, passinput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,28 +46,6 @@ public class Register_User extends AppCompatActivity {
         initView();
         shake = AnimationUtils.loadAnimation(Register_User.this,
                 R.anim.shake);
-        username.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("wode", "beforeTextChanged:CharSequence " + s);
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("wode", "onTextChanged:CharSequence " + s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d("wode", "afterTextChanged:Editable " + s);
-//                String user_name = username.getText().toString();
-                if (queryUsername(s.toString())) {
-                    Toast.makeText(Register_User.this, "用户名已被使用", Toast.LENGTH_SHORT).show();
-                    username.startAnimation(shake);
-                }
-            }
-        });
         regiset_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +53,7 @@ public class Register_User extends AppCompatActivity {
                 String user_name = username.getText().toString();
                 String pass_word = password.getText().toString();
                 String pass_word_2 = password_2.getText().toString();
-                if (!queryUsername(user_name) && pass_word.equals(pass_word_2) && pass_word.length() > 5) {
+                if (!queryUsername(user_name) && pass_word.equals(pass_word_2) && validatePassword(pass_word) && validateUser(user_name)) {
                     Users users_updata = new Users();
                     users_updata.setUsername(user_name);
                     users_updata.setPassword(pass_word);
@@ -81,13 +65,16 @@ public class Register_User extends AppCompatActivity {
                     Register_Dialog();
                 } else if (queryUsername(user_name)) {
                     username.startAnimation(shake);
-                    Toast.makeText(Register_User.this, "用户名已使用", Toast.LENGTH_SHORT).show();
+                    userinput.setError("用户名已存在");
+                } else if (!validateUser(user_name)) {
+                    username.startAnimation(shake);
+                    userinput.setError("用户名必须字母开头且不含非法字符");
                 } else if (!pass_word.equals(pass_word_2)) {
                     password.startAnimation(shake);
-                    Toast.makeText(Register_User.this, "密码不一致", Toast.LENGTH_SHORT).show();
-                } else if (pass_word.length() <= 5) {
+                    passinput.setError("密码不一致");
+                } else if (!validatePassword(pass_word)) {
+                    passinput.setError("密码过于简单");
                     password.startAnimation(shake);
-                    Toast.makeText(Register_User.this, "密码过于简单", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -98,6 +85,8 @@ public class Register_User extends AppCompatActivity {
         password = (EditText) findViewById(R.id.register_password1);
         password_2 = (EditText) findViewById(R.id.register_password2);
         regiset_button = (Button) findViewById(R.id.register_in);
+        userinput = (TextInputLayout) findViewById(R.id.user_input);
+        passinput = (TextInputLayout) findViewById(R.id.pass_input);
     }
 
     private void initToolbar() {
@@ -146,5 +135,15 @@ public class Register_User extends AppCompatActivity {
         });
         builder.create();
         builder.show();
+    }
+
+    public boolean validateUser(String email) {
+        Matcher matcher = pattern.matcher(email);
+        Log.i("wode", "validateUser: " + matcher.matches());
+        return matcher.matches();
+    }
+
+    public boolean validatePassword(String password) {
+        return password.length() > 5;
     }
 }

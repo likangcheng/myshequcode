@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -41,8 +42,6 @@ import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
 public class Book_Card_Activity extends AppCompatActivity implements View.OnClickListener {
     private final static String APP_ID = "wxd6ab7c22e73907b9";
     private IWXAPI iwxapi;
-    final static String biturl = "http://i.gtimg.cn/music/photo/mid_album_90/7/K/001qHmKU29WX7K.jpg";
-    private ImageView fenxiangimg;
     public static final String WEIXIN_DATA = "weixin data";
     private WeiXin_Content_list data;
     private Dialog dialog;
@@ -63,7 +62,7 @@ public class Book_Card_Activity extends AppCompatActivity implements View.OnClic
     }
 
     private void initfenxiang() {
-        fenxiangimg = (ImageView) findViewById(R.id.book_card_fenxiang);
+        RelativeLayout fenxiangimg = (RelativeLayout) findViewById(R.id.book_card_fenxiang);
         fenxiangimg.setOnClickListener(this);
     }
 
@@ -122,27 +121,22 @@ public class Book_Card_Activity extends AppCompatActivity implements View.OnClic
                 message.description = "来自你的社区APP最新的微信文章精选";
                 Bitmap bitmap = null;
                 try {
-                    bitmap = Glide.with(Book_Card_Activity.this).load(data.userLogo).asBitmap().into(100,100).get();
+                    bitmap = Glide.with(Book_Card_Activity.this).load(data.userLogo).asBitmap().into(100, 100).get();
                 } catch (InterruptedException e) {
-                    Log.d("wode", "WXfengxiang: 1");
                     e.printStackTrace();
                 } catch (ExecutionException e) {
-                    Log.d("wode", "WXfengxiang: 2");
                     e.printStackTrace();
                 }
                 message.thumbData = Bitmap2Bytes(bitmap);
-                Log.d("wode", "WXfengxiang: 3");
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
                 req.transaction = String.valueOf(System.currentTimeMillis());
                 req.message = message;
                 if (flag == 0) {
                     req.scene = SendMessageToWX.Req.WXSceneSession;
-                    Log.d("wode", "onResourceReady: ");
                 } else {
                     req.scene = SendMessageToWX.Req.WXSceneTimeline;
                 }
                 iwxapi.sendReq(req);
-                Log.d("wode", "onResourceReady: ");
             }
         }).start();
 
