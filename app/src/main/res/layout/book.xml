@@ -19,13 +19,34 @@
             app:type="follow">
 
             <android.support.v7.widget.RecyclerView
-                android:overScrollMode="never"
                 android:id="@+id/weixin_rc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:overScrollMode="never"
                 android:scrollbars="vertical">
 
             </android.support.v7.widget.RecyclerView>
         </com.liaoinstan.springview.widget.SpringView>
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:id="@+id/book_network_erro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/networkerro" />
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="网络错误点击重试" />
+    </LinearLayout>
 </FrameLayout>

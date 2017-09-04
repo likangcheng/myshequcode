@@ -300,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (new Date().getTime() - lastPressTime < 2000) {
-            stopService(new Intent(this, MusicService.class));
             finish();//结束程序
         } else {
             lastPressTime = new Date().getTime();//重置lastPressTime

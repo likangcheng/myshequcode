@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.liaoinstan.springview.container.AliFooter;
@@ -40,7 +41,7 @@ public class Book_Fragment extends Fragment {
     private WeiXinNew weiXinNew;
     private GridLayoutManager gridLayoutManager;
     private Book_rc_Adapter adapter;
-    private CustomDialog dialog;
+    private LinearLayout networkerro;
     private int page = 1;
 //    private boolean REFRESH = false;
 //    //已经加载出来的Item的数量
@@ -63,6 +64,7 @@ public class Book_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.book, null);
         bookrecyclerView = (RecyclerView) view.findViewById(R.id.weixin_rc);
+        networkerro = (LinearLayout) view.findViewById(R.id.book_network_erro);
         swip = (SwipeRefreshLayout) view.findViewById(R.id.book_swip);
         springView = (SpringView) view.findViewById(R.id.springview);
         springView.setType(SpringView.Type.FOLLOW);
@@ -78,6 +80,13 @@ public class Book_Fragment extends Fragment {
         swip.post(new Runnable() {
             @Override
             public void run() {
+                swip.setRefreshing(true);
+                requestWexinNEWS();
+            }
+        });
+        networkerro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 swip.setRefreshing(true);
                 requestWexinNEWS();
             }
@@ -195,6 +204,8 @@ public class Book_Fragment extends Fragment {
                     @Override
                     public void run() {
                         Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
+                        networkerro.setVisibility(View.VISIBLE);
+                        bookrecyclerView.setVisibility(View.GONE);
                         swip.setRefreshing(false);
                     }
                 });
@@ -210,6 +221,8 @@ public class Book_Fragment extends Fragment {
                         if (weiXinNew1.showapi_res_code == 0) {
                             returnWeixin(weiXinNew1);
                             showBook();
+                            bookrecyclerView.setVisibility(View.VISIBLE);
+                            networkerro.setVisibility(View.GONE);
                             page = 1;
                             swip.setRefreshing(false);
                         } else {

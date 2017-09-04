@@ -239,6 +239,13 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unbindService(connection);
+        getActivity().stopService(new Intent(getActivity(), MusicService.class));
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.music_go:
