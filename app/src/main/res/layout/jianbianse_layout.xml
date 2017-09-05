@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#F8F8F8"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/pp_listview"
-        android:layout_width="120dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#BEBEBE"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:gravity="center"
+            android:text="ID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:gravity="center"
+            android:text="UserName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <TextView
+            android:gravity="center"
+            android:text="Password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <TextView
+            android:gravity="center"
+            android:text="ImgPath"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_list_rcview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

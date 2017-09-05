@@ -9,6 +9,15 @@ public class Users extends DataSupport {
     private int id;
     private String username;
     private String password;
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public int getId() {
         return id;

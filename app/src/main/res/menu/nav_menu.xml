@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_call"
-
-            android:title="用户详情"></item>
-        <item
             android:id="@+id/nav_frends"
 
             android:title="Friends"></item>

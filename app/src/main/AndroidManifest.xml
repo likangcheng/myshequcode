@@ -7,9 +7,11 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name="org.litepal.LitePalApplication"
+        android:name="coming.example.lkc.bottomnavigationbar.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/cjq"
         android:label="@string/app_name"
@@ -32,7 +34,6 @@
         <activity
             android:name=".Register_User"
             android:theme="@style/Login_Activity" />
-        <activity android:name=".User_Details_Activity" />
 
         <service
             android:name=".service.MusicService"
@@ -44,6 +45,16 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTop"></activity>
-    </application>
+        <activity android:name=".JBS_Activity" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="coming.example.lkc.bottomnavigationbar.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths_public"></meta-data>
+        </provider>
+    </application>
 </manifest>

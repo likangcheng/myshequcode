@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
+import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog_lkc;
 
 public class Register_User extends AppCompatActivity {
     private EditText username, password, password_2;
@@ -57,6 +58,7 @@ public class Register_User extends AppCompatActivity {
                     Users users_updata = new Users();
                     users_updata.setUsername(user_name);
                     users_updata.setPassword(pass_word);
+                    users_updata.setPath("");
                     users_updata.save();
                     Intent resultintent = new Intent();
                     resultintent.putExtra(USERNAME_RESULT, user_name);
@@ -122,19 +124,19 @@ public class Register_User extends AppCompatActivity {
     }
 
     private void Register_Dialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);  //先得到构造器
-        builder.setTitle("提示"); //设置标题
-        builder.setMessage("注册成功"); //设置内容
-        builder.setIcon(R.drawable.cjq);//设置图标，图片id即可
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
+        CustomDialog_lkc dialog_lkc=new CustomDialog_lkc(this);
+        dialog_lkc.SetDialog("确定","注册成功");
+        dialog_lkc.setOnDialogMenuClick(new CustomDialog_lkc.OnDialogMenuClick() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();//关闭dialog
+            public void OnOkClick(View view) {
+                finish();
+            }
+
+            @Override
+            public void OnCancelClick(View view) {
+                finish();
             }
         });
-        builder.create();
-        builder.show();
     }
 
     public boolean validateUser(String email) {

@@ -1,12 +1,16 @@
 package coming.example.lkc.bottomnavigationbar;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.graphics.Path;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
@@ -20,20 +24,34 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.bumptech.glide.Glide;
+import com.werb.permissionschecker.PermissionChecker;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.fragment.Book_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Game_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Home_Fragment;
@@ -51,11 +69,24 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     public static final int REQUESTCODE = 2;
     public boolean LOGIN_STATUS;
+    public String USERNAME_LOGIN;
     private NetWorkReceiver netWorkReceiver;
+    private Dialog dialog;
+    private static final int REQUEST_CODE_CHOOSE = 23;
+    private List<String> pathList;
+    private PermissionChecker permissionChecker;
+    private String[] PERMISSIONS = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        permissionChecker = new PermissionChecker(this);
+        if (permissionChecker.isLackPermissions(PERMISSIONS)) {
+            permissionChecker.requestPermissions();
+        }
         setContentView(R.layout.activity_main);
         initBottomNavigationBar();
         initActionBar();
@@ -96,10 +127,32 @@ public class MainActivity extends AppCompatActivity {
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Login_User_Activity.class);
-                startActivityForResult(intent, REQUESTCODE);
+                if (LOGIN_STATUS) {
+                    initPicture();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, Login_User_Activity.class);
+                    startActivityForResult(intent, REQUESTCODE);
+                }
             }
         });
+    }
+
+    private void initPicture() {
+        Matisse
+                .from(MainActivity.this)
+                .choose(MimeType.ofImage())//照片视频全部显示
+                .countable(true)//有序选择图片
+                .capture(true)
+                .captureStrategy(
+                        new CaptureStrategy(true, "coming.example.lkc.bottomnavigationbar.fileprovider"))
+                .maxSelectable(1)//最大选择数量为9
+                .gridExpectedSize(
+                        getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)//图像选择和预览活动所需的方向。
+                .thumbnailScale(0.85f)//缩放比例
+                .theme(R.style.Matisse_Zhihu)//主题  暗色主题 R.style.Matisse_Dracula
+                .imageEngine(new GlideEngine())//加载方式
+                .forResult(REQUEST_CODE_CHOOSE);//请求码
     }
 
     private void initReceiver() {
@@ -112,20 +165,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       unregisterReceiver(netWorkReceiver);
+        unregisterReceiver(netWorkReceiver);
 
     }
 
     private void login_status_ok() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         LOGIN_STATUS = sp.getBoolean(Login_User_Activity.LOGIN_STATUS, false);
-        String USERNAME_LOGIN = sp.getString(Login_User_Activity.USERNAME_LOGIN, "");
+        USERNAME_LOGIN = sp.getString(Login_User_Activity.USERNAME_LOGIN, "");
         if (LOGIN_STATUS) {
             main_login.setText("欢迎：" + USERNAME_LOGIN);
-            circleImageView.setImageResource(R.drawable.ww2017719);
-            circleImageView.setEnabled(false);
+            List<Users> usersList = DataSupport.where("username = ?", USERNAME_LOGIN).find(Users.class);
+            if (TextUtils.isEmpty(usersList.get(0).getPath())) {
+                Log.d("wode", "login_status_ok: no picture" + usersList.get(0).getPath());
+                circleImageView.setImageResource(R.drawable.ww2017719);
+            } else {
+                Glide.with(this).load(usersList.get(0).getPath()).into(circleImageView);
+            }
         } else {
-            navigationView.getMenu().getItem(4).setVisible(false);
+            navigationView.getMenu().getItem(3).setVisible(false);
         }
 
     }
@@ -138,12 +196,31 @@ public class MainActivity extends AppCompatActivity {
                     String username = data.getStringExtra(Login_User_Activity.USERNAME_LOGIN);
                     main_login.setText("欢迎：" + username);
                     circleImageView.setImageResource(R.drawable.ww2017719);
-                    circleImageView.setEnabled(false);
-                    navigationView.getMenu().getItem(4).setVisible(true);
+                    navigationView.getMenu().getItem(3).setVisible(true);
                     LOGIN_STATUS = true;
                 }
                 break;
-            default:
+            case REQUEST_CODE_CHOOSE:
+                if (resultCode == RESULT_OK) {
+                    pathList = Matisse.obtainPathResult(data);
+                    Users userupdate = new Users();
+                    userupdate.setPath(pathList.get(0));
+                    Log.d("wode", "onActivityResult: " + pathList.get(0));
+                    userupdate.updateAll("username = ?", USERNAME_LOGIN);
+                    Glide.with(this).load(pathList.get(0)).into(circleImageView);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PermissionChecker.PERMISSION_REQUEST_CODE:
+                if (!permissionChecker.hasAllPermissionsGranted(grantResults)) {
+                    permissionChecker.showDialog();
+                } else {
+                }
                 break;
         }
     }
@@ -159,42 +236,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_Logout:
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);  //先得到构造器
-                        builder.setTitle("提示"); //设置标题
-                        builder.setMessage("确实要退出登录？"); //设置内容
-                        builder.setIcon(R.drawable.dsq);//设置图标，图片id即可
-                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                SharedPreferences.Editor editor = PreferenceManager
-                                        .getDefaultSharedPreferences(MainActivity.this).edit();
-                                editor.clear();
-                                editor.apply();
-//                              //Activity重新启动
-                                Intent i = getBaseContext().getPackageManager()
-                                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(i);
-                            }
-                        });
-                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        builder.create().show();
+                        initTCDLdialog();
                         break;
-                    case R.id.nav_call:
-                        if (LOGIN_STATUS) {
-                            Intent intent = new Intent(MainActivity.this, User_Details_Activity.class);
-                            startActivity(intent);
-                        } else {
-                            Intent intent = new Intent(MainActivity.this, Login_User_Activity.class);
-                            startActivityForResult(intent, REQUESTCODE);
-                        }
-
+                    case R.id.nav_frends:
+                        Intent intent = new Intent(MainActivity.this, JBS_Activity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;
@@ -202,6 +248,43 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void initTCDLdialog() {
+        dialog = new Dialog(this, R.style.PhotographAndPicture_DialogStyle);
+        View view = LayoutInflater.from(this).inflate(R.layout.determine_cancel_dialog_layout, null);
+        TextView ok = (TextView) view.findViewById(R.id.tcdl_ok);
+        TextView cancel = (TextView) view.findViewById(R.id.tcdl_cancel);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(MainActivity.this).edit();
+                editor.clear();
+                editor.apply();
+//                              //Activity重新启动
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                finish();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setContentView(view);
+        Window dialogWindow = dialog.getWindow();
+        dialogWindow.setGravity(Gravity.CENTER);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialogWindow.setAttributes(lp);
+        dialog.show();
     }
 
     //加载页面时第一次点击
@@ -306,6 +389,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
         }
     }
+
     class NetWorkReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
