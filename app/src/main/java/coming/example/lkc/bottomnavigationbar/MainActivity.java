@@ -195,9 +195,15 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     String username = data.getStringExtra(Login_User_Activity.USERNAME_LOGIN);
                     main_login.setText("欢迎：" + username);
-                    circleImageView.setImageResource(R.drawable.ww2017719);
+                    List<Users> user = DataSupport.where("username = ?", username).find(Users.class);
+                    if (TextUtils.isEmpty(user.get(0).getPath())) {
+                        circleImageView.setImageResource(R.drawable.ww2017719);
+                    } else {
+                        Glide.with(this).load(user.get(0).getPath()).into(circleImageView);
+                    }
                     navigationView.getMenu().getItem(3).setVisible(true);
                     LOGIN_STATUS = true;
+                    USERNAME_LOGIN = username;
                 }
                 break;
             case REQUEST_CODE_CHOOSE:
