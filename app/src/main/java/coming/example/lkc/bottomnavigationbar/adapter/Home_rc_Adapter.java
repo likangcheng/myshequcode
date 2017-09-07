@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,50 +18,49 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.HomeCardActivity;
 import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.dao.Contentlist;
-import coming.example.lkc.bottomnavigationbar.dao.ShowApi;
+import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 
 /**
  * Created by lkc on 2017/7/31.
  */
 public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHolder> {
     private Context context;
-    private List<Contentlist> contentlists;
+    private List<JiSuApi_List> contentlists;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
+        LinearLayout linearLayout;
         ImageView newsimg;
-        TextView newsTitle,newsTime,newsSource;
+        TextView newsTitle, newsTime, newsSource;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             super(view);
-            cardView= (CardView) view;
-            newsimg= (ImageView) view.findViewById(R.id.news_img);
-            newsTitle= (TextView) view.findViewById(R.id.news_title);
-            newsTime= (TextView) view.findViewById(R.id.news_time);
-            newsSource= (TextView) view.findViewById(R.id.news_source);
+            linearLayout = (LinearLayout) view;
+            newsimg = (ImageView) view.findViewById(R.id.news_img);
+            newsTitle = (TextView) view.findViewById(R.id.news_title);
+            newsTime = (TextView) view.findViewById(R.id.news_time);
+            newsSource = (TextView) view.findViewById(R.id.news_source);
 
         }
     }
 
-    public Home_rc_Adapter(List<Contentlist> datalist){
-        this.contentlists=datalist;
+    public Home_rc_Adapter(List<JiSuApi_List> datalist) {
+        this.contentlists = datalist;
     }
 
     @Override
     public Home_rc_Adapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (context==null){
-            context=parent.getContext();
+        if (context == null) {
+            context = parent.getContext();
         }
-        View view= LayoutInflater.from(context).inflate(R.layout.home_rc_layout,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.home_rc_layout, parent, false);
         final ViewHolder holder = new ViewHolder(view);
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
-                Contentlist content = contentlists.get(position);
-                Intent intent=new Intent(context,HomeCardActivity.class);
-                intent.putExtra(HomeCardActivity.CONTENTLIST_DATA,content);
+                JiSuApi_List jiSuApi_list = contentlists.get(position);
+                Intent intent = new Intent(context, HomeCardActivity.class);
+                intent.putExtra(HomeCardActivity.CONTENTLIST_DATA, jiSuApi_list);
                 context.startActivity(intent);
             }
         });
@@ -68,13 +69,13 @@ public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHo
 
     @Override
     public void onBindViewHolder(Home_rc_Adapter.ViewHolder holder, int position) {
-        Contentlist contentlist=contentlists.get(position);
-        holder.newsSource.setText(contentlist.getSource());
-        holder.newsTime.setText(contentlist.getPubDate());
-        holder.newsTitle.setText(contentlist.getNewstitle());
-        if (contentlist.isHavePic()){
-            Glide.with(context).load(contentlist.imageurls.get(0).getImgurl()).into(holder.newsimg);
-        }else {
+        JiSuApi_List jiSuApi_list = contentlists.get(position);
+        holder.newsSource.setText("新浪新闻");
+        holder.newsTime.setText(jiSuApi_list.NewsTime);
+        holder.newsTitle.setText(jiSuApi_list.NewsTitle);
+        if (!TextUtils.isEmpty(jiSuApi_list.pic)) {
+            Glide.with(context).load(jiSuApi_list.pic).into(holder.newsimg);
+        } else {
             Glide.with(context).load(R.drawable.unimg).into(holder.newsimg);
         }
     }

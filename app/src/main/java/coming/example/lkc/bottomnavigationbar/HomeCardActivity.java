@@ -6,52 +6,45 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import coming.example.lkc.bottomnavigationbar.dao.Contentlist;
+import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 
 public class HomeCardActivity extends AppCompatActivity {
-    public static final String CONTENTLIST_DATA="contentlist data";
-    private TextView homecard_title,homecard_time,homecard_text;
-    private ImageView homecard_img;
+    public static final String CONTENTLIST_DATA = "contentlist data";
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_card);
-        Contentlist contentlist = (Contentlist) getIntent().getSerializableExtra(CONTENTLIST_DATA);
+        JiSuApi_List jiSuApi_list = (JiSuApi_List) getIntent().getSerializableExtra(CONTENTLIST_DATA);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_homecard);
-        toolbar.setTitle(contentlist.getSource());
+        toolbar.setTitle(jiSuApi_list.NewsTitle);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         initfindID();
-        homecard_title.setText(contentlist.getNewstitle());
-        homecard_time.setText(contentlist.getPubDate());
-        homecard_text.setText("  "+contentlist.getNewsinfo());
-        if (contentlist.isHavePic()){
-            Glide.with(this).load(contentlist.imageurls.get(0).getImgurl()).into(homecard_img);
-        }else {
-            homecard_img.setVisibility(View.GONE);
-        }
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl(jiSuApi_list.NewsUrl);
     }
 
     private void initfindID() {
-        homecard_text= (TextView) findViewById(R.id.homecard_text);
-        homecard_time= (TextView) findViewById(R.id.homecard_time);
-        homecard_title= (TextView) findViewById(R.id.homecard_title);
-        homecard_img= (ImageView) findViewById(R.id.homecard_img);
+        webView = (WebView) findViewById(R.id.home_card_webview);
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;

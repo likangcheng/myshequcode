@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,12 @@ import java.io.IOException;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Home_rc_Adapter;
-import coming.example.lkc.bottomnavigationbar.dao.News;
-import coming.example.lkc.bottomnavigationbar.dao.ShowApi;
+import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 /**
@@ -30,7 +31,7 @@ public class Home_Fragment extends Fragment {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swip;
     private GridLayoutManager layoutManager;
-    private ShowApi showApi_home;
+    private JiSuApi_Body jiSuApi_body;
     private Home_rc_Adapter newsAdapter;
 
     @Nullable
@@ -64,48 +65,53 @@ public class Home_Fragment extends Fragment {
         });
     }
 
+
     private void requestNews() {
-        String NewsUrl = "http://route.showapi.com/109-35?" +
-                "showapi_appid=42977&" +
-                "showapi_sign=5e9e2850cf574e4fbb358230ff31fafe&needContent=1&title=电影";
+        String NewsUrl = "http://api.jisuapi.com/news/get?channel=头条&start=0&num=20&appkey=9a46b272586356ee";
         HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
-                        swip.setRefreshing(false);
-                    }
-                });
+                if (!call.isCanceled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
+                            swip.setRefreshing(false);
+                        }
+                    });
+                }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String newsResponse = response.body().string();
-                final ShowApi showApi = Utility.handelNewsResponse(newsResponse);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (showApi.showapi_res_code == 0) {
-                            returnShowApi(showApi);
-                            show_home_news();
-                        } else {
-                            Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
+                final JiSuApi_Body jiSuApi_body = Utility.handelNewsResponse(newsResponse);
+                if (!call.isCanceled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (jiSuApi_body != null) {
+                                if (jiSuApi_body.status == 0) {
+                                    returnShowApi(jiSuApi_body);
+                                    show_home_news();
+                                } else {
+                                    Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            swip.setRefreshing(false);
                         }
-                        swip.setRefreshing(false);
-                    }
-                });
+                    });
+                }
             }
         });
     }
 
-    private void returnShowApi(ShowApi showApi) {
-        this.showApi_home = showApi;
+    private void returnShowApi(JiSuApi_Body jiSuApi_body) {
+        this.jiSuApi_body = jiSuApi_body;
     }
 
     private void show_home_news() {
-        newsAdapter = new Home_rc_Adapter(showApi_home.showapi_res_body.pagebean.contentlist);
+        newsAdapter = new Home_rc_Adapter(jiSuApi_body.result.Newslist);
         recyclerView.setAdapter(newsAdapter);
     }
 
