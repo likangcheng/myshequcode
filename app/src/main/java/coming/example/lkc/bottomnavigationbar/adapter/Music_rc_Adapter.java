@@ -26,7 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.ViewHolder> {
     private Context context;
-    private Music music_1;
+    private List<SingList> singLists;
     private OnclickMusicData onclickMusicData = null;
     private OnLongClick onLongClick = null;
 
@@ -45,8 +45,14 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
         }
     }
 
-    public Music_rc_Adapter(Music music) {
-        this.music_1 = music;
+    public void setMusicData(List<SingList> singLists) {
+        if (this.singLists == null) {
+            this.singLists = singLists;
+        } else {
+            this.singLists.clear();
+            this.singLists = singLists;
+        }
+        notifyDataSetChanged();
     }
 
     public static interface OnclickMusicData {
@@ -96,7 +102,7 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        SingList singList = music_1.showapi_res_body.pagebean.songlist.get(position);
+        SingList singList = singLists.get(position);
         holder.sing.setText(singList.songname);
         holder.singer.setText(singList.singername);
         Glide.with(context).load(singList.albumpic_small).into(holder.circleImageView);
@@ -104,6 +110,6 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
 
     @Override
     public int getItemCount() {
-        return music_1.showapi_res_body.pagebean.songlist.size();
+        return singLists == null ? 0 : singLists.size();
     }
 }

@@ -43,8 +43,14 @@ public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHo
         }
     }
 
-    public Home_rc_Adapter(List<JiSuApi_List> datalist) {
-        this.contentlists = datalist;
+    public void setDatalist(List<JiSuApi_List> datalist) {
+        if (this.contentlists == null) {
+            this.contentlists = datalist;
+        } else {
+            this.contentlists.clear();
+            contentlists = datalist;
+        }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -82,6 +88,6 @@ public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return contentlists.size();
+        return contentlists == null ? 0 : contentlists.size();
     }
 }

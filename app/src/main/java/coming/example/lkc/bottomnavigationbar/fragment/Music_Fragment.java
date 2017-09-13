@@ -75,11 +75,11 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     public static ImageView music_icon, music_next, music_go;
     private static TextView sing_name, singer, time_left, time_right;
     public static SeekBar seekBar;
-    public static List<SingList> Singlist;
+    public static List<SingList> singlist;
     public static int position;
     public static boolean LOADING;
     private MusicService.MusicBinder musicBinder;
-    private int poisition_copy = 0, Next_Music_Code = 0;
+    private int poisition_copy = 0, Next_Music_Code = 1;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -101,6 +101,8 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         regtoWX(view.getContext());
         gridLayoutManager = new GridLayoutManager(view.getContext(), 1);
         musicrecyclerView.setLayoutManager(gridLayoutManager);
+        madapter = new Music_rc_Adapter();
+        musicrecyclerView.setAdapter(madapter);
         return view;
     }
 
@@ -181,53 +183,49 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call call, Response response) throws IOException {
                 String singResponse = response.body().string();
                 final Music music = Utility.handelMusicResponse(singResponse);
-                Music_Fragment.this.Singlist = music.showapi_res_body.pagebean.songlist;
+                Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (music.showapi_res_code == 0) {
-                            madapter = new Music_rc_Adapter(music);
-                            musicrecyclerView.setAdapter(madapter);
-                            CloseProgressDialog();
-                            madapter.setOnLongItemClickListenter(new Music_rc_Adapter.OnLongClick() {
-                                @Override
-                                public void FengXiang(View v, int Position) {
-                                    initFX(Position);
-                                }
-                            });
-                            madapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
-                                @Override
-                                public void MusicData(int Position) {
-                                    Log.d("wode", "MusicData: " + Position);
-                                    SingList sing = music.showapi_res_body.pagebean.songlist.get(Position);
-                                    Music_Fragment.this.position = Position;
-                                    Glide.with(getActivity()).load(sing.albumpic_small).into(music_icon);
-                                    sing_name.setText(sing.songname);
-                                    singer.setText(sing.singername);
-                                    NextMusic_Select();
-                                }
-                            });
+                            madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
                         } else {
-                            CloseProgressDialog();
                             Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
                         }
-
+                        CloseProgressDialog();
                     }
                 });
+            }
+        });
+        madapter.setOnLongItemClickListenter(new Music_rc_Adapter.OnLongClick() {
+            @Override
+            public void FengXiang(View v, int Position) {
+                initFX(Position);
+            }
+        });
+        madapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
+            @Override
+            public void MusicData(int Position) {
+                SingList sing = singlist.get(Position);
+                Music_Fragment.this.position = Position;
+                Glide.with(getActivity()).load(sing.albumpic_small).into(music_icon);
+                sing_name.setText(sing.songname);
+                singer.setText(sing.singername);
+                NextMusic_Select();
             }
         });
     }
 
     private void initFX(final int position) {
-        Glide.with(getActivity()).load(Singlist.get(position).albumpic_small).asBitmap().into(new SimpleTarget<Bitmap>() {
+        Glide.with(getActivity()).load(singlist.get(position).albumpic_small).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 WXMusicObject wxmusic = new WXMusicObject();
-                wxmusic.musicUrl = Singlist.get(position).musicurl;
+                wxmusic.musicUrl = singlist.get(position).musicurl;
                 WXMediaMessage mediaMessage = new WXMediaMessage();
                 mediaMessage.mediaObject = wxmusic;
-                mediaMessage.title = Singlist.get(position).songname;
-                mediaMessage.description = Singlist.get(position).singername;
+                mediaMessage.title = singlist.get(position).songname;
+                mediaMessage.description = singlist.get(position).singername;
                 mediaMessage.thumbData = Bitmap2Bytes(resource);
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
                 req.transaction = String.valueOf(System.currentTimeMillis());
@@ -252,13 +250,10 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 musicBinder.startMusic(getActivity());
                 break;
             case R.id.music_next:
-                Next_Music_Code++;
-                Log.i("wode", "onClick: this position" + position);
-                Log.i("wode", "onClick:  Next_Music_Code" + Next_Music_Code);
-                musicBinder.nextMusic(Singlist.get(position + Next_Music_Code));
-                Glide.with(getActivity()).load(Singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
-                sing_name.setText(Singlist.get(position + Next_Music_Code).songname);
-                singer.setText(Singlist.get(position + Next_Music_Code).singername);
+                musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
+                Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
+                sing_name.setText(singlist.get(position + Next_Music_Code).songname);
+                singer.setText(singlist.get(position + Next_Music_Code).singername);
                 position = position + Next_Music_Code;
                 poisition_copy = position;
                 break;
@@ -268,11 +263,8 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     private void NextMusic_Select() {
-        Next_Music_Code = 0;
-        Log.i("wode", "NextMusic_Select: poisition_copy" + poisition_copy);
-        Log.i("wode", "NextMusic_Select: this.position" + position);
-        if (poisition_copy != position) {
-            musicBinder.nextMusic(Singlist.get(position));
+        if (poisition_copy != position || position == 0) {
+            musicBinder.nextMusic(singlist.get(position));
             poisition_copy = position;
         } else {
             musicBinder.startMusic(getActivity());

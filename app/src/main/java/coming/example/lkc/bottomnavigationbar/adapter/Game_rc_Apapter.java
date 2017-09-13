@@ -34,27 +34,40 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     }
 
     public void GameAdapterSetData(List<JiSuApi_List> list0) {
-        this.jiSuApi_lists0 = list0;
-
+        if (jiSuApi_lists0 == null) {
+            this.jiSuApi_lists0 = list0;
+        } else {
+            jiSuApi_lists0.clear();
+            jiSuApi_lists0 = list0;
+        }
+        notifyDataSetChanged();
     }
 
     @Override
     protected int getSectionCount() {
-        return 5;
+        if (jiSuApi_lists0 == null) {
+            return 0;
+        } else {
+            return 5;
+        }
     }
 
     @Override
     protected int getItemCountForSection(int section) {
-        if (section == 0) {
-            return 8;
-        } else if (section == 1) {
-            return 6;
-        } else if (section == 2) {
-            return 8;
-        } else if (section == 3) {
-            return 6;
+        if (jiSuApi_lists0 == null) {
+            return 0;
         } else {
-            return 10;
+            if (section == 0) {
+                return 8;
+            } else if (section == 1) {
+                return 6;
+            } else if (section == 2) {
+                return 8;
+            } else if (section == 3) {
+                return 6;
+            } else {
+                return 10;
+            }
         }
     }
 
@@ -101,19 +114,19 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
                 holder.setDate(jiSuApi_list0, context);
                 break;
             case 1:
-                JiSuApi_List jiSuApi_list1 = jiSuApi_lists0.get(8+position);
+                JiSuApi_List jiSuApi_list1 = jiSuApi_lists0.get(8 + position);
                 holder.setDate(jiSuApi_list1, context);
                 break;
             case 2:
-                JiSuApi_List jiSuApi_list2 = jiSuApi_lists0.get(14+position);
+                JiSuApi_List jiSuApi_list2 = jiSuApi_lists0.get(14 + position);
                 holder.setDate(jiSuApi_list2, context);
                 break;
             case 3:
-                JiSuApi_List jiSuApi_list3 = jiSuApi_lists0.get(22+position);
+                JiSuApi_List jiSuApi_list3 = jiSuApi_lists0.get(22 + position);
                 holder.setDate(jiSuApi_list3, context);
                 break;
             case 4:
-                JiSuApi_List jiSuApi_list4 = jiSuApi_lists0.get(28+position);
+                JiSuApi_List jiSuApi_list4 = jiSuApi_lists0.get(28 + position);
                 holder.setDate(jiSuApi_list4, context);
                 break;
             default:

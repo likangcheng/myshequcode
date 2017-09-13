@@ -25,30 +25,4 @@
 
     </com.liaoinstan.springview.widget.SpringView>
 
-    <LinearLayout
-        android:id="@+id/game_load"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/custom_cursor"
-        android:orientation="horizontal"
-        android:paddingBottom="6dp"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingTop="6dp">
-
-        <com.tuyenmonkey.mkloader.MKLoader
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal"
-            app:mk_color="#fff"
-            app:mk_type="Sharingan" />
-
-        <TextView
-            android:textColor="#fff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="玩命加载中..." />
-    </LinearLayout>
 </FrameLayout>

@@ -40,8 +40,22 @@ public class Book_rc_Adapter extends RecyclerView.Adapter<Book_rc_Adapter.ViewHo
         }
     }
 
-    public Book_rc_Adapter(List<WeiXin_Content_list> datalist) {
-        this.weiXin_content_lists = datalist;
+    public void setBookData(List<WeiXin_Content_list> datalist) {
+        if (weiXin_content_lists == null) {
+            this.weiXin_content_lists = datalist;
+        } else {
+            this.weiXin_content_lists.clear();
+            this.weiXin_content_lists = datalist;
+        }
+        notifyDataSetChanged();
+    }
+
+    public void loadmoreBookData(List<WeiXin_Content_list> datalist) {
+        if (weiXin_content_lists != null) {
+            int page = weiXin_content_lists.size();
+            weiXin_content_lists.addAll(datalist);
+            notifyItemInserted(page);
+        }
     }
 
     @Override
@@ -54,10 +68,10 @@ public class Book_rc_Adapter extends RecyclerView.Adapter<Book_rc_Adapter.ViewHo
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position =holder.getAdapterPosition();
-                WeiXin_Content_list sd=weiXin_content_lists.get(position);
+                int position = holder.getAdapterPosition();
+                WeiXin_Content_list sd = weiXin_content_lists.get(position);
                 Intent intent = new Intent(mcontext, Book_Card_Activity.class);
-                intent.putExtra(Book_Card_Activity.WEIXIN_DATA,sd);
+                intent.putExtra(Book_Card_Activity.WEIXIN_DATA, sd);
                 mcontext.startActivity(intent);
             }
         });
@@ -66,8 +80,8 @@ public class Book_rc_Adapter extends RecyclerView.Adapter<Book_rc_Adapter.ViewHo
 
     @Override
     public void onBindViewHolder(Book_rc_Adapter.ViewHolder holder, int position) {
-        WeiXin_Content_list weixinclass =weiXin_content_lists.get(position);
-        String[] timedata=weixinclass.ct.split(" ");
+        WeiXin_Content_list weixinclass = weiXin_content_lists.get(position);
+        String[] timedata = weixinclass.ct.split(" ");
         holder.weixin_time.setText(timedata[0]);
         holder.weixin_title.setText(weixinclass.weixintitle);
         Glide.with(mcontext).load(weixinclass.contentImg).into(holder.weixin_img);
@@ -75,6 +89,6 @@ public class Book_rc_Adapter extends RecyclerView.Adapter<Book_rc_Adapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return weiXin_content_lists.size();
+        return weiXin_content_lists == null ? 0 : weiXin_content_lists.size();
     }
 }

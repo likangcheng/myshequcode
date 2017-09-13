@@ -390,12 +390,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (new Date().getTime() - lastPressTime < 2000) {
-            HttpUnitily.call.cancel();
-            finish();//结束程序
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
         } else {
-            lastPressTime = new Date().getTime();//重置lastPressTime
-            Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            if (new Date().getTime() - lastPressTime < 2000) {
+                HttpUnitily.call.cancel();
+                finish();//结束程序
+            } else {
+                lastPressTime = new Date().getTime();//重置lastPressTime
+                Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

@@ -51,6 +51,7 @@ import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
+import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
@@ -69,8 +70,7 @@ public class Game_Fragment extends Fragment {
     private RecyclerView game_recyclerview;
     private Game_rc_Apapter adapter;
     private SpringView springView;
-    private List<JiSuApi_List> jiSuApi_lists;
-    private LinearLayout loadlinalyout;
+    private CustomDialog dialog;
 
     @Nullable
     @Override
@@ -78,13 +78,14 @@ public class Game_Fragment extends Fragment {
         View view = inflater.inflate(R.layout.game, container, false);
         game_recyclerview = (RecyclerView) view.findViewById(R.id.game_rcview);
         springView = (SpringView) view.findViewById(R.id.game_springview);
-        loadlinalyout = (LinearLayout) view.findViewById(R.id.game_load);
+        showAdapter();
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        showProgressDialog();
         requestNews();
         springView.setType(SpringView.Type.FOLLOW);
         springView.setListener(new SpringView.OnFreshListener() {
@@ -113,7 +114,7 @@ public class Game_Fragment extends Fragment {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
-                            loadlinalyout.setVisibility(View.GONE);
+                            CloseProgressDialog();
                             springView.onFinishFreshAndLoad();
                         }
                     });
@@ -130,13 +131,12 @@ public class Game_Fragment extends Fragment {
                         public void run() {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status == 0) {
-                                    returnShowApi(jiSuApi_body);
-                                    showAdapter();
+                                    adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            loadlinalyout.setVisibility(View.GONE);
+                            CloseProgressDialog();
                             springView.onFinishFreshAndLoad();
                         }
                     });
@@ -147,7 +147,6 @@ public class Game_Fragment extends Fragment {
 
     private void showAdapter() {
         adapter = new Game_rc_Apapter(getActivity());
-        adapter.GameAdapterSetData(jiSuApi_lists);
         game_recyclerview.setAdapter(adapter);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         SectionedSpanSizeLookup lookup = new SectionedSpanSizeLookup(adapter, layoutManager);
@@ -155,8 +154,19 @@ public class Game_Fragment extends Fragment {
         game_recyclerview.setLayoutManager(layoutManager);
     }
 
-    private void returnShowApi(JiSuApi_Body jiSuApi_body) {
-        this.jiSuApi_lists = jiSuApi_body.result.Newslist;
+
+    private void CloseProgressDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+    }
+
+    private void showProgressDialog() {
+        if (dialog == null) {
+            dialog = new CustomDialog(getActivity(), R.style.CustomDialog);
+            dialog.show();
+        }
+        dialog.show();
     }
 
 }

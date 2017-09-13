@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:layout_centerInParent="true"
-    android:layout_gravity="center_horizontal"
-    android:background="@drawable/shape_dialog_layout"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/game_load"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/custom_cursor"
+    android:orientation="horizontal"
+    android:paddingBottom="16dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="16dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
-
-        <ProgressBar
-            android:id="@+id/pb_load"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_centerInParent="true"
-            android:indeterminate="false" />
-
-    </RelativeLayout>
+    <com.wang.avi.AVLoadingIndicatorView
+        android:layout_marginRight="10dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        app:indicator="BallSpinFadeLoader"
+        app:indicator_color="#fff" />
 
     <TextView
-        android:id="@+id/tv_load_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="加载中···"
-        android:textColor="#fff"
-        android:textSize="14sp" />
-
+        android:layout_gravity="center_vertical"
+        android:textSize="16sp"
+        android:text="玩命加载中..."
+        android:textColor="#fff" />
 </LinearLayout>

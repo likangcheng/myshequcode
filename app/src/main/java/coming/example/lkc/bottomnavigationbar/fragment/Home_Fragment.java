@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import java.io.IOException;
+import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Home_rc_Adapter;
@@ -45,6 +46,8 @@ public class Home_Fragment extends Fragment {
         swip.setColorSchemeResources(R.color.colorAccent);
         layoutManager = new GridLayoutManager(view.getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
+        newsAdapter = new Home_rc_Adapter();
+        recyclerView.setAdapter(newsAdapter);
         return view;
     }
 
@@ -94,8 +97,7 @@ public class Home_Fragment extends Fragment {
                         public void run() {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status == 0) {
-                                    returnShowApi(jiSuApi_body);
-                                    show_home_news();
+                                   newsAdapter.setDatalist(jiSuApi_body.result.Newslist);
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
@@ -106,15 +108,6 @@ public class Home_Fragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void returnShowApi(JiSuApi_Body jiSuApi_body) {
-        this.jiSuApi_body = jiSuApi_body;
-    }
-
-    private void show_home_news() {
-        newsAdapter = new Home_rc_Adapter(jiSuApi_body.result.Newslist);
-        recyclerView.setAdapter(newsAdapter);
     }
 
 }
