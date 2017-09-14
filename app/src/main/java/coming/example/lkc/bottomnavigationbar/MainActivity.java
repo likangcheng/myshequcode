@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(new BottomNavigationItem(R.drawable.home_fill, "Home").setInactiveIconResource(R.drawable.home))
                 .addItem(new BottomNavigationItem(R.drawable.book_fill, "Book").setInactiveIconResource(R.drawable.book))
                 .addItem(new BottomNavigationItem(R.drawable.music_fill, "Music").setInactiveIconResource(R.drawable.music))
-                .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie&Tv").setInactiveIconResource(R.drawable.tv))
+                .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie").setInactiveIconResource(R.drawable.tv))
                 .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad))
                 .setFirstSelectedPosition(0)
                 .initialise();

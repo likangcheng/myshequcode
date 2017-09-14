@@ -55,7 +55,7 @@ public class Music_rc_Adapter extends RecyclerView.Adapter<Music_rc_Adapter.View
         notifyDataSetChanged();
     }
 
-    public static interface OnclickMusicData {
+    public  interface OnclickMusicData {
         void MusicData(int Position);
     }
 

@@ -1,6 +1,7 @@
 package coming.example.lkc.bottomnavigationbar.viewholder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import coming.example.lkc.bottomnavigationbar.HomeCardActivity;
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 
@@ -39,5 +41,16 @@ public class Custom_Item_VH extends RecyclerView.ViewHolder {
         }
         title.setText(lists.NewsTitle);
         time.setText(lists.NewsTime);
+    }
+
+    public void setOnClick(final JiSuApi_List list, final Context context) {
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, HomeCardActivity.class);
+                intent.putExtra(HomeCardActivity.CONTENTLIST_DATA, list);
+                context.startActivity(intent);
+            }
+        });
     }
 }

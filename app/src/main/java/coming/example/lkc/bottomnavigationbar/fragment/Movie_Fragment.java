@@ -1,126 +1,118 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.viewpagerindicator.CirclePageIndicator;
+import com.truizlop.sectionedrecyclerview.SectionedSpanSizeLookup;
+
+import java.io.IOException;
 
 import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.adapter.MoviePager_Adapter;
-import io.netopen.hotbitmapgg.library.view.RingProgressBar;
+import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
+import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
+import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.Utility;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by lkc on 2017/7/31.
  */
 public class Movie_Fragment extends Fragment {
-    private ViewPager viewPager;
-    private int Viewpager_flag = 0;
-    private RingProgressBar ringProgressBar;
-    private Button button_sb;
-    private TextView sb;
-    private int progress = 0;
-    private int position = 0;
-    private static final int VIEWPAGER_TIME = 3500;
-    private CirclePageIndicator circlePageIndicator;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    viewPager.setCurrentItem(Viewpager_flag = (Viewpager_flag + 1) % 5);
-                    handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-                    break;
-                case 1:
-                    if (progress > 0) {
-                        ringProgressBar.setProgress(progress = progress - 1);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+    private RecyclerView movie_recyclerview;
+    private SwipeRefreshLayout swip;
+    private Game_rc_Apapter adapter;
+    private CustomDialog dialog;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.movie, container, false);
-        viewPager = (ViewPager) view.findViewById(R.id.viewpager_movie);
-        circlePageIndicator = (CirclePageIndicator) view.findViewById(R.id.CirclePage_Indicator);
-        button_sb = (Button) view.findViewById(R.id.button_sb);
-        sb = (TextView) view.findViewById(R.id.sb);
-        ringProgressBar = (RingProgressBar) view.findViewById(R.id.ringprogressbar);
+        movie_recyclerview = (RecyclerView) view.findViewById(R.id.movie_rcview);
+        swip = (SwipeRefreshLayout) view.findViewById(R.id.swip_movie);
+        swip.setColorSchemeResources(R.color.colorAccent, R.color.bule, R.color.orange, R.color.teal);
+        showAdapter();
         return view;
+    }
+
+    private void showAdapter() {
+        adapter = new Game_rc_Apapter(getActivity());
+        movie_recyclerview.setAdapter(adapter);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        SectionedSpanSizeLookup lookup = new SectionedSpanSizeLookup(adapter, layoutManager);
+        layoutManager.setSpanSizeLookup(lookup);
+        movie_recyclerview.setLayoutManager(layoutManager);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MoviePager_Adapter adapter = new MoviePager_Adapter(getActivity());
-        viewPager.setAdapter(adapter);
-        circlePageIndicator.setViewPager(viewPager);
-        handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-        new Thread(new Runnable() {
+        swip.post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    while (progress >= 0 && progress < 100) {
-                        Thread.sleep(500);
-                        Message message = Message.obtain();
-                        message.what = 1;
-                        handler.sendMessage(message);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                swip.setRefreshing(true);
+                requestNews();
+            }
+        });
+
+        swip.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestNews();
+            }
+        });
+    }
+
+
+    private void requestNews() {
+        String NewsUrl = "http://api.jisuapi.com/news/get?channel=娱乐&start=0&num=40&appkey=9a46b272586356ee";
+        HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
+                            swip.setRefreshing(false);
+                        }
+                    });
                 }
             }
-        }).start();
-        circlePageIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Viewpager_flag = position;
-                handler.removeMessages(0);
-                handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-            }
 
             @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        ringProgressBar.setOnProgressListener(new RingProgressBar.OnProgressListener() {
-            @Override
-            public void progressToComplete() {
-                ringProgressBar.setVisibility(View.GONE);
-                button_sb.setVisibility(View.GONE);
-                sb.setVisibility(View.VISIBLE);
-                sb.setText("你共点了" + position + "下\n点到100%的都是傻逼");
+            public void onResponse(Call call, Response response) throws IOException {
+                final String newsResponse = response.body().string();
+                final JiSuApi_Body jiSuApi_body = Utility.handelNewsResponse(newsResponse);
+                if (!call.isCanceled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (jiSuApi_body != null) {
+                                if (jiSuApi_body.status == 0) {
+                                    adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
+                                    Log.d("wode", "run:adapter setdata ");
+                                } else {
+                                    Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            swip.setRefreshing(false);
+                        }
+                    });
+                }
             }
         });
 
-        button_sb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                position++;
-                ringProgressBar.setProgress(progress = progress + 1);
-            }
-        });
     }
 }

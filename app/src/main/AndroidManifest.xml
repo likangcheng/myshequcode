@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="coming.example.lkc.bottomnavigationbar" >
+    package="coming.example.lkc.bottomnavigationbar">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,11 +13,11 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/cjq"
+        android:icon="@drawable/icon_yours"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".Start_Activity" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".Start_Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,14 +51,13 @@
             android:name="android.support.v4.content.FileProvider"
             android:authorities="coming.example.lkc.bottomnavigationbar.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths_public" />
         </provider>
 
-        <activity android:name=".Search" >
-        </activity>
+        <activity android:name=".Movie_Card_Activity"></activity>
     </application>
 
 </manifest>

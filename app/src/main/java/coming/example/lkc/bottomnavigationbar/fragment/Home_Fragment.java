@@ -43,7 +43,7 @@ public class Home_Fragment extends Fragment {
         View view = inflater.inflate(R.layout.home, null);
         recyclerView = (RecyclerView) view.findViewById(R.id.home_recyclerView);
         swip = (SwipeRefreshLayout) view.findViewById(R.id.swip_home_layout);
-        swip.setColorSchemeResources(R.color.colorAccent);
+        swip.setColorSchemeResources(R.color.colorAccent, R.color.bule, R.color.orange, R.color.teal);
         layoutManager = new GridLayoutManager(view.getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         newsAdapter = new Home_rc_Adapter();

@@ -27,7 +27,14 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     private List<Integer> Header_img = new ArrayList<>(Arrays.asList(R.drawable.xhl, R.drawable.hg, R.drawable.kdy
             , R.drawable.lmc, R.drawable.mwzz));
     private List<String> Header_text = new ArrayList<>(Arrays.asList("今日头条", "财金报道", "体育快讯", "娱乐杂谈", "女性秘密"));
-    private List<String> Header_date = new ArrayList<>(Arrays.asList("1111", "247", "313", "555", "666"));
+    private List<String> Header_date = new ArrayList<>(Arrays.asList("1111", "247", "313", "455", "696"));
+    private String[] imgurl = {
+            "http://img5.mtime.cn/mg/2017/09/14/090931.42802398.jpg",
+            "http://img5.mtime.cn/mg/2017/09/13/090510.61509534.jpg",
+            "http://img5.mtime.cn/mg/2017/09/12/092258.23134801.jpg",
+            "http://img5.mtime.cn/mg/2017/09/10/092952.73981337.jpg",
+            "http://img5.mtime.cn/mg/2017/09/09/090018.96429511.jpg"
+    };
 
     public Game_rc_Apapter(Context context) {
         this.context = context;
@@ -79,7 +86,7 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     @Override
     protected Custom_Header_VH onCreateSectionHeaderViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.home_header_vh, parent, false);
-        return new Custom_Header_VH(view);
+        return new Custom_Header_VH(view, context);
     }
 
     @Override
@@ -96,7 +103,7 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
 
     @Override
     protected void onBindSectionHeaderViewHolder(Custom_Header_VH holder, int section) {
-        holder.setDate(Header_text.get(section), Header_date.get(section), Header_img.get(section), context);
+        holder.setDate(Header_text.get(section), Header_date.get(section), Header_img.get(section), imgurl[section], section, context);
 
     }
 
@@ -112,22 +119,27 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
             case 0:
                 JiSuApi_List jiSuApi_list0 = jiSuApi_lists0.get(position);
                 holder.setDate(jiSuApi_list0, context);
+                holder.setOnClick(jiSuApi_list0, context);
                 break;
             case 1:
                 JiSuApi_List jiSuApi_list1 = jiSuApi_lists0.get(8 + position);
                 holder.setDate(jiSuApi_list1, context);
+                holder.setOnClick(jiSuApi_list1, context);
                 break;
             case 2:
                 JiSuApi_List jiSuApi_list2 = jiSuApi_lists0.get(14 + position);
                 holder.setDate(jiSuApi_list2, context);
+                holder.setOnClick(jiSuApi_list2, context);
                 break;
             case 3:
                 JiSuApi_List jiSuApi_list3 = jiSuApi_lists0.get(22 + position);
                 holder.setDate(jiSuApi_list3, context);
+                holder.setOnClick(jiSuApi_list3, context);
                 break;
             case 4:
                 JiSuApi_List jiSuApi_list4 = jiSuApi_lists0.get(28 + position);
                 holder.setDate(jiSuApi_list4, context);
+                holder.setOnClick(jiSuApi_list4, context);
                 break;
             default:
                 break;

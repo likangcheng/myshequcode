@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
@@ -16,21 +19,22 @@ import coming.example.lkc.bottomnavigationbar.R;
  */
 public class MoviePager_Adapter extends PagerAdapter {
     private Context mcontext;
-    private int[] imgdata = {
-            R.drawable.item1,
-            R.drawable.item2,
-            R.drawable.item3,
-            R.drawable.item4,
-            R.drawable.item5
+    private List<Integer> Title_img = new ArrayList<>(Arrays.asList(R.drawable.aa11, R.drawable.aa12, R.drawable.aa13, R.drawable.aa14, R.drawable.aa15));
+    private String[] imgurl = {
+            "http://img5.mtime.cn/mg/2017/09/14/090931.42802398.jpg",
+            "http://img5.mtime.cn/mg/2017/09/13/090510.61509534.jpg",
+            "http://img5.mtime.cn/mg/2017/09/12/092258.23134801.jpg",
+            "http://img5.mtime.cn/mg/2017/09/10/092952.73981337.jpg",
+            "http://img5.mtime.cn/mg/2017/09/09/090018.96429511.jpg"
     };
     private List<View> data = new ArrayList<>();
 
     public MoviePager_Adapter(Context context) {
         this.mcontext = context;
-        for (int i = 0; i < imgdata.length; i++) {
-        View view = View.inflate(mcontext, R.layout.viewpager_movie_item, null);
-        ImageView imageView = (ImageView) view;
-            imageView.setImageResource(imgdata[i]);
+        for (int i = 0; i < Title_img.size(); i++) {
+            View view = View.inflate(mcontext, R.layout.viewpager_movie_item, null);
+            ImageView imageView = (ImageView) view;
+            Glide.with(mcontext).load(Title_img.get(i)).into(imageView);
             data.add(imageView);
         }
     }

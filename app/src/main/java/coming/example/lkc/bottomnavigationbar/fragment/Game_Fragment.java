@@ -105,7 +105,7 @@ public class Game_Fragment extends Fragment {
     }
 
     private void requestNews() {
-        String NewsUrl = "http://api.jisuapi.com/news/get?channel=娱乐&start=0&num=40&appkey=9a46b272586356ee";
+        String NewsUrl = "http://api.jisuapi.com/news/get?channel=NBA&start=0&num=40&appkey=9a46b272586356ee";
         HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
