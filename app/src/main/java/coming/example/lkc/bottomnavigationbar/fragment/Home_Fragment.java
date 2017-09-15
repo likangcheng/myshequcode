@@ -14,6 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,21 +36,23 @@ import okhttp3.Response;
  * Created by lkc on 2017/7/31.
  */
 public class Home_Fragment extends Fragment {
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout swip;
+    private XRecyclerView recyclerView;
     private GridLayoutManager layoutManager;
-    private JiSuApi_Body jiSuApi_body;
     private Home_rc_Adapter newsAdapter;
+    private int newspage = 1;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home, null);
-        recyclerView = (RecyclerView) view.findViewById(R.id.home_recyclerView);
-        swip = (SwipeRefreshLayout) view.findViewById(R.id.swip_home_layout);
-        swip.setColorSchemeResources(R.color.colorAccent, R.color.bule, R.color.orange, R.color.teal);
+        recyclerView = (XRecyclerView) view.findViewById(R.id.home_recyclerView);
         layoutManager = new GridLayoutManager(view.getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setPullRefreshEnabled(true);
+        recyclerView.setArrowImageView(R.drawable.ondown);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallPulse);
+
         newsAdapter = new Home_rc_Adapter();
         recyclerView.setAdapter(newsAdapter);
         return view;
@@ -54,25 +61,29 @@ public class Home_Fragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        swip.post(new Runnable() {
-            @Override
-            public void run() {
-                swip.setRefreshing(true);
-                requestNews();
-            }
-        });
-
-        swip.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
                 requestNews();
+                newspage = 1;
+            }
+
+            @Override
+            public void onLoadMore() {
+                if (newspage < 6) {
+                    loadmoreNews(20 * newspage);
+                    newspage++;
+                } else {
+                    recyclerView.setNoMore(true);
+                }
             }
         });
+        recyclerView.refresh();
     }
 
 
     private void requestNews() {
-        String NewsUrl = "http://api.jisuapi.com/news/get?channel=头条&start=0&num=20&appkey=9a46b272586356ee";
+        String NewsUrl = "http://api.jisuapi.com/news/get?channel=新闻&start=0&num=20&appkey=9a46b272586356ee";
         HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -81,7 +92,7 @@ public class Home_Fragment extends Fragment {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
-                            swip.setRefreshing(false);
+                            recyclerView.refreshComplete();
                         }
                     });
                 }
@@ -97,12 +108,51 @@ public class Home_Fragment extends Fragment {
                         public void run() {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status == 0) {
-                                   newsAdapter.setDatalist(jiSuApi_body.result.Newslist);
+                                    newsAdapter.setDatalist(jiSuApi_body.result.Newslist);
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            swip.setRefreshing(false);
+                            recyclerView.refreshComplete();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void loadmoreNews(int start) {
+        String NewsUrl = "http://api.jisuapi.com/news/get?channel=新闻&start=" + start + "&num=20&appkey=9a46b272586356ee";
+        HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
+                            recyclerView.loadMoreComplete();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String newsResponse = response.body().string();
+                final JiSuApi_Body jiSuApi_body = Utility.handelNewsResponse(newsResponse);
+                if (!call.isCanceled()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (jiSuApi_body != null) {
+                                if (jiSuApi_body.status == 0) {
+                                    newsAdapter.loadmoreDatalist(jiSuApi_body.result.Newslist);
+                                } else {
+                                    Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            recyclerView.loadMoreComplete();
                         }
                     });
                 }

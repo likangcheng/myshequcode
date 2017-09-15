@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +101,6 @@ public class Movie_Fragment extends Fragment {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status == 0) {
                                     adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
-                                    Log.d("wode", "run:adapter setdata ");
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }

@@ -26,6 +26,13 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     private List<JiSuApi_List> jiSuApi_lists0;
     private List<Integer> Header_img = new ArrayList<>(Arrays.asList(R.drawable.xhl, R.drawable.hg, R.drawable.kdy
             , R.drawable.lmc, R.drawable.mwzz));
+    private List<String> Img_url = new ArrayList<>(Arrays.asList(
+            "http://imgs.aixifan.com/cms/2017_03_03/1488523586727.gif",
+            "http://imgs.aixifan.com/cms/2017_03_03/1488523474487.gif",
+            "http://imgs.aixifan.com/cms/2017_03_03/1488523606418.gif",
+            "http://imgs.aixifan.com/cms/2017_03_03/1488523679990.gif",
+            "http://imgs.aixifan.com/cms/2017_03_03/1488523695622.gif"
+    ));
     private List<String> Header_text = new ArrayList<>(Arrays.asList("今日头条", "财金报道", "体育快讯", "娱乐杂谈", "女性秘密"));
     private List<String> Header_date = new ArrayList<>(Arrays.asList("1111", "247", "313", "455", "696"));
     private String[] imgurl = {

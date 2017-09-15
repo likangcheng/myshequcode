@@ -53,6 +53,14 @@ public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void loadmoreDatalist(List<JiSuApi_List> list) {
+        if (this.contentlists != null) {
+            contentlists.addAll(list);
+            notifyDataSetChanged();
+        }
+
+    }
+
     @Override
     public Home_rc_Adapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (context == null) {
@@ -64,7 +72,7 @@ public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHo
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
-                JiSuApi_List jiSuApi_list = contentlists.get(position);
+                JiSuApi_List jiSuApi_list = contentlists.get(position - 1);
                 Intent intent = new Intent(context, HomeCardActivity.class);
                 intent.putExtra(HomeCardActivity.CONTENTLIST_DATA, jiSuApi_list);
                 context.startActivity(intent);
