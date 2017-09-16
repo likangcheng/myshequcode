@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><!-- 位移动画 。时间1秒，位移x(0,10)。抖动循环次数7次。interpolator是动画插入器-->
-<translate xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="1000"
-    android:fromXDelta="0"
-    android:interpolator="@anim/cycle_7"
-    android:toXDelta="10" />

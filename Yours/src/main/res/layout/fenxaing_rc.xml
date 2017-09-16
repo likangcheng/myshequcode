@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="100dp">
+
+    <ImageView
+        android:layout_marginTop="15dp"
+        android:id="@+id/fx_rc_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/fxwb" />
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:id="@+id/fx_rc_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fx_rc_img"
+        android:layout_centerHorizontal="true"
+        android:text="QQ" />
+
+</RelativeLayout>

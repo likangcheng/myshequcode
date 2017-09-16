@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#DA5380</color>
+    <color name="colorPrimaryDark">#DA5380</color>
+    <color name="colorAccent">#DA5380</color>
+    <color name="orange">#FFA500</color>
+    <color name="teal">#76EE00</color>
+    <color name="bule">#63B8FF</color>
+    <color name="fill">#d4237a</color>
+    <color name="wirte">#ffffff</color>
+    <color name="wirte_dark">#FAFAFA</color>
+    <color name="text_dark">#8A8A8A</color>
+    <color name="text_light">#4D4D4D</color>
+</resources>
