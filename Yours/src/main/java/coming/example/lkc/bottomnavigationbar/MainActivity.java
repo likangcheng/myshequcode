@@ -37,6 +37,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public String USERNAME_LOGIN;
     private NetWorkReceiver netWorkReceiver;
     private Dialog dialog;
+    private BadgeItem badgeItem;
     private static final int REQUEST_CODE_CHOOSE = 23;
     private List<String> pathList;
     private PermissionChecker permissionChecker;
@@ -116,7 +118,10 @@ public class MainActivity extends AppCompatActivity {
             //选中到未选中
             @Override
             public void onTabUnselected(int position) {
-
+                if (position == 4) {
+                    badgeItem.hide();
+                    Log.d("wode", "onTabSelected: ");
+                }
             }
 
             //选中到选中
@@ -323,6 +328,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initBottomNavigationBar() {
+        badgeItem = new BadgeItem()
+                .setBorderWidth(2)
+                .setBorderColorResource(R.color.red)
+                .setBackgroundColorResource(R.color.red)
+                .setHideOnSelect(true)
+                .setText("3");
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         bottomNavigationBar.setActiveColor(R.color.wirte_dark).setBarBackgroundColor(R.color.fill);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
@@ -332,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(new BottomNavigationItem(R.drawable.book_fill, "Book").setInactiveIconResource(R.drawable.book))
                 .addItem(new BottomNavigationItem(R.drawable.music_fill, "Music").setInactiveIconResource(R.drawable.music))
                 .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie").setInactiveIconResource(R.drawable.tv))
-                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad))
+                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setBadgeItem(badgeItem).setInactiveIconResource(R.drawable.gamepad))
                 .setFirstSelectedPosition(0)
                 .initialise();
     }
