@@ -45,6 +45,7 @@ import com.bumptech.glide.Glide;
 import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
 import com.vector.update_app.UpdateCallback;
+import com.vector.update_app.utils.AppUpdateUtils;
 import com.werb.permissionschecker.PermissionChecker;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -57,7 +58,9 @@ import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.fragment.Book_Fragment;
@@ -278,6 +281,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initUpdataAPP() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("appVersion", AppUpdateUtils.getVersionName(this));
         new UpdateAppManager
                 .Builder()
                 //当前Activity
@@ -286,12 +291,14 @@ public class MainActivity extends AppCompatActivity {
                 .setHttpManager(new UpdateAppHttpUtil())
                         //设置请求方式 默认get,
                 .setPost(false)
+                .setParams(params)
                         //更新地址
                 .setUpdateUrl("https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/json")
                         //设置头部
                 .setTopPic(R.mipmap.top_3)
+                .setTargetPath(path)
                         //设置主题色
-                .setThemeColor(0xff034ea0)
+                .setThemeColor(0xff6392ff)
                 .build()
                         //检测是否有新版本
                 .checkNewApp(new UpdateCallback() {
