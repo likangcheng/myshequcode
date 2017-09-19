@@ -49,4 +49,6 @@ dependencies {
     compile 'com.wang.avi:library:1.0.0'
     compile 'com.nineoldandroids:library:2.4.0'
     compile project(':xrecyclerview')
+    compile 'com.qianwen:update-app:3.3.8'
+    compile 'com.qianwen:okhttp-utils:3.8.0'
 }

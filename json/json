@@ -1,9 +1,8 @@
 {
   "update": "Yes",
-  "new_version": "0.8.3",
-  "apk_file_url": "https://raw.githubusercontent.com/WVector/AppUpdateDemo/master/apk/app-debug.apk",
-  "update_log": "1，添加删除信用卡接口。\r\n2，添加vip认证。\r\n3，区分自定义消费，一个小时不限制。\r\n4，添加放弃任务接口，小时内不生成。\r\n5，消费任务手动生成。",
+  "new_version": "1.5.3",
+  "apk_file_url": "https://raw.githubusercontent.com/likangcheng/myshequcode/master/Yours/Yours-release.apk",
+  "update_log": "1，添加下拉刷新显示时间。\r\n2，添加版本更新。\r\n3，滑动底部自动加载。\r\n4，UI界面优化，新版更可爱。\r\n5，添加隐藏功能。",
   "target_size": "5M",
-  "new_md5":"295687E756F569C7159974DD493489A5",
   "constraint": false
 }

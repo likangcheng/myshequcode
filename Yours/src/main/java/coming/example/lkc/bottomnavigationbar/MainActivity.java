@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -41,12 +42,17 @@ import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
+import com.vector.update_app.UpdateAppBean;
+import com.vector.update_app.UpdateAppManager;
+import com.vector.update_app.UpdateCallback;
 import com.werb.permissionschecker.PermissionChecker;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -60,7 +66,9 @@ import coming.example.lkc.bottomnavigationbar.fragment.Home_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Movie_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
+import coming.example.lkc.bottomnavigationbar.unitl.CProgressDialogUtils;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.UpdateAppHttpUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
     private PermissionChecker permissionChecker;
     private String[] PERMISSIONS = new String[]{
             Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE
     };
 
     @Override
@@ -255,12 +265,80 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, JBS_Activity.class);
                         startActivity(intent);
                         break;
+                    case R.id.nav_mail:
+                        initUpdataAPP();
+                        break;
                     default:
                         break;
                 }
                 return true;
             }
         });
+    }
+
+    private void initUpdataAPP() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        new UpdateAppManager
+                .Builder()
+                //当前Activity
+                .setActivity(this)
+                        //实现httpManager接口的对象
+                .setHttpManager(new UpdateAppHttpUtil())
+                        //设置请求方式 默认get,
+                .setPost(false)
+                        //更新地址
+                .setUpdateUrl("https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/json")
+                        //设置头部
+                .setTopPic(R.mipmap.top_3)
+                        //设置主题色
+                .setThemeColor(0xff034ea0)
+                .build()
+                        //检测是否有新版本
+                .checkNewApp(new UpdateCallback() {
+                    @Override
+                    protected void hasNewApp(UpdateAppBean updateApp, UpdateAppManager updateAppManager) {
+                        updateAppManager.showDialogFragment();
+                    }
+
+                    @Override
+                    protected UpdateAppBean parseJson(String json) {
+                        UpdateAppBean updateAppBean = new UpdateAppBean();
+                        try {
+                            JSONObject jsonObject = new JSONObject(json);
+                            updateAppBean
+                                    //是否更新Yes,No
+                                    .setUpdate(jsonObject.getString("update"))
+                                            //新版本号
+                                    .setNewVersion(jsonObject.getString("new_version"))
+                                            //下载地址
+                                    .setApkFileUrl(jsonObject.getString("apk_file_url"))
+                                            //大小
+                                    .setTargetSize(jsonObject.getString("target_size"))
+                                            //更新内容
+                                    .setUpdateLog(jsonObject.getString("update_log"))
+                                            //是否强制更新
+                                    .setConstraint(jsonObject.getBoolean("constraint"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return updateAppBean;
+                    }
+
+                    @Override
+                    protected void onAfter() {
+                        CProgressDialogUtils.cancelProgressDialog(MainActivity.this);
+                    }
+
+                    @Override
+                    protected void noNewApp() {
+                        Toast.makeText(MainActivity.this, "没有新版本", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    protected void onBefore() {
+                        CProgressDialogUtils.showProgressDialog(MainActivity.this);
+                    }
+                });
     }
 
     private void initTCDLdialog() {
