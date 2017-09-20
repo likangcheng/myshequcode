@@ -1,20 +1,15 @@
 package coming.example.lkc.bottomnavigationbar;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.graphics.Path;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -38,29 +33,20 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
-import com.vector.update_app.UpdateAppBean;
-import com.vector.update_app.UpdateAppManager;
-import com.vector.update_app.UpdateCallback;
-import com.vector.update_app.utils.AppUpdateUtils;
 import com.werb.permissionschecker.PermissionChecker;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.fragment.Book_Fragment;
@@ -68,13 +54,15 @@ import coming.example.lkc.bottomnavigationbar.fragment.Game_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Home_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Movie_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
-import coming.example.lkc.bottomnavigationbar.service.MusicService;
-import coming.example.lkc.bottomnavigationbar.unitl.CProgressDialogUtils;
+import coming.example.lkc.bottomnavigationbar.other_view.UpdataAppCreat;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
-import coming.example.lkc.bottomnavigationbar.unitl.UpdateAppHttpUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private String Url = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/json";
     private Fragment[] fragments;
     private BottomNavigationBar bottomNavigationBar;
     private DrawerLayout drawerLayout;
@@ -86,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     public String USERNAME_LOGIN;
     private NetWorkReceiver netWorkReceiver;
     private Dialog dialog;
-    private BadgeItem badgeItem;
     private static final int REQUEST_CODE_CHOOSE = 23;
     private List<String> pathList;
     private PermissionChecker permissionChecker;
@@ -131,10 +118,7 @@ public class MainActivity extends AppCompatActivity {
             //选中到未选中
             @Override
             public void onTabUnselected(int position) {
-                if (position == 4) {
-                    badgeItem.hide();
-                    Log.d("wode", "onTabSelected: ");
-                }
+
             }
 
             //选中到选中
@@ -156,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void initPicture() {
         Matisse
@@ -269,7 +254,8 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case R.id.nav_mail:
-                        initUpdataAPP();
+                        UpdataAppCreat updataAppCreat = new UpdataAppCreat(MainActivity.this);
+                        updataAppCreat.setUpdataDialog();
                         break;
                     default:
                         break;
@@ -279,74 +265,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initUpdataAPP() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("appVersion", AppUpdateUtils.getVersionName(this));
-        new UpdateAppManager
-                .Builder()
-                //当前Activity
-                .setActivity(this)
-                        //实现httpManager接口的对象
-                .setHttpManager(new UpdateAppHttpUtil())
-                        //设置请求方式 默认get,
-                .setPost(false)
-                .setParams(params)
-                        //更新地址
-                .setUpdateUrl("https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/json")
-                        //设置头部
-                .setTopPic(R.mipmap.top_3)
-                .setTargetPath(path)
-                        //设置主题色
-                .setThemeColor(0xff6392ff)
-                .build()
-                        //检测是否有新版本
-                .checkNewApp(new UpdateCallback() {
-                    @Override
-                    protected void hasNewApp(UpdateAppBean updateApp, UpdateAppManager updateAppManager) {
-                        updateAppManager.showDialogFragment();
-                    }
-
-                    @Override
-                    protected UpdateAppBean parseJson(String json) {
-                        UpdateAppBean updateAppBean = new UpdateAppBean();
-                        try {
-                            JSONObject jsonObject = new JSONObject(json);
-                            updateAppBean
-                                    //是否更新Yes,No
-                                    .setUpdate(jsonObject.getString("update"))
-                                            //新版本号
-                                    .setNewVersion(jsonObject.getString("new_version"))
-                                            //下载地址
-                                    .setApkFileUrl(jsonObject.getString("apk_file_url"))
-                                            //大小
-                                    .setTargetSize(jsonObject.getString("target_size"))
-                                            //更新内容
-                                    .setUpdateLog(jsonObject.getString("update_log"))
-                                            //是否强制更新
-                                    .setConstraint(jsonObject.getBoolean("constraint"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        return updateAppBean;
-                    }
-
-                    @Override
-                    protected void onAfter() {
-                        CProgressDialogUtils.cancelProgressDialog(MainActivity.this);
-                    }
-
-                    @Override
-                    protected void noNewApp() {
-                        Toast.makeText(MainActivity.this, "没有新版本", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    protected void onBefore() {
-                        CProgressDialogUtils.showProgressDialog(MainActivity.this);
-                    }
-                });
-    }
 
     private void initTCDLdialog() {
         dialog = new Dialog(this, R.style.PhotographAndPicture_DialogStyle);
@@ -413,12 +331,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initBottomNavigationBar() {
-        badgeItem = new BadgeItem()
-                .setBorderWidth(2)
-                .setBorderColorResource(R.color.red)
-                .setBackgroundColorResource(R.color.red)
-                .setHideOnSelect(true)
-                .setText("3");
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         bottomNavigationBar.setActiveColor(R.color.wirte_dark).setBarBackgroundColor(R.color.fill);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
@@ -428,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(new BottomNavigationItem(R.drawable.book_fill, "Book").setInactiveIconResource(R.drawable.book))
                 .addItem(new BottomNavigationItem(R.drawable.music_fill, "Music").setInactiveIconResource(R.drawable.music))
                 .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie").setInactiveIconResource(R.drawable.tv))
-                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setBadgeItem(badgeItem).setInactiveIconResource(R.drawable.gamepad))
+                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad))
                 .setFirstSelectedPosition(0)
                 .initialise();
     }
@@ -512,4 +424,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }
