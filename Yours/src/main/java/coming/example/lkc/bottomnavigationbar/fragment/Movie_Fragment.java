@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,12 @@ import android.widget.Toast;
 
 import com.truizlop.sectionedrecyclerview.SectionedSpanSizeLookup;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
@@ -21,6 +27,7 @@ import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
+import coming.example.lkc.bottomnavigationbar.viewholder.Custom_Header_VH;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -32,7 +39,8 @@ public class Movie_Fragment extends Fragment {
     private RecyclerView movie_recyclerview;
     private SwipeRefreshLayout swip;
     private Game_rc_Apapter adapter;
-    private CustomDialog dialog;
+    private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
+    private List<String> picstring = new ArrayList<>();
 
     @Nullable
     @Override
@@ -101,6 +109,7 @@ public class Movie_Fragment extends Fragment {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status == 0) {
                                     adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
+                                    initPic2Json();
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
@@ -112,5 +121,41 @@ public class Movie_Fragment extends Fragment {
             }
         });
 
+    }
+
+    private void initPic2Json() {
+        Log.d("wode", "initPic2Json: ");
+        HttpUnitily.sendOkHttpRequest(picurl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "广告数据异常", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String JsonString = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(JsonString);
+                    picstring.add(jsonObject.getString("pic_1"));
+                    picstring.add(jsonObject.getString("pic_2"));
+                    picstring.add(jsonObject.getString("pic_3"));
+                    picstring.add(jsonObject.getString("pic_4"));
+                    picstring.add(jsonObject.getString("pic_5"));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Custom_Header_VH.adapter.setDate(picstring);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

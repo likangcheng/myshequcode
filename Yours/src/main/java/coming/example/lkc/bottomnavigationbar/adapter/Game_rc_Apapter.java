@@ -1,6 +1,8 @@
 package coming.example.lkc.bottomnavigationbar.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,7 @@ import coming.example.lkc.bottomnavigationbar.viewholder.Custom_Item_VH;
  */
 public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_VH, Custom_Item_VH
         , Custom_Footer_VH> {
-    private Context context;
+    private Activity context;
     private List<JiSuApi_List> jiSuApi_lists0;
     private List<Integer> Header_img = new ArrayList<>(Arrays.asList(R.drawable.xhl, R.drawable.hg, R.drawable.kdy
             , R.drawable.lmc, R.drawable.mwzz));
@@ -43,22 +45,14 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
             "http://img5.mtime.cn/mg/2017/09/09/090018.96429511.jpg"
     };
 
-    public Game_rc_Apapter(Context context) {
+    public Game_rc_Apapter(Activity context) {
         this.context = context;
     }
 
-    public void GameAdapterSetData(List<JiSuApi_List> list0) {
-        if (jiSuApi_lists0 == null) {
-            this.jiSuApi_lists0 = list0;
-        } else {
-            jiSuApi_lists0.clear();
-            jiSuApi_lists0 = list0;
-        }
-        notifyDataSetChanged();
-    }
 
     @Override
     protected int getSectionCount() {
+        Log.d("wode", "getSectionCount: ");
         if (jiSuApi_lists0 == null) {
             return 0;
         } else {
@@ -93,6 +87,7 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     @Override
     protected Custom_Header_VH onCreateSectionHeaderViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.home_header_vh, parent, false);
+        Log.d("wode", "onCreateSectionHeaderViewHolder: ");
         return new Custom_Header_VH(view, context);
     }
 
@@ -152,5 +147,15 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
                 break;
         }
 
+    }
+
+    public void GameAdapterSetData(List<JiSuApi_List> list0) {
+        if (jiSuApi_lists0 == null) {
+            this.jiSuApi_lists0 = list0;
+        } else {
+            jiSuApi_lists0.clear();
+            jiSuApi_lists0 = list0;
+        }
+        notifyDataSetChanged();
     }
 }

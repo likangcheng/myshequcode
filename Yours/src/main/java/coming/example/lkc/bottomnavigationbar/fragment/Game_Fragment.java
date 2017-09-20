@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,15 +46,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
+import coming.example.lkc.bottomnavigationbar.adapter.MoviePager_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
+import coming.example.lkc.bottomnavigationbar.viewholder.Custom_Header_VH;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -70,6 +74,8 @@ public class Game_Fragment extends Fragment {
     private RecyclerView game_recyclerview;
     private Game_rc_Apapter adapter;
     private SpringView springView;
+    private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
+    private List<String> picstring = new ArrayList<>();
     private CustomDialog dialog;
 
     @Nullable
@@ -132,6 +138,7 @@ public class Game_Fragment extends Fragment {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status == 0) {
                                     adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
+                                    initPic2Json();
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
@@ -145,8 +152,45 @@ public class Game_Fragment extends Fragment {
         });
     }
 
+    private void initPic2Json() {
+        Log.d("wode", "initPic2Json: ");
+        HttpUnitily.sendOkHttpRequest(picurl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "广告数据异常", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String JsonString = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(JsonString);
+                    picstring.add(jsonObject.getString("pic_1"));
+                    picstring.add(jsonObject.getString("pic_2"));
+                    picstring.add(jsonObject.getString("pic_3"));
+                    picstring.add(jsonObject.getString("pic_4"));
+                    picstring.add(jsonObject.getString("pic_5"));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Custom_Header_VH.adapter.setDate(picstring);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     private void showAdapter() {
         adapter = new Game_rc_Apapter(getActivity());
+        Log.d("wode", "showAdapter: ");
         game_recyclerview.setAdapter(adapter);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         SectionedSpanSizeLookup lookup = new SectionedSpanSizeLookup(adapter, layoutManager);

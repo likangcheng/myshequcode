@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.viewholder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -7,18 +8,29 @@ import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.viewpagerindicator.CirclePageIndicator;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
 import coming.example.lkc.bottomnavigationbar.adapter.MoviePager_Adapter;
-import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by lkc on 2017/9/8.
@@ -27,10 +39,13 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
     ImageView imageView, titleimg;
     TextView headtext, headdate;
     ViewPager viewPager;
+    private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
+    private List<String> picstring = new ArrayList<>();
     private int Viewpager_flag = 0;
     private static final int VIEWPAGER_TIME = 3500;
     private CirclePageIndicator circlePageIndicator;
     private RelativeLayout viewpager_RL;
+    public static MoviePager_Adapter adapter;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -45,7 +60,7 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
         }
     };
 
-    public Custom_Header_VH(View itemView, Context context) {
+    public Custom_Header_VH(View itemView, Activity context) {
         super(itemView);
         titleimg = (ImageView) itemView.findViewById(R.id.header_vh_title);
         imageView = (ImageView) itemView.findViewById(R.id.header_vh_img);
@@ -57,8 +72,9 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
         initViewPagerAdapter(context);
     }
 
-    private void initViewPagerAdapter(Context context) {
-        MoviePager_Adapter adapter = new MoviePager_Adapter(context);
+
+    private void initViewPagerAdapter(Activity activity) {
+        adapter = new MoviePager_Adapter(activity);
         viewPager.setAdapter(adapter);
         circlePageIndicator.setViewPager(viewPager);
         handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
