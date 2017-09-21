@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
@@ -122,7 +123,7 @@ public class Login_User_Activity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);  //先得到构造器
         builder.setTitle("提示"); //设置标题
         builder.setMessage("登录成功"); //设置内容
-        builder.setIcon(R.drawable.cjq);//设置图标，图片id即可
+        builder.setIcon(R.mipmap.icon_yours);//设置图标，图片id即可
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
             @Override
             public void onClick(DialogInterface dialog, int which) {

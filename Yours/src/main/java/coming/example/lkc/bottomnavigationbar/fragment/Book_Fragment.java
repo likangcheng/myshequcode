@@ -41,22 +41,6 @@ public class Book_Fragment extends Fragment {
     private Book_rc_Adapter adapter;
     private LinearLayout networkerro;
     private int page = 1;
-//    private boolean REFRESH = false;
-//    //已经加载出来的Item的数量
-//    private int totalItemCount;
-//
-//    //主要用来存储上一个totalItemCount
-//    private int previousTotal = 0;
-//
-//    //在屏幕上可见的item数量
-//    private int visibleItemCount;
-//
-//    //在屏幕可见的Item中的第一个
-//    private int firstVisibleItem;
-//
-//    //是否正在上拉数据
-//    private boolean loading = true;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,35 +90,6 @@ public class Book_Fragment extends Fragment {
 
         springView.setHeader(new AliHeader(getActivity(), true));
         springView.setFooter(new AliFooter(getActivity(), false));
-
-//        bookrecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                visibleItemCount = recyclerView.getChildCount();
-//                if (previousTotal == 0) {
-//                    totalItemCount = 20;
-//                } else {
-//                    totalItemCount = gridLayoutManager.getItemCount();
-//                }
-//                firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
-//
-//
-//                if (loading && totalItemCount > previousTotal) {
-//
-//                    loading = false;
-//                    previousTotal = totalItemCount;
-//                }
-//
-//                //这里需要好好理解
-//                if (!loading && totalItemCount - visibleItemCount <= firstVisibleItem) {
-//                    showProgressDialog();
-//                    page++;
-//                    loadmoreNEWS();
-//                    loading = true;
-//                }
-//            }
-//        });
     }
 
     private void loadmoreNEWS() {

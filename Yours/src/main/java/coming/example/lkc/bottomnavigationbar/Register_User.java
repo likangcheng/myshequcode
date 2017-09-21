@@ -125,7 +125,7 @@ public class Register_User extends AppCompatActivity {
 
     private void Register_Dialog() {
         CustomDialog_lkc dialog_lkc=new CustomDialog_lkc(this);
-        dialog_lkc.SetDialog("确定","注册成功");
+        dialog_lkc.SetDialog("恭喜你注册成功了！你可以在用户栏更改你的头像，可以将新闻分享至您的微信。","确定");
         dialog_lkc.setOnDialogMenuClick(new CustomDialog_lkc.OnDialogMenuClick() {
             @Override
             public void OnOkClick(View view) {

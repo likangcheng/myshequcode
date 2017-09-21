@@ -2,12 +2,17 @@ package coming.example.lkc.bottomnavigationbar;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
@@ -15,6 +20,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -43,8 +49,11 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +68,8 @@ import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -87,47 +98,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //权限声明
         permissionChecker = new PermissionChecker(this);
         if (permissionChecker.isLackPermissions(PERMISSIONS)) {
             permissionChecker.requestPermissions();
         }
-        setContentView(R.layout.activity_main);
-        initBottomNavigationBar();
-        initActionBar();
-        initDrawerLayout();
-        login_status_ok();
         fragments = new Fragment[5];
-        initonClick();
-        initReceiver();
-        bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
-            //未选中到选中
-            @Override
-            public void onTabSelected(int position) {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                hideAllFragments(ft);
-                if (fragments[position] == null) {
-                    initFragments(position);
-                    ft.add(R.id.frameLayout_fragment, fragments[position]);
-                } else {
-                    ft.show(fragments[position]);
-                }
-                ft.commit();
-            }
+        setContentView(R.layout.activity_main);
+        initBottomNavigationBar();//底部导航栏
+        initActionBar();//标题栏
+        initDrawerLayout();//左边用户栏
+        login_status_ok();//登录状态
+        initFirstonClick();//底部导航栏第一次点击
+        initReceiver();//检测网络状态
+        initUpdata();//检测更新状态
+        initcircleImageView();//头像
+    }
 
-            //选中到未选中
-            @Override
-            public void onTabUnselected(int position) {
-
-            }
-
-            //选中到选中
-            @Override
-            public void onTabReselected(int position) {
-
-            }
-        });
-
+    private void initcircleImageView() {
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,7 +129,49 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initUpdata() {
+        HttpUnitily.sendOkHttpRequest(Url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
 
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String json = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(json);
+                    String newVersionName = jsonObject.getString("new_version");
+                    PackageManager packageManager = getPackageManager();
+                    // getPackageName()是你当前类的包名，0代表是获取版本信息
+                    PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+                    String version = packInfo.versionName;
+                    if (!TextUtils.equals(version, newVersionName)) {
+                        initNotifaction();//通知
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void initNotifaction() {
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle("APP有新的版本了！")
+                .setStyle(new NotificationCompat.BigTextStyle().bigText("系统检测到Yours有新的版本啦！可以在用户栏版本更新处进行下载更新。"))
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.icon_yours)
+//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.gx_icon))
+                .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .build();
+        manager.notify(1, notification);
+    }
+
+    //打开图片选择器  知乎库
     private void initPicture() {
         Matisse
                 .from(MainActivity.this)
@@ -170,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(netWorkReceiver);
+        unregisterReceiver(netWorkReceiver);//关闭广播
 
     }
 
@@ -304,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //加载页面时第一次点击
-    private void initonClick() {
+    private void initFirstonClick() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         initFragments(0);
@@ -343,6 +373,34 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad))
                 .setFirstSelectedPosition(0)
                 .initialise();
+        bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
+            //未选中到选中
+            @Override
+            public void onTabSelected(int position) {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                hideAllFragments(ft);
+                if (fragments[position] == null) {
+                    initFragments(position);
+                    ft.add(R.id.frameLayout_fragment, fragments[position]);
+                } else {
+                    ft.show(fragments[position]);
+                }
+                ft.commit();
+            }
+
+            //选中到未选中
+            @Override
+            public void onTabUnselected(int position) {
+
+            }
+
+            //选中到选中
+            @Override
+            public void onTabReselected(int position) {
+
+            }
+        });
     }
 
     private void initFragments(int position) {
