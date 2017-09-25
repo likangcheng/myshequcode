@@ -4,11 +4,11 @@
         <item
             android:id="@+id/nav_frends"
 
-            android:title="Friends"></item>
+            android:title="用户信息"></item>
         <item
             android:id="@+id/nav_location"
 
-            android:title="Location"></item>
+            android:title="我的收藏"></item>
         <item
             android:id="@+id/nav_mail"
 

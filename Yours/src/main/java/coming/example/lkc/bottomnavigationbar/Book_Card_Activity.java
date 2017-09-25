@@ -57,8 +57,8 @@ public class Book_Card_Activity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book__card_);
         regtoWX(this);
-        initdata();
-        initfenxiang();
+        initdata();//BOOK界面点击内容
+        initfenxiang();//微信分享
     }
 
     private void initfenxiang() {
