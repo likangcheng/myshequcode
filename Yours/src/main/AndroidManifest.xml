@@ -17,22 +17,29 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Start_Activity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeCardActivity" />
+        <activity
+            android:name=".HomeCardActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".Book_Card_Activity"
+            android:launchMode="singleTask"
             android:theme="@style/Book_card_activity" />
         <activity
             android:name=".Login_User_Activity"
+            android:launchMode="singleTask"
             android:theme="@style/Login_Activity" />
         <activity
             android:name=".Register_User"
+            android:launchMode="singleTask"
             android:theme="@style/Login_Activity" />
 
         <service
@@ -40,12 +47,16 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".Start_Activity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTop" />
-        <activity android:name=".JBS_Activity" />
+        <activity
+            android:name=".JBS_Activity"
+            android:launchMode="singleTask" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -57,7 +68,12 @@
                 android:resource="@xml/file_paths_public" />
         </provider>
 
-        <activity android:name=".Movie_Card_Activity"></activity>
+        <activity
+            android:name=".Movie_Card_Activity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".CollectionActivity"
+            android:launchMode="singleTask"></activity>
     </application>
 
 </manifest>

@@ -31,20 +31,13 @@ public class Start_Activity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT>=21){
+        if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_start);
-        SharedPreferences sharedPreferences = getSharedPreferences("FirstOpen", 0);
-        boolean firstopen = sharedPreferences.getBoolean("firstopen", false);
-        if (firstopen) {
-            Intent intent = new Intent(Start_Activity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
         viewPager = (ViewPager) findViewById(R.id.start_viewpager);
         button = (Button) findViewById(R.id.start_button);
         circlePageIndicator = (LinePageIndicator) findViewById(R.id.start_indicator);
@@ -75,10 +68,8 @@ public class Start_Activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = getSharedPreferences("FirstOpen", 0).edit();
-                editor.putBoolean("firstopen", true);
+                editor.putBoolean("firstopen", false);
                 editor.commit();
-                Intent intent = new Intent(Start_Activity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });

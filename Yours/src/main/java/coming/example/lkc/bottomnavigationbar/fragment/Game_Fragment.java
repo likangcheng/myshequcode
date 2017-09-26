@@ -75,7 +75,6 @@ public class Game_Fragment extends Fragment {
     private Game_rc_Apapter adapter;
     private SpringView springView;
     private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
-    private List<String> picstring = new ArrayList<>();
     private CustomDialog dialog;
 
     @Nullable
@@ -168,6 +167,7 @@ public class Game_Fragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String JsonString = response.body().string();
+                final List<String> picstring = new ArrayList<>();
                 try {
                     JSONObject jsonObject = new JSONObject(JsonString);
                     picstring.add(jsonObject.getString("pic_1"));

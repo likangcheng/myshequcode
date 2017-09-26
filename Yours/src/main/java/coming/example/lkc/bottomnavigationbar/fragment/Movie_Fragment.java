@@ -40,7 +40,6 @@ public class Movie_Fragment extends Fragment {
     private SwipeRefreshLayout swip;
     private Game_rc_Apapter adapter;
     private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
-    private List<String> picstring = new ArrayList<>();
 
     @Nullable
     @Override
@@ -139,6 +138,7 @@ public class Movie_Fragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String JsonString = response.body().string();
+                final List<String> picstring = new ArrayList<>();
                 try {
                     JSONObject jsonObject = new JSONObject(JsonString);
                     picstring.add(jsonObject.getString("pic_1"));

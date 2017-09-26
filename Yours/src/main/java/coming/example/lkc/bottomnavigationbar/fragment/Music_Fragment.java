@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -52,6 +53,7 @@ import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -72,14 +74,15 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     private CustomDialog dialog;
-    public static ImageView music_icon, music_next, music_go;
+    public static ImageView music_next, music_go;
     private static TextView sing_name, singer, time_left, time_right;
     public static SeekBar seekBar;
+    public static CircleImageView music_icon;
     public static List<SingList> singlist;
     public static int position;
     public static boolean LOADING;
     private MusicService.MusicBinder musicBinder;
-    private int poisition_copy = 0, Next_Music_Code = 1;
+    private int poisition_copy = 0, Next_Music_Code = 1, First_AUTONEXT = 0;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -107,7 +110,7 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     private void init(View view) {
-        music_icon = (ImageView) view.findViewById(R.id.music_icon);
+        music_icon = (CircleImageView) view.findViewById(R.id.music_icon);
         music_next = (ImageView) view.findViewById(R.id.music_next);
         music_go = (ImageView) view.findViewById(R.id.music_go);
         sing_name = (TextView) view.findViewById(R.id.sing_name);
@@ -212,6 +215,10 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 sing_name.setText(sing.songname);
                 singer.setText(sing.singername);
                 NextMusic_Select();
+                if (First_AUTONEXT == 0) {
+                    initMusicPlayAutoNext();
+                    First_AUTONEXT = 1;
+                }
             }
         });
     }
@@ -232,6 +239,22 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 req.message = mediaMessage;
                 req.scene = SendMessageToWX.Req.WXSceneSession;
                 iwxapi.sendReq(req);
+            }
+        });
+    }
+
+    private void initMusicPlayAutoNext() {
+        MusicService.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (MusicService.count == 0) {
+                    musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
+                    Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
+                    sing_name.setText(singlist.get(position + Next_Music_Code).songname);
+                    singer.setText(singlist.get(position + Next_Music_Code).singername);
+                    position = position + Next_Music_Code;
+                    poisition_copy = position;
+                }
             }
         });
     }

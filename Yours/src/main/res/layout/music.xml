@@ -13,35 +13,27 @@
         <android.support.v7.widget.CardView
             android:id="@+id/card_view_music"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:elevation="5dp"
             android:orientation="vertical"
             app:cardCornerRadius="5dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-
-                <ImageView
-                    android:id="@+id/music_icon"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:src="@drawable/timg" />
 
                 <LinearLayout
                     android:id="@+id/seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_toRightOf="@id/music_icon"
+                    android:layout_margin="6dp"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/time_left"
-                        android:layout_width="40dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal" />
 
@@ -54,52 +46,69 @@
 
                     <TextView
                         android:id="@+id/time_right"
-                        android:layout_width="40dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/music_icon"
+                        android:layout_width="66dp"
+                        android:layout_height="66dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginBottom="6dp"
+                        android:src="@drawable/timg" />
 
-                <ImageView
-                    android:id="@+id/music_next"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_below="@id/seekbar"
-                    android:layout_marginRight="20dp"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/next" />
+                    <LinearLayout
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="10dp"
+                        android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/music_go"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_below="@id/seekbar"
-                    android:layout_marginRight="20dp"
-                    android:layout_toLeftOf="@id/music_next"
-                    android:src="@drawable/go" />
+                        <TextView
+                            android:id="@+id/sing_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="QQ音乐"
+                            android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/sing_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/seekbar"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/music_icon"
-                    android:text="QQ音乐"
-                    android:textSize="14sp" />
+                        <TextView
+                            android:id="@+id/singer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="我的音乐"
+                            android:textSize="14sp" />
+                    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/singer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/sing_name"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/music_icon"
-                    android:text="我的音乐"
-                    android:textSize="14sp" />
+                    <ImageView
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="8dp"
+                        android:id="@+id/music_go"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/play" />
 
-            </RelativeLayout>
+                    <ImageView
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="8dp"
+                        android:id="@+id/music_next"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/next" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </android.support.v7.widget.CardView>
 

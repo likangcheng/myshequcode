@@ -45,7 +45,6 @@ public class Book_Card_Activity extends AppCompatActivity implements View.OnClic
     public static final String WEIXIN_DATA = "weixin data";
     private WeiXin_Content_list data;
     private Dialog dialog;
-    public int i = 0;
 
     private void regtoWX(Context context) {
         iwxapi = WXAPIFactory.createWXAPI(context, APP_ID, true);

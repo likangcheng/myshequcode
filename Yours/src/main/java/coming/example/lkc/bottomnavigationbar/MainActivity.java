@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }
         fragments = new Fragment[5];
         setContentView(R.layout.activity_main);
+        initFirstStart();
         initBottomNavigationBar();//底部导航栏
         initActionBar();//标题栏
         initDrawerLayout();//左边用户栏
@@ -113,6 +114,15 @@ public class MainActivity extends AppCompatActivity {
         initReceiver();//检测网络状态
         initUpdata();//检测更新状态
         initcircleImageView();//头像
+    }
+
+    private void initFirstStart() {
+        SharedPreferences sharedPreferences = getSharedPreferences("FirstOpen", 0);
+        boolean firstopen = sharedPreferences.getBoolean("firstopen", true);
+        if (firstopen) {
+            Intent intent = new Intent(MainActivity.this, Start_Activity.class);
+            startActivity(intent);
+        }
     }
 
     private void initcircleImageView() {
@@ -286,6 +296,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_mail:
                         UpdataAppCreat updataAppCreat = new UpdataAppCreat(MainActivity.this);
                         updataAppCreat.setUpdataDialog();
+                        break;
+                    case R.id.nav_location:
+                        Intent intent2collection = new Intent(MainActivity.this, CollectionActivity.class);
+                        startActivity(intent2collection);
                         break;
                     default:
                         break;

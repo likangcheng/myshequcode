@@ -24,7 +24,7 @@ import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 
 public class MusicService extends Service {
     public static MediaPlayer mediaPlayer;
-    public static int count = 0;
+    public static int count = 0;//1为暂停,0为播放
 
     @Override
     public void onCreate() {
@@ -55,11 +55,11 @@ public class MusicService extends Service {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                     count = 1;
-                    Music_Fragment.music_go.setImageResource(R.drawable.go);
+                    Music_Fragment.music_go.setImageResource(R.drawable.play);
                 } else {
                     mediaPlayer.start();
                     count = 0;
-                    Music_Fragment.music_go.setImageResource(R.drawable.paruse);
+                    Music_Fragment.music_go.setImageResource(R.drawable.pause);
                     UpdateProgress();
                 }
 
@@ -71,29 +71,31 @@ public class MusicService extends Service {
 
         public void nextMusic(SingList singlist) {
             if (mediaPlayer != null) {
+                //以后的next
                 if (mediaPlayer.isPlaying()) {
+                    count=1;
                     mediaPlayer.stop();
-                    Music_Fragment.music_go.setImageResource(R.drawable.go);
+                    Music_Fragment.music_go.setImageResource(R.drawable.play);
                 }
                 mediaPlayer.reset();
                 try {
                     mediaPlayer.setDataSource(singlist.musicurl);
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    mediaPlayer.prepareAsync();
+                    mediaPlayer.prepareAsync();//异步加载
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
                             mediaPlayer.start();
                             count = 0;
                             UpdateProgress();
-                            Log.d("wode", "第二次next: ");
-                            Music_Fragment.music_go.setImageResource(R.drawable.paruse);
+                            Music_Fragment.music_go.setImageResource(R.drawable.pause);
                         }
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if (mediaPlayer == null) {
+                //第一次next
                 mediaPlayer = new MediaPlayer();
                 try {
                     mediaPlayer.setDataSource(singlist.musicurl);
@@ -104,9 +106,8 @@ public class MusicService extends Service {
                         public void onPrepared(MediaPlayer mp) {
                             mediaPlayer.start();
                             UpdateProgress();
-                            Log.d("wode", "第一次next: ");
                             count = 0;
-                            Music_Fragment.music_go.setImageResource(R.drawable.paruse);
+                            Music_Fragment.music_go.setImageResource(R.drawable.pause);
                         }
                     });
                 } catch (IOException e) {
@@ -115,17 +116,6 @@ public class MusicService extends Service {
             }
         }
 
-//        public void stopMusic() {
-//            count = 1;
-//            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-//                mediaPlayer.stop();
-//                Log.d("wode", "关闭MediaPalyer: ");
-//                mediaPlayer.release();//释放音乐文件资源
-//                mediaPlayer = null;
-//            } else {
-//                mediaPlayer.release();
-//            }
-//        }
     }
 
     public static void UpdateProgress() {
