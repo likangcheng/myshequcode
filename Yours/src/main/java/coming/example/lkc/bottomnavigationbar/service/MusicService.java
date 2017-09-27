@@ -7,11 +7,15 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.annotation.IntDef;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -21,10 +25,13 @@ import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.dao.Music;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
 import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
+import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 
 public class MusicService extends Service {
-    public static MediaPlayer mediaPlayer;
-    public static int count = 0;//1为暂停,0为播放
+    private static MediaPlayer mediaPlayer;
+    private static int count = 0;//1为暂停,0为播放
+    private boolean PLAYSTAUCT_PAUSE;
+    private MusicBinder mBinder = new MusicBinder();
 
     @Override
     public void onCreate() {
@@ -42,7 +49,6 @@ public class MusicService extends Service {
         super.onDestroy();
     }
 
-    private MusicBinder mBinder = new MusicBinder();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,16 +56,22 @@ public class MusicService extends Service {
     }
 
     public class MusicBinder extends Binder {
+        private MusicPlayOrPause listener;
+
+        public void initMusicBinder(MusicPlayOrPause listener) {
+            this.listener = listener;
+        }
+
         public void startMusic(Context context) {
             if (mediaPlayer != null) {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                     count = 1;
-                    Music_Fragment.music_go.setImageResource(R.drawable.play);
+                    listener.Pause();
                 } else {
                     mediaPlayer.start();
                     count = 0;
-                    Music_Fragment.music_go.setImageResource(R.drawable.pause);
+                    listener.Play();
                     UpdateProgress();
                 }
 
@@ -70,13 +82,20 @@ public class MusicService extends Service {
 
 
         public void nextMusic(SingList singlist) {
+            if (mediaPlayer == null) {
+                mediaPlayer = new MediaPlayer();
+            }
             if (mediaPlayer != null) {
-                //以后的next
+                //next
                 if (mediaPlayer.isPlaying()) {
-                    count=1;
+                    Log.d("music", "nextMusic: count赋值之前:" + count);
+                    count = 1;
+                    Log.d("music", "nextMusic: count赋值之后:" + count);
                     mediaPlayer.stop();
-                    Music_Fragment.music_go.setImageResource(R.drawable.play);
+                    listener.Pause();
                 }
+                count = 1;
+                Log.d("music", "nextMusic: count没走playing:" + count);
                 mediaPlayer.reset();
                 try {
                     mediaPlayer.setDataSource(singlist.musicurl);
@@ -85,29 +104,10 @@ public class MusicService extends Service {
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
-                            mediaPlayer.start();
+                            mp.start();
                             count = 0;
                             UpdateProgress();
-                            Music_Fragment.music_go.setImageResource(R.drawable.pause);
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if (mediaPlayer == null) {
-                //第一次next
-                mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(singlist.musicurl);
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    mediaPlayer.prepareAsync();
-                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mediaPlayer.start();
-                            UpdateProgress();
-                            count = 0;
-                            Music_Fragment.music_go.setImageResource(R.drawable.pause);
+                            listener.Play();
                         }
                     });
                 } catch (IOException e) {
@@ -116,9 +116,56 @@ public class MusicService extends Service {
             }
         }
 
+        public int onProgressChanged(int progress) {
+            if (mediaPlayer != null) {
+                int current = (int) (progress * mediaPlayer.getDuration() / 100.0);
+                return current;
+            } else {
+                return 0;
+            }
+        }
+
+        public void onStartTrackingTouch() {
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    count = 1;
+                    mediaPlayer.pause();
+                    PLAYSTAUCT_PAUSE = true;
+                } else {
+                    PLAYSTAUCT_PAUSE = false;
+                }
+            }
+        }
+
+        public void onStopTrackingTouch(int progress) {
+            if (mediaPlayer != null) {
+                int current = (int) (progress * MusicService.mediaPlayer.getDuration() / 100.0);
+                mediaPlayer.seekTo(current);
+                if (PLAYSTAUCT_PAUSE) {
+                    count = 0;
+                    mediaPlayer.start();
+                    UpdateProgress();
+                } else {
+                    mediaPlayer.pause();
+                }
+
+            }
+        }
+
+        public void initMusicPlayAutoNext() {
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (count == 0) {
+                        listener.AutoNext();
+                    }
+                }
+            });
+        }
     }
 
-    public static void UpdateProgress() {
+
+    private void UpdateProgress() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -128,7 +175,7 @@ public class MusicService extends Service {
                     msg_.what = mediaPlayer.getCurrentPosition();  //获取当前播放位置
                     msg_.arg1 = progress;
                     msg_.arg2 = mediaPlayer.getDuration();
-                    Music_Fragment.handler.sendMessage(msg_);
+                    handler.sendMessage(msg_);
                     SystemClock.sleep(1000);    //延时一秒钟
                 }
             }
@@ -136,6 +183,16 @@ public class MusicService extends Service {
 
     }
 
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int progress = msg.arg1;
+            int current = msg.what;
+            int current1 = msg.arg2;
+            mBinder.listener.Progress(progress, current, current1);
+        }
+    };
 
 }
 

@@ -38,6 +38,8 @@ import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,6 +51,7 @@ import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Music_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.Music;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
+import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
@@ -74,15 +77,38 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     private CustomDialog dialog;
-    public static ImageView music_next, music_go;
-    private static TextView sing_name, singer, time_left, time_right;
-    public static SeekBar seekBar;
-    public static CircleImageView music_icon;
-    public static List<SingList> singlist;
-    public static int position;
-    public static boolean LOADING;
+    private ImageView music_next, music_go;
+    private TextView sing_name, singer, time_left, time_right;
+    private DiscreteSeekBar seekBar;
+    private CircleImageView music_icon;
+    private List<SingList> singlist;
+    private int position;
     private MusicService.MusicBinder musicBinder;
     private int poisition_copy = 0, Next_Music_Code = 1, First_AUTONEXT = 0;
+    private MusicPlayOrPause listener = new MusicPlayOrPause() {
+        @Override
+        public void Play() {
+            music_go.setImageResource(R.drawable.pause);
+        }
+
+        @Override
+        public void Pause() {
+            music_go.setImageResource(R.drawable.play);
+        }
+
+        @Override
+        public void AutoNext() {
+            Next();
+        }
+
+        @Override
+        public void Progress(int progress, int lefttext, int righttext) {
+            seekBar.setProgress(progress);
+            time_left.setText(new SimpleDateFormat("mm:ss").format(lefttext));
+            time_right.setText(new SimpleDateFormat("mm:ss").format(righttext));
+
+        }
+    };
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -115,7 +141,7 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         music_go = (ImageView) view.findViewById(R.id.music_go);
         sing_name = (TextView) view.findViewById(R.id.sing_name);
         singer = (TextView) view.findViewById(R.id.singer);
-        seekBar = (SeekBar) view.findViewById(R.id.seekbar_1);
+        seekBar = (DiscreteSeekBar) view.findViewById(R.id.seekbar_1);
         time_left = (TextView) view.findViewById(R.id.time_left);
         time_right = (TextView) view.findViewById(R.id.time_right);
     }
@@ -127,42 +153,28 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        seekBar.setVisibility(View.GONE);
         showProgressDialog();
         querySingList();
         music_go.setOnClickListener(this);
         music_next.setOnClickListener(this);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int current = MusicService.mediaPlayer.getCurrentPosition();
-                time_left.setText(new SimpleDateFormat("mm:ss").format(current));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                if (MusicService.mediaPlayer.isPlaying()) {
-                    MusicService.count = 1;
-                    MusicService.mediaPlayer.pause();
-                    LOADING = true;
-                } else {
-                    LOADING = false;
+            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+                int current = musicBinder.onProgressChanged(value);
+                if (current != 0) {
+                    time_left.setText(new SimpleDateFormat("mm:ss").format(current));
                 }
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                int current = (int) (progress * MusicService.mediaPlayer.getDuration() / 100.0);
-                MusicService.mediaPlayer.seekTo(current);
-                if (LOADING) {
-                    MusicService.count = 0;
-                    MusicService.mediaPlayer.start();
-                    MusicService.UpdateProgress();
-                } else {
-                    MusicService.count = 0;
-                    MusicService.UpdateProgress();
-                    MusicService.mediaPlayer.pause();
-                }
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
+                musicBinder.onStartTrackingTouch();
+            }
+
+            @Override
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
+                musicBinder.onStopTrackingTouch(seekBar.getProgress());
             }
         });
     }
@@ -216,7 +228,9 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 singer.setText(sing.singername);
                 NextMusic_Select();
                 if (First_AUTONEXT == 0) {
-                    initMusicPlayAutoNext();
+                    musicBinder.initMusicBinder(listener);
+                    seekBar.setVisibility(View.VISIBLE);
+                    musicBinder.initMusicPlayAutoNext();
                     First_AUTONEXT = 1;
                 }
             }
@@ -243,20 +257,13 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void initMusicPlayAutoNext() {
-        MusicService.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (MusicService.count == 0) {
-                    musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
-                    Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
-                    sing_name.setText(singlist.get(position + Next_Music_Code).songname);
-                    singer.setText(singlist.get(position + Next_Music_Code).singername);
-                    position = position + Next_Music_Code;
-                    poisition_copy = position;
-                }
-            }
-        });
+    private void Next() {
+        musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
+        Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
+        sing_name.setText(singlist.get(position + Next_Music_Code).songname);
+        singer.setText(singlist.get(position + Next_Music_Code).singername);
+        position = position + Next_Music_Code;
+        poisition_copy = position;
     }
 
     @Override
@@ -274,11 +281,7 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.music_next:
                 musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
-                Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
-                sing_name.setText(singlist.get(position + Next_Music_Code).songname);
-                singer.setText(singlist.get(position + Next_Music_Code).singername);
-                position = position + Next_Music_Code;
-                poisition_copy = position;
+                Next();
                 break;
             default:
                 break;
@@ -293,20 +296,6 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
             musicBinder.startMusic(getActivity());
         }
     }
-
-    public static Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            int progress = msg.arg1;
-            int current = msg.what;
-            int current1 = msg.arg2;
-            time_left.setText(new SimpleDateFormat("mm:ss").format(current));
-            time_right.setText(new SimpleDateFormat("mm:ss").format(current1));
-            seekBar.setProgress(progress);
-        }
-    };
-
 
     private void CloseProgressDialog() {
         if (dialog != null) {
