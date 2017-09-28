@@ -448,8 +448,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.backup:
-                Toast.makeText(this, "返回", Toast.LENGTH_SHORT).show();
+            case R.id.search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
                 break;
             case R.id.delete:
                 Toast.makeText(this, "删除", Toast.LENGTH_SHORT).show();

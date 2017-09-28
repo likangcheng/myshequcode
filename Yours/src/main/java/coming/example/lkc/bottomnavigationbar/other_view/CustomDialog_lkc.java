@@ -80,6 +80,7 @@ public class CustomDialog_lkc implements View.OnClickListener {
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         dialogWindow.setAttributes(lp);
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         dialog.show();
     }
 

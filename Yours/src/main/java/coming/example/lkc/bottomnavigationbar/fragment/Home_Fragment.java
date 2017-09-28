@@ -52,7 +52,6 @@ public class Home_Fragment extends Fragment {
         recyclerView.setArrowImageView(R.drawable.ondown);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallPulse);
-
         newsAdapter = new Home_rc_Adapter();
         recyclerView.setAdapter(newsAdapter);
         return view;

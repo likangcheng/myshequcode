@@ -1,7 +1,7 @@
 {
-  "new_version": "1.5.6",
+  "new_version": "1.5.7",
   "apk_file_url": "https://raw.githubusercontent.com/likangcheng/myshequcode/master/Yours/Yours-release.apk",
-  "update_log": "1，添加音乐自动播放。\r\n2，增加版本更新提示及版本下载。\r\n3，优化音乐播放器。\r\n4，修复Home键再启动Yours会重复启动一个新的Activity的漏洞",
-  "target_size": "6.88M",
+  "update_log": "1，添加音乐自动播放。\r\n2，增加版本更新提示及版本下载。\r\n3，优化音乐播放器。\r\n4，修复Home键再启动Yours会重复启动一个新的Activity的漏洞。\r\n5，搜索功能全新上线。",
+  "target_size": "6.96M",
   "constraint": false
 }

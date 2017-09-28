@@ -153,7 +153,6 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        seekBar.setVisibility(View.GONE);
         showProgressDialog();
         querySingList();
         music_go.setOnClickListener(this);
@@ -229,7 +228,6 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 NextMusic_Select();
                 if (First_AUTONEXT == 0) {
                     musicBinder.initMusicBinder(listener);
-                    seekBar.setVisibility(View.VISIBLE);
                     musicBinder.initMusicPlayAutoNext();
                     First_AUTONEXT = 1;
                 }

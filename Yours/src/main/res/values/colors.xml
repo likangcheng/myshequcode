@@ -12,4 +12,5 @@
     <color name="wirte_dark">#FAFAFA</color>
     <color name="text_dark">#9a9a9a</color>
     <color name="text_light">#4D4D4D</color>
+    <color name="ededed">#E0E0E0</color>
 </resources>
