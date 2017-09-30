@@ -9,4 +9,5 @@ public class WeiXin_Content {
     public List<WeiXin_Content_list> contentlist;
     public int currentPage;
     public int maxResult;
+    public int allNum;
 }

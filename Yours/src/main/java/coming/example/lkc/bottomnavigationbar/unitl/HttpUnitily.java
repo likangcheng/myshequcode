@@ -22,9 +22,9 @@ public class HttpUnitily {
 
     public static void sendOkHttpRequest(String address, okhttp3.Callback callback) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS);
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS);
         //超时
         OkHttpClient client = builder.build();
         Request request = new Request.Builder().url(address).build();
