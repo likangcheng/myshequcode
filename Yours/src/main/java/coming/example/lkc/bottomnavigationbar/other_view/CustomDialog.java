@@ -32,9 +32,8 @@ public class CustomDialog extends ProgressDialog {
     private void init(Context context)
     {
         //设置不可取消，点击其他区域不能取消，实际中可以抽出去封装供外包设置
-        setCancelable(false);
+        setCancelable(true);
         setCanceledOnTouchOutside(false);
-
         setContentView(R.layout.dialog_layout);
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;

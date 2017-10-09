@@ -41,6 +41,7 @@ public class Book_Fragment extends Fragment {
     private Book_rc_Adapter adapter;
     private LinearLayout networkerro;
     private int page = 1;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,10 +117,14 @@ public class Book_Fragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (weiXinNew2.showapi_res_code == 0) {
-                            adapter.loadmoreBookData(weiXinNew2.showapi_res_body.pagebean.contentlist);
+                        if (weiXinNew2 != null) {
+                            if (weiXinNew2.showapi_res_code == 0) {
+                                adapter.loadmoreBookData(weiXinNew2.showapi_res_body.pagebean.contentlist);
+                            } else {
+                                Toast.makeText(getActivity(), "获取更多信息失败", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(getActivity(), "获取更多信息失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                         }
                         springView.onFinishFreshAndLoad();
                     }
@@ -154,11 +159,15 @@ public class Book_Fragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (weiXinNew1.showapi_res_code == 0) {
-                            adapter.setBookData(weiXinNew1.showapi_res_body.pagebean.contentlist);
-                            page = 1;
+                        if (weiXinNew1 != null) {
+                            if (weiXinNew1.showapi_res_code == 0) {
+                                adapter.setBookData(weiXinNew1.showapi_res_body.pagebean.contentlist);
+                                page = 1;
+                            } else {
+                                Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                         }
                         bookrecyclerView.setVisibility(View.VISIBLE);
                         networkerro.setVisibility(View.GONE);

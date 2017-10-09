@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class JiSuApi_Result {
     public String channel;
-    public int num;
+    public String num;
     @SerializedName("list")
     public List<JiSuApi_List> Newslist;
 }

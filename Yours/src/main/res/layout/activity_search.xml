@@ -61,6 +61,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/search_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -84,6 +85,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -93,6 +95,21 @@
                 android:id="@+id/search_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></ListView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#21000000" />
+
+            <Button
+                android:layout_margin="6dp"
+                android:id="@+id/cancel_histour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/button_zhuce"
+                android:text="清空历史"
+                android:textColor="@color/wirte" />
 
         </LinearLayout>
 

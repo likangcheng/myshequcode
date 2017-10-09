@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -53,21 +54,63 @@ public class SearchActivity extends AppCompatActivity {
     private CustomDialog dialog;
     private LinearLayout suggest;
     private List<String> suggest_list_data = new ArrayList<>();
+    private TextView search_back, histour_header;
+    private ListView listview;
+    private Button histour_cancel;
+    private boolean NO_HISITOUR = false;
+    private InputMethodManager imManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        initSearch();
-        initSuggest();
-        initHistour();
+        imManager = (InputMethodManager) getSystemService(SearchActivity.this.INPUT_METHOD_SERVICE);
+        initSearch();//声明Search相关变量
+        initSuggest();//历史记录相关变量
+        initHistour();//获取历史记录
+        initSearchListen();//搜索栏相关的事件监听
+        initBack();//取消返回键
+        initCancelHistour();//清空历史搜索
+    }
+
+    private void initCancelHistour() {
+        histour_cancel = (Button) findViewById(R.id.cancel_histour);
+        histour_header = (TextView) findViewById(R.id.header);
+        if (suggest_list_data.size() == 0 || suggest_list_data == null) {
+            histour_cancel.setVisibility(View.GONE);
+            histour_header.setVisibility(View.GONE);
+            NO_HISITOUR = true;
+        }
+        histour_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                suggest_list_data.clear();
+                suggest_adapter.notifyDataSetChanged();
+                histour_cancel.setVisibility(View.GONE);
+                histour_header.setVisibility(View.GONE);
+                NO_HISITOUR = true;
+            }
+        });
+    }
+
+    private void initBack() {
+        search_back = (TextView) findViewById(R.id.search_back);
+        search_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void initSearchListen() {
         search_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 search_et.setText("");
                 search_et.setHint("Search");
             }
-        });
+        });//点击清空
 
         search_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -79,7 +122,7 @@ public class SearchActivity extends AppCompatActivity {
                     suggest.setVisibility(View.GONE);
                 }
             }
-        });
+        });//搜索栏获取焦点显示历史搜索
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,16 +140,30 @@ public class SearchActivity extends AppCompatActivity {
                     search_cancel.setVisibility(View.GONE);
                 }
             }
+        });//监听搜索栏上内容，根据内容显示cancel项
+        search_et.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                search_et.setFocusable(true);
+                search_et.setFocusableInTouchMode(true);
+                search_et.requestFocus();
+                imManager.showSoftInput(search_et,InputMethodManager.SHOW_FORCED);
+                return true;
+            }
         });
-
         search_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    initFousce(search_rc);
-                    remove32(suggest_list_data, v.getText().toString());
-                    suggest_list_data.add(0, v.getText().toString());
+                    initFousce(search_rc);//搜索结果获取焦点
+                    remove32(suggest_list_data, v.getText().toString());//取消历史搜索相同搜索
+                    suggest_list_data.add(0, v.getText().toString());//增加此次搜索
                     suggest_adapter.notifyDataSetChanged();
+                    if (NO_HISITOUR) {
+                        histour_header.setVisibility(View.VISIBLE);
+                        histour_cancel.setVisibility(View.VISIBLE);
+                        NO_HISITOUR = false;
+                    }
                     showProgressDialog();
                     Search(v.getText().toString());
                 }
@@ -139,12 +196,20 @@ public class SearchActivity extends AppCompatActivity {
     private void initSuggest() {
         suggest = (LinearLayout) findViewById(R.id.suggest_search);
         suggest.setVisibility(View.GONE);
-        suggest_adapter = new Suggest_list_BaseAdapter(this, suggest_list_data);
-        ListView listview = (ListView) findViewById(R.id.search_list);
+        suggest_adapter = new Suggest_list_BaseAdapter(this, suggest_list_data, listview);
+        listview = (ListView) findViewById(R.id.search_list);
         listview.setAdapter(suggest_adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                initFousce(search_rc);
+                if (NO_HISITOUR) {
+                    histour_header.setVisibility(View.VISIBLE);
+                    histour_cancel.setVisibility(View.VISIBLE);
+                    NO_HISITOUR = false;
+                }
+                showProgressDialog();
+                Search(suggest_list_data.get(position));
             }
         });
     }
@@ -155,9 +220,11 @@ public class SearchActivity extends AppCompatActivity {
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         //隐藏输入法
-        ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(SearchActivity.this.getCurrentFocus()
-                        .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        imManager.hideSoftInputFromWindow(search_et.getWindowToken(), 0);
+        search_et.setFocusable(false);
+        search_et.setFocusableInTouchMode(false);
+        search_et.requestFocus();
+        suggest.setVisibility(View.GONE);
         search_rc.setVisibility(View.VISIBLE);
     }
 
@@ -203,6 +270,9 @@ public class SearchActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(SearchActivity.this, "搜索的内容不存在", Toast.LENGTH_SHORT).show();
                                 }
+                            }else {
+                                Toast.makeText(SearchActivity.this, "请检测网络是否连接异常", Toast.LENGTH_SHORT).show();
+                                finish();
                             }
                             CloseProgressDialog();
                         }
@@ -219,7 +289,6 @@ public class SearchActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this).edit();
         for (String s : suggest_list_data) {
             history = history + s + "|";
-            Log.d("search", "onDestroy: " + history);
         }
         editor.putString("History", history);
         editor.commit();
@@ -238,4 +307,5 @@ public class SearchActivity extends AppCompatActivity {
         }
         dialog.show();
     }
+
 }

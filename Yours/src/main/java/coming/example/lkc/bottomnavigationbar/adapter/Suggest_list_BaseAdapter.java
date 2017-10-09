@@ -1,12 +1,15 @@
 package coming.example.lkc.bottomnavigationbar.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -21,11 +24,12 @@ import coming.example.lkc.bottomnavigationbar.R;
 public class Suggest_list_BaseAdapter extends BaseAdapter {
     private Context context;
     private List<String> data;
+    private ListView listView;
 
-    public Suggest_list_BaseAdapter(Context context, List<String> data) {
+    public Suggest_list_BaseAdapter(Context context, List<String> data, ListView listView) {
         this.context = context;
         this.data = data;
-
+        this.listView = listView;
     }
 
     @Override
@@ -69,8 +73,12 @@ public class Suggest_list_BaseAdapter extends BaseAdapter {
         holder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data.remove(position);
-                notifyDataSetChanged();
+                if (data.size() > 1) {
+                    data.remove(position);
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "下面那个按钮是干嘛的？非要一个一个点？", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         holder.text.setText(data.get(position));

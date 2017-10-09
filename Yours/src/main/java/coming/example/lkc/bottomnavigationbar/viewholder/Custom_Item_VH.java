@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import java.util.List;
 
@@ -35,9 +36,9 @@ public class Custom_Item_VH extends RecyclerView.ViewHolder {
 
     public void setDate(JiSuApi_List lists, Context context) {
         if (!TextUtils.isEmpty(lists.pic)) {
-            Glide.with(context).load(lists.pic).into(imageView);
+            Glide.with(context).load(lists.pic).asBitmap().centerCrop().into(new BitmapImageViewTarget(imageView));
         } else {
-            Glide.with(context).load(R.drawable.zwtp111).into(imageView);
+            Glide.with(context).load(R.drawable.zwtp111).asBitmap().centerCrop().into(new BitmapImageViewTarget(imageView));
         }
         title.setText(lists.NewsTitle);
         time.setText(lists.NewsTime);

@@ -84,7 +84,7 @@ public class Book_rc_Adapter extends RecyclerView.Adapter<Book_rc_Adapter.ViewHo
         String[] timedata = weixinclass.ct.split(" ");
         holder.weixin_time.setText(timedata[0]);
         holder.weixin_title.setText(weixinclass.weixintitle);
-        Glide.with(mcontext).load(weixinclass.contentImg).into(holder.weixin_img);
+        Glide.with(mcontext).load(weixinclass.contentImg).centerCrop().into(holder.weixin_img);
     }
 
     @Override

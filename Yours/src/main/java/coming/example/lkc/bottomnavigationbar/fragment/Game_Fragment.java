@@ -135,12 +135,14 @@ public class Game_Fragment extends Fragment {
                         @Override
                         public void run() {
                             if (jiSuApi_body != null) {
-                                if (jiSuApi_body.status == 0) {
+                                if (jiSuApi_body.status .equals("0") ) {
                                     adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
                                     initPic2Json();
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
+                            }else {
+                                Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                             }
                             CloseProgressDialog();
                             springView.onFinishFreshAndLoad();

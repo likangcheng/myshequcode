@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -68,47 +70,55 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     private RecyclerView musicrecyclerView;
     private GridLayoutManager gridLayoutManager;
     private Music_rc_Adapter madapter;
-    private final static String APP_ID = "wxd6ab7c22e73907b9";
+    private final static String APP_ID = "wxd6ab7c22e73907b9";//微信ID
     private IWXAPI iwxapi;
 
     private void regtoWX(Context context) {
+        //验证微信ID
         iwxapi = WXAPIFactory.createWXAPI(context, APP_ID, true);
         iwxapi.registerApp(APP_ID);
     }
 
-    private CustomDialog dialog;
-    private ImageView music_next, music_go;
+    private CustomDialog dialog;//显示加载的对话框
+    private ImageView music_next, music_go;//暂停 下一首按钮
     private TextView sing_name, singer, time_left, time_right;
     private DiscreteSeekBar seekBar;
     private CircleImageView music_icon;
-    private List<SingList> singlist;
+    private List<SingList> singlist;//音乐资源
     private int position;
     private MusicService.MusicBinder musicBinder;
-    private int poisition_copy = 0, Next_Music_Code = 1, First_AUTONEXT = 0;
+    private int poisition_copy = -1,//本地管理播放曲目序列号
+            Next_Music_Code = 1,//用于下一首，可直接用1代替。
+            First_AUTONEXT = 0;//由于使用的一个MediaPlay，所以MediaPlay的监听播放完成的方法只能调用一次，该参数判定使用为第一次。
     private MusicPlayOrPause listener = new MusicPlayOrPause() {
         @Override
         public void Play() {
+            //监听播放状态
             music_go.setImageResource(R.drawable.pause);
         }
 
         @Override
         public void Pause() {
+            //监听暂停状态
             music_go.setImageResource(R.drawable.play);
         }
 
         @Override
         public void AutoNext() {
+            //下一首
             Next();
         }
 
         @Override
         public void Progress(int progress, int lefttext, int righttext) {
+            //监听播放条状态
             seekBar.setProgress(progress);
             time_left.setText(new SimpleDateFormat("mm:ss").format(lefttext));
             time_right.setText(new SimpleDateFormat("mm:ss").format(righttext));
 
         }
     };
+    //用ServiceConnection绑定一个服务
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -150,16 +160,18 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        //启动服务
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        showProgressDialog();
-        querySingList();
+        showProgressDialog();//加载对话框
+        querySingList();//查询可取列表
         music_go.setOnClickListener(this);
         music_next.setOnClickListener(this);
         seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+                //通过服务返回播放位置
                 int current = musicBinder.onProgressChanged(value);
                 if (current != 0) {
                     time_left.setText(new SimpleDateFormat("mm:ss").format(current));
@@ -168,12 +180,12 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
-                musicBinder.onStartTrackingTouch();
+                musicBinder.onStartTrackingTouch();//开始滑动滚动条通知服务
             }
 
             @Override
             public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
-                musicBinder.onStopTrackingTouch(seekBar.getProgress());
+                musicBinder.onStopTrackingTouch(seekBar.getProgress());//结束滑动滚动条通知服务
             }
         });
     }
@@ -197,14 +209,18 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call call, Response response) throws IOException {
                 String singResponse = response.body().string();
                 final Music music = Utility.handelMusicResponse(singResponse);
-                Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (music.showapi_res_code == 0) {
-                            madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
-                        } else {
-                            Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
+                        if (music != null){
+                            if (music.showapi_res_code == 0) {
+                                Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
+                                madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
+                            } else {
+                                Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                         }
                         CloseProgressDialog();
                     }
@@ -214,6 +230,7 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
         madapter.setOnLongItemClickListenter(new Music_rc_Adapter.OnLongClick() {
             @Override
             public void FengXiang(View v, int Position) {
+                //长按分享
                 initFX(Position);
             }
         });
@@ -227,12 +244,21 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
                 singer.setText(sing.singername);
                 NextMusic_Select();
                 if (First_AUTONEXT == 0) {
+                    initPlayer();
                     musicBinder.initMusicBinder(listener);
                     musicBinder.initMusicPlayAutoNext();
                     First_AUTONEXT = 1;
                 }
             }
         });
+    }
+
+    private void initPlayer() {
+        LinearLayout Palyer = (LinearLayout) getActivity().findViewById(R.id.music_player);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(Palyer, "translationY", -200f, 200f,0f);
+        animator.setDuration(4000);
+        animator.start();
+        Palyer.setVisibility(View.VISIBLE);
     }
 
     private void initFX(final int position) {
@@ -256,6 +282,7 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     private void Next() {
+        //下一首
         musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
         Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
         sing_name.setText(singlist.get(position + Next_Music_Code).songname);
@@ -287,10 +314,16 @@ public class Music_Fragment extends Fragment implements View.OnClickListener {
     }
 
     private void NextMusic_Select() {
-        if (poisition_copy != position || position == 0) {
+        //当前播放曲目序列号如果为初始化值，则直接跳position
+        if (poisition_copy == -1) {
+            musicBinder.nextMusic(singlist.get(position));
+            poisition_copy = position;
+        } else if (poisition_copy != position) {
+            //不想等则直接next
             musicBinder.nextMusic(singlist.get(position));
             poisition_copy = position;
         } else {
+            //相等则暂停
             musicBinder.startMusic(getActivity());
         }
     }
