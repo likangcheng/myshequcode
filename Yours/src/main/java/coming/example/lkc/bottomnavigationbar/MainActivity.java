@@ -80,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
     private CircleImageView circleImageView;
     private TextView main_login;
     private NavigationView navigationView;
-    public static final int REQUESTCODE = 2;
-    public boolean LOGIN_STATUS;
-    public String USERNAME_LOGIN;
+    public static final int REQUESTCODE = 2;//返回码
+    public boolean LOGIN_STATUS;//登录状态
+    public String USERNAME_LOGIN;//登录用户名
     private NetWorkReceiver netWorkReceiver;
     private Dialog dialog;
     private static final int REQUEST_CODE_CHOOSE = 23;
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }
         fragments = new Fragment[5];
         setContentView(R.layout.activity_main);
-        initFirstStart();
+        initFirstStart();//第一次启动跳转闪屏页
         initBottomNavigationBar();//底部导航栏
         initActionBar();//标题栏
         initDrawerLayout();//左边用户栏
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    //启动页面检测是否有更新
     private void initUpdata() {
         HttpUnitily.sendOkHttpRequest(Url, new Callback() {
             @Override
@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     // getPackageName()是你当前类的包名，0代表是获取版本信息
                     PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
                     String version = packInfo.versionName;
+                    //当前版本和后台版本不匹配，弹出通知
                     if (!TextUtils.equals(version, newVersionName)) {
                         initNotifaction();//通知
                     }
@@ -201,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initReceiver() {
+        //广播
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         netWorkReceiver = new NetWorkReceiver();
@@ -218,16 +220,19 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         LOGIN_STATUS = sp.getBoolean(Login_User_Activity.LOGIN_STATUS, false);
         USERNAME_LOGIN = sp.getString(Login_User_Activity.USERNAME_LOGIN, "");
+        //本地配置文件查询登录状态，登录用户名
         if (LOGIN_STATUS) {
             main_login.setText("欢迎：" + USERNAME_LOGIN);
             List<Users> usersList = DataSupport.where("username = ?", USERNAME_LOGIN).find(Users.class);
             if (TextUtils.isEmpty(usersList.get(0).getPath())) {
-                Log.d("wode", "login_status_ok: no picture" + usersList.get(0).getPath());
+//                Log.d("wode", "login_status_ok: no picture" + usersList.get(0).getPath());
                 circleImageView.setImageResource(R.drawable.ww2017719);
+                //用户头像path是否为空，为空设置为初始化头像，否则设置path路径头像。
             } else {
                 Glide.with(this).load(usersList.get(0).getPath()).into(circleImageView);
             }
         } else {
+            //登录状态为否，隐藏退出登录按钮，全部初始化。
             navigationView.getMenu().getItem(3).setVisible(false);
         }
 
@@ -237,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUESTCODE:
+                //接收登录返回内容
                 if (resultCode == RESULT_OK) {
                     String username = data.getStringExtra(Login_User_Activity.USERNAME_LOGIN);
                     main_login.setText("欢迎：" + username);
@@ -252,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case REQUEST_CODE_CHOOSE:
+                //照片返回内容
                 if (resultCode == RESULT_OK) {
                     pathList = Matisse.obtainPathResult(data);
                     Users userupdate = new Users();

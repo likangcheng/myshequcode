@@ -159,6 +159,7 @@ public class SearchActivity extends AppCompatActivity {
                     remove32(suggest_list_data, v.getText().toString());//取消历史搜索相同搜索
                     suggest_list_data.add(0, v.getText().toString());//增加此次搜索
                     suggest_adapter.notifyDataSetChanged();
+                    //有搜索记录则显示出来
                     if (NO_HISITOUR) {
                         histour_header.setVisibility(View.VISIBLE);
                         histour_cancel.setVisibility(View.VISIBLE);
@@ -176,12 +177,15 @@ public class SearchActivity extends AppCompatActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this);
         String history = sp.getString("History", "");
         Log.d("search", "initHistour: " + history);
+        //本地获取History
         if (!TextUtils.isEmpty(history)) {
+            //加入list
             Collections.addAll(suggest_list_data, history.split("\\|"));
         }
     }
 
     public static void remove32(List<String> list, String target) {
+        //功能，删除list中内容重复的项
         if (!TextUtils.isEmpty(target)) {
             Iterator<String> iter = list.iterator();
             while (iter.hasNext()) {
@@ -194,6 +198,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initSuggest() {
+        //历史记录提示
         suggest = (LinearLayout) findViewById(R.id.suggest_search);
         suggest.setVisibility(View.GONE);
         suggest_adapter = new Suggest_list_BaseAdapter(this, suggest_list_data, listview);
@@ -203,11 +208,6 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 initFousce(search_rc);
-                if (NO_HISITOUR) {
-                    histour_header.setVisibility(View.VISIBLE);
-                    histour_cancel.setVisibility(View.VISIBLE);
-                    NO_HISITOUR = false;
-                }
                 showProgressDialog();
                 Search(suggest_list_data.get(position));
             }
@@ -221,6 +221,7 @@ public class SearchActivity extends AppCompatActivity {
         view.requestFocus();
         //隐藏输入法
         imManager.hideSoftInputFromWindow(search_et.getWindowToken(), 0);
+        //搜索栏失去焦点
         search_et.setFocusable(false);
         search_et.setFocusableInTouchMode(false);
         search_et.requestFocus();
@@ -271,6 +272,8 @@ public class SearchActivity extends AppCompatActivity {
                                     Toast.makeText(SearchActivity.this, "搜索的内容不存在", Toast.LENGTH_SHORT).show();
                                 }
                             }else {
+                                //获取对象为空，一般是网络可以访问，但已被拦截，而且能够获取到JSON返回值，但是值乱码所以JSon序列化
+                                //会失效。
                                 Toast.makeText(SearchActivity.this, "请检测网络是否连接异常", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
@@ -289,6 +292,7 @@ public class SearchActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this).edit();
         for (String s : suggest_list_data) {
             history = history + s + "|";
+            //遍历list存入history，转存于本地
         }
         editor.putString("History", history);
         editor.commit();
