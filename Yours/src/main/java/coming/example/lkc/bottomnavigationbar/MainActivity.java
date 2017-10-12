@@ -203,6 +203,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initReceiver() {
         //广播
+        /**
+         * @p
+         */
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         netWorkReceiver = new NetWorkReceiver();

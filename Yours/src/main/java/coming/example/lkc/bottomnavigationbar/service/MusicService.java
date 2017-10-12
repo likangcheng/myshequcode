@@ -32,10 +32,12 @@ public class MusicService extends Service {
     private static int count = 0;//1为暂停,0为播放
     private boolean PLAYSTAUCT_PAUSE;
     private MusicBinder mBinder = new MusicBinder();
+    private boolean MUSIC_PREPARE_SUCUTS = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("wode", "MusicService onCreate: ");
     }
 
     @Override
@@ -52,6 +54,7 @@ public class MusicService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d("wode", "MusicService onBind: ");
         return mBinder;
     }
 
@@ -69,17 +72,32 @@ public class MusicService extends Service {
                     count = 1;
                     listener.Pause();
                 } else {
-                    mediaPlayer.start();
-                    count = 0;
-                    listener.Play();
-                    UpdateProgress();
+                    if (MUSIC_PREPARE_SUCUTS){
+                        mediaPlayer.start();
+                        count = 0;
+                        listener.Play();
+                        UpdateProgress();
+                    }else {
+                        Toast.makeText(context,"音乐资源错误",Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             } else {
-                Toast.makeText(context, "请选择一首歌", Toast.LENGTH_SHORT).show();
+                new NullPointerException();
             }
         }
 
+        public void setloop() {
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isLooping()) {
+                    mediaPlayer.setLooping(false);
+                    listener.isLooping(false);
+                } else {
+                    mediaPlayer.setLooping(true);
+                    listener.isLooping(true);
+                }
+            }
+        }
 
         public void nextMusic(SingList singlist) {
             if (mediaPlayer == null) {
@@ -88,14 +106,11 @@ public class MusicService extends Service {
             if (mediaPlayer != null) {
                 //next
                 if (mediaPlayer.isPlaying()) {
-                    Log.d("music", "nextMusic: count赋值之前:" + count);
                     count = 1;
-                    Log.d("music", "nextMusic: count赋值之后:" + count);
                     mediaPlayer.stop();
                     listener.Pause();
                 }
                 count = 1;
-                Log.d("music", "nextMusic: count没走playing:" + count);
                 mediaPlayer.reset();
                 try {
                     mediaPlayer.setDataSource(singlist.musicurl);
@@ -104,6 +119,7 @@ public class MusicService extends Service {
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
+                            MUSIC_PREPARE_SUCUTS = true;
                             mp.start();
                             count = 0;
                             UpdateProgress();

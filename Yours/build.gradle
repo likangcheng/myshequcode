@@ -14,7 +14,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 25
         versionCode 10
-        versionName "1.5.4"
+        versionName "1.5.5"
     }
     buildTypes {
         release {
@@ -51,5 +51,8 @@ dependencies {
     compile 'com.qianwen:update-app:3.3.8'
     compile 'com.qianwen:okhttp-utils:3.8.0'
     compile 'org.adw.library:discrete-seekbar:1.0.1'
+    compile 'com.romandanylyk:pageindicatorview:0.1.1'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 }

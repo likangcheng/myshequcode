@@ -98,6 +98,10 @@ public class SearchActivity extends AppCompatActivity {
         search_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (imManager.isActive()){
+                    Log.d("search", "onClick: ");
+                    imManager.hideSoftInputFromWindow(search_et.getWindowToken(), 0);
+                }
                 finish();
             }
         });
@@ -147,7 +151,7 @@ public class SearchActivity extends AppCompatActivity {
                 search_et.setFocusable(true);
                 search_et.setFocusableInTouchMode(true);
                 search_et.requestFocus();
-                imManager.showSoftInput(search_et,InputMethodManager.SHOW_FORCED);
+                imManager.showSoftInput(search_et, InputMethodManager.SHOW_FORCED);
                 return true;
             }
         });
@@ -207,6 +211,8 @@ public class SearchActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                search_et.setText(suggest_list_data.get(position));
+                search_et.setSelection(suggest_list_data.get(position).length());
                 initFousce(search_rc);
                 showProgressDialog();
                 Search(suggest_list_data.get(position));
@@ -271,7 +277,7 @@ public class SearchActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(SearchActivity.this, "搜索的内容不存在", Toast.LENGTH_SHORT).show();
                                 }
-                            }else {
+                            } else {
                                 //获取对象为空，一般是网络可以访问，但已被拦截，而且能够获取到JSON返回值，但是值乱码所以JSon序列化
                                 //会失效。
                                 Toast.makeText(SearchActivity.this, "请检测网络是否连接异常", Toast.LENGTH_SHORT).show();

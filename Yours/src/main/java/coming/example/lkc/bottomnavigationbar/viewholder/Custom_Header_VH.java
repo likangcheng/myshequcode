@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rd.PageIndicatorView;
+import com.rd.animation.AnimationType;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.json.JSONException;
@@ -39,11 +41,11 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
     ImageView imageView, titleimg;
     TextView headtext, headdate;
     ViewPager viewPager;
-    private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
-    private List<String> picstring = new ArrayList<>();
+//    private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
+//    private List<String> picstring = new ArrayList<>();
     private int Viewpager_flag = 0;
     private static final int VIEWPAGER_TIME = 3500;
-    private CirclePageIndicator circlePageIndicator;
+    private PageIndicatorView circlePageIndicator;
     private RelativeLayout viewpager_RL;
     public static MoviePager_Adapter adapter;
     private Handler handler = new Handler() {
@@ -67,7 +69,7 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
         headtext = (TextView) itemView.findViewById(R.id.header_vh_text);
         headdate = (TextView) itemView.findViewById(R.id.header_vh_date);
         viewPager = (ViewPager) itemView.findViewById(R.id.viewpager_movie);
-        circlePageIndicator = (CirclePageIndicator) itemView.findViewById(R.id.CirclePage_Indicator);
+        circlePageIndicator = (PageIndicatorView) itemView.findViewById(R.id.pageIndicatorView);
         viewpager_RL = (RelativeLayout) itemView.findViewById(R.id.viewpager_rl);
         initViewPagerAdapter(context);
     }
@@ -76,9 +78,10 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
     private void initViewPagerAdapter(Activity activity) {
         adapter = new MoviePager_Adapter(activity);
         viewPager.setAdapter(adapter);
+        circlePageIndicator.setAnimationType(AnimationType.WORM);
         circlePageIndicator.setViewPager(viewPager);
         handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-        circlePageIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 Viewpager_flag = position;

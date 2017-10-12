@@ -61,7 +61,8 @@
 
         <activity android:name=".Movie_Card_Activity" />
         <activity android:name=".CollectionActivity" />
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".MusicPlayer" />
     </application>
 
 </manifest>

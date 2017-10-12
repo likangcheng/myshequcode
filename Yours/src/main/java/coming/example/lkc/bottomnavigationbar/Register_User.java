@@ -45,6 +45,7 @@ public class Register_User extends AppCompatActivity {
         setContentView(R.layout.activity_register__user);
         initToolbar();
         initView();
+        //抖动动画
         shake = AnimationUtils.loadAnimation(Register_User.this,
                 R.anim.shake);
         regiset_button.setOnClickListener(new View.OnClickListener() {
@@ -55,15 +56,18 @@ public class Register_User extends AppCompatActivity {
                 String pass_word = password.getText().toString();
                 String pass_word_2 = password_2.getText().toString();
                 if (!queryUsername(user_name) && pass_word.equals(pass_word_2) && validatePassword(pass_word) && validateUser(user_name)) {
+                    //用户名不存在&二次密码一直&密码长度&用户名规则
                     Users users_updata = new Users();
                     users_updata.setUsername(user_name);
                     users_updata.setPassword(pass_word);
                     users_updata.setPath("");
                     users_updata.save();
+                    //存入本地数据库
                     Intent resultintent = new Intent();
                     resultintent.putExtra(USERNAME_RESULT, user_name);
                     resultintent.putExtra(PASSWORD_RESULT, pass_word);
                     Register_User.this.setResult(RESULT_OK, resultintent);
+                    //返回值
                     Register_Dialog();
                 } else if (queryUsername(user_name)) {
                     username.startAnimation(shake);
@@ -115,17 +119,16 @@ public class Register_User extends AppCompatActivity {
 
     private boolean queryUsername(String user_name) {
         LitePal.getDatabase();
-        List<Users> users = DataSupport.where("username = ?", user_name).find(Users.class);
-        if (users.size() > 0) {
+        //查询用户名是否存在。
+        int usercount = DataSupport.where("username = ?", user_name).count(Users.class);
+        if (usercount > 0) {
             return true;
-        } else if (users == null) {
-            return false;
         } else return false;
     }
 
     private void Register_Dialog() {
-        CustomDialog_lkc dialog_lkc=new CustomDialog_lkc(this);
-        dialog_lkc.SetDialog("恭喜你注册成功了！你可以在用户栏更改你的头像，可以将新闻分享至您的微信。","确定");
+        CustomDialog_lkc dialog_lkc = new CustomDialog_lkc(this);
+        dialog_lkc.SetDialog("恭喜你注册成功了！你可以在用户栏更改你的头像，可以将新闻分享至您的微信。", "确定");
         dialog_lkc.setOnDialogMenuClick(new CustomDialog_lkc.OnDialogMenuClick() {
             @Override
             public void OnOkClick(View view) {

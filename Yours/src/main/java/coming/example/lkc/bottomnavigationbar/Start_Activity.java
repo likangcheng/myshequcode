@@ -31,6 +31,7 @@ public class Start_Activity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //SDK>21的用户全屏显示
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -90,6 +91,7 @@ public class Start_Activity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             if (imageView[position] == null) {
+                //如果imageview为空，则实例化它
                 imageView[position] = new ImageView(Start_Activity.this);
                 imageView[position].setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView[position].setImageResource(img[position]);

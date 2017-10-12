@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:attrs="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#F2F2F2"
@@ -19,16 +19,16 @@
 
         </android.support.v4.view.ViewPager>
 
-        <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/CirclePage_Indicator"
-            android:layout_width="match_parent"
+        <com.rd.PageIndicatorView
+            android:id="@+id/pageIndicatorView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            app:fillColor="#DA5380"
-            app:pageColor="#88ffffff"
-            app:strokeWidth="0dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="16dp"
+            attrs:piv_radius="5dp"
+            attrs:piv_padding="3dp"
+            attrs:piv_viewPager="@id/viewpager_movie" />
     </RelativeLayout>
 
 

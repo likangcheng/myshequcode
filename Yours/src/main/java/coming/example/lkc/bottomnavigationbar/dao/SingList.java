@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class SingList implements Serializable {
     public String songname;
+    public String albumpic_big;
     public String albumpic_small;
     public String downUrl;
     @SerializedName("url")

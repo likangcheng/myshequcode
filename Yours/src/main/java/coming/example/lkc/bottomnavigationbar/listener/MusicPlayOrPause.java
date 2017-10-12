@@ -11,5 +11,7 @@ public interface MusicPlayOrPause {
 
     void AutoNext();
 
+    void isLooping(boolean looping);
+
     void Progress(int progress, int lefttext, int righttext);
 }
