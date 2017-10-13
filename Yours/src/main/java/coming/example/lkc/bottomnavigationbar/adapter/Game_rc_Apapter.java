@@ -38,11 +38,11 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     private List<String> Header_text = new ArrayList<>(Arrays.asList("今日头条", "财金报道", "体育快讯", "娱乐杂谈", "女性秘密"));
     private List<String> Header_date = new ArrayList<>(Arrays.asList("1111", "247", "313", "455", "696"));
     private String[] imgurl = {
-            "http://img5.mtime.cn/mg/2017/09/14/090931.42802398.jpg",
-            "http://img5.mtime.cn/mg/2017/09/13/090510.61509534.jpg",
-            "http://img5.mtime.cn/mg/2017/09/12/092258.23134801.jpg",
-            "http://img5.mtime.cn/mg/2017/09/10/092952.73981337.jpg",
-            "http://img5.mtime.cn/mg/2017/09/09/090018.96429511.jpg"
+            "http://img5.mtime.cn/mg/2017/10/13/113414.29878320.jpg",
+            "http://img5.mtime.cn/mg/2017/10/12/092745.43278082.jpg",
+            "http://img5.mtime.cn/mg/2017/10/10/094057.75267757.jpg",
+            "http://img5.mtime.cn/mg/2017/10/09/095014.10028933.jpg",
+            "http://img5.mtime.cn/mg/2017/10/08/090813.97621772.jpg"
     };
 
     public Game_rc_Apapter(Activity context) {

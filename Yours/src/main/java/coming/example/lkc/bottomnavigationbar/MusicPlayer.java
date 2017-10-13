@@ -2,6 +2,7 @@ package coming.example.lkc.bottomnavigationbar;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,11 +20,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +48,9 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
+import coming.example.lkc.bottomnavigationbar.adapter.Song_List_BaseAdapter;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
 import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
@@ -54,13 +63,19 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class MusicPlayer extends AppCompatActivity implements View.OnClickListener {
     private ImageView mp_backimg;
-    private SingList sing;
+    private List<SingList> singLists;
     private CircleImageView mp_icon;
     private ObjectAnimator mp_icon_obanimator;
     private TextView time_left, time_right;
     private ImageView mp_play, mp_l_next, mp_r_next, mp_loop, mp_list;
+    private Dialog songlist_dialog;
     private MusicService.MusicBinder musicBinder;
     private DiscreteSeekBar seekBar;
+    private Song_List_BaseAdapter Song_listview_adapter;
+    private ListView SonglistView;
+    private int MUSIC_POSITION;//当前播放音乐序列号
+    private SingList sing;
+    private Toolbar toolbar;
     private final static String APP_ID = "wxd6ab7c22e73907b9";//微信ID
     private IWXAPI iwxapi;
 
@@ -75,7 +90,8 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         public void onServiceConnected(ComponentName name, IBinder service) {
             musicBinder = (MusicService.MusicBinder) service;
             musicBinder.initMusicBinder(listener);//绑定监听器
-            musicBinder.nextMusic(sing);
+            musicBinder.nextMusic(singLists.get(MUSIC_POSITION));
+            musicBinder.initMusicPlayAutoNext();
         }
 
         @Override
@@ -110,17 +126,37 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         @Override
         public void isLooping(boolean looping) {
             if (looping) {
-                Toast.makeText(MusicPlayer.this, "单曲循环", Toast.LENGTH_SHORT).show();
                 mp_loop.setImageDrawable(getResources().getDrawable(R.drawable.order));
             } else {
-                Toast.makeText(MusicPlayer.this, "顺序播放", Toast.LENGTH_SHORT).show();
                 mp_loop.setImageDrawable(getResources().getDrawable(R.drawable.loop));
             }
         }
 
         @Override
         public void AutoNext() {
+            //播放完毕自动下一首
+            mp_icon_obanimator.cancel();
+            if (MUSIC_POSITION != singLists.size()) {
+                musicBinder.nextMusic(singLists.get(MUSIC_POSITION + 1));
+                MUSIC_POSITION++;
+            } else if (MUSIC_POSITION == singLists.size()) {
+                musicBinder.nextMusic(singLists.get(0));
+                MUSIC_POSITION = 0;
+            }
 
+        }
+
+        @Override
+        public void SwitchBackground() {
+            //切换一首新歌时调用，更改当前音乐背景；
+            sing = singLists.get(MUSIC_POSITION);
+            toolbar.setTitle(sing.songname);
+            toolbar.setSubtitle(sing.singername);
+            setSupportActionBar(toolbar);
+            Glide.with(MusicPlayer.this).load(sing.albumpic_big).bitmapTransform(new BlurTransformation(MusicPlayer.this, 25),
+                    new CenterCrop(MusicPlayer.this)).into(mp_backimg);
+            Glide.with(MusicPlayer.this).load(sing.albumpic_big).into(mp_icon);
+            mp_icon.setRotation(0f);
         }
 
         @Override
@@ -147,6 +183,7 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         initToolbar();
         initmp_backimg();
         initseekBar();
+        initsonglist();
     }
 
     private void initseekBar() {
@@ -180,7 +217,9 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         startService(intent);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         regtoWX(this);//验证微信ID
-        sing = (SingList) getIntent().getSerializableExtra("MUSIC_DATA");
+        //获取音频资源
+        singLists = (List<SingList>) getIntent().getSerializableExtra("MUSIC_DATA");
+        MUSIC_POSITION = getIntent().getIntExtra("MUSIC_DATA_INT", 0);
         seekBar = (DiscreteSeekBar) findViewById(R.id.seekbar_1);
         time_left = (TextView) findViewById(R.id.time_left);
         time_right = (TextView) findViewById(R.id.time_right);
@@ -200,15 +239,13 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
     private void initmp_backimg() {
         mp_backimg = (ImageView) findViewById(R.id.music_player_backimg);
         mp_icon = (CircleImageView) findViewById(R.id.music_player_icon);
-        Glide.with(this).load(sing.albumpic_big).bitmapTransform(new BlurTransformation(this, 25),
-                new CenterCrop(this)).into(mp_backimg);
-        Glide.with(this).load(sing.albumpic_big).into(mp_icon);
     }
 
     //toolbar
     private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.music_player_toolbar);
-        toolbar.setTitle(sing.songname);
+        toolbar = (Toolbar) findViewById(R.id.music_player_toolbar);
+        toolbar.setTitle(singLists.get(MUSIC_POSITION).songname);
+        toolbar.setSubtitle(singLists.get(MUSIC_POSITION).singername);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -223,17 +260,73 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
                 musicBinder.startMusic(this);
                 break;
             case R.id.mp_left_next:
+                if (MUSIC_POSITION > 0) {
+                    musicBinder.nextMusic(singLists.get(MUSIC_POSITION - 1));
+                    MUSIC_POSITION--;
+                } else if (MUSIC_POSITION == 0) {
+                    MUSIC_POSITION = singLists.size() - 1;
+                    musicBinder.nextMusic(singLists.get(MUSIC_POSITION));
+                }
                 break;
             case R.id.mp_right_next:
+                if (MUSIC_POSITION < singLists.size() - 1) {
+                    musicBinder.nextMusic(singLists.get(MUSIC_POSITION + 1));
+                    MUSIC_POSITION++;
+                } else if (MUSIC_POSITION == singLists.size() - 1) {
+                    musicBinder.nextMusic(singLists.get(0));
+                    MUSIC_POSITION = 0;
+                }
                 break;
             case R.id.mp_loop:
-                musicBinder.setloop();
+                boolean islooping = musicBinder.setloop();
+                if (islooping) {
+                    Toast.makeText(MusicPlayer.this, "单曲循环", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MusicPlayer.this, "顺序播放", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.mp_list:
+                Song_listview_adapter.SelectPosition(MUSIC_POSITION);
+                SonglistView.setSelection(MUSIC_POSITION);
+                songlist_dialog.show();//显示对话框
+                break;
+            case R.id.song_listview_cancel:
+                songlist_dialog.dismiss();
                 break;
             default:
                 throw new NullPointerException();
         }
+    }
+
+    private void initsonglist() {
+        songlist_dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
+        View view = LayoutInflater.from(this).inflate(R.layout.song_list_player, null);
+        SonglistView = (ListView) view.findViewById(R.id.song_listview);
+        TextView song_listview_title = (TextView) view.findViewById(R.id.song_lsitview_title);
+        ImageView song_listview_cancel = (ImageView) view.findViewById(R.id.song_listview_cancel);
+        song_listview_title.setText("播放列表(" + singLists.size() + ")");
+        song_listview_cancel.setOnClickListener(this);
+        Song_listview_adapter = new Song_List_BaseAdapter(singLists, this);
+        SonglistView.setAdapter(Song_listview_adapter);
+        SonglistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Song_listview_adapter.SelectPosition(position);
+                musicBinder.nextMusic(singLists.get(position));
+                MUSIC_POSITION = position;
+            }
+        });
+        songlist_dialog.setContentView(view);
+        //获取当前Activity所在的窗体
+        Window dialogWindow = songlist_dialog.getWindow();
+        //设置Dialog从窗体底部弹出
+        dialogWindow.setGravity(Gravity.BOTTOM);
+        //获得窗体的属性
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        //设置窗口高度为包裹内容
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialogWindow.setAttributes(lp);
     }
 
     @Override
@@ -287,13 +380,23 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
                 req.transaction = String.valueOf(System.currentTimeMillis());
                 req.message = mediaMessage;
                 if (which == 0) {
+                    //0分享至微信好友
                     req.scene = SendMessageToWX.Req.WXSceneSession;
                 } else if (which == 1) {
+                    //1分享至朋友圈
                     req.scene = SendMessageToWX.Req.WXSceneTimeline;
                 }
                 iwxapi.sendReq(req);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
     }
 
     public byte[] Bitmap2Bytes(Bitmap bm) {

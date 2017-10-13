@@ -112,7 +112,7 @@ public class Movie_Fragment extends Fragment {
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
-                            }else {
+                            } else {
                                 Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                             }
                             swip.setRefreshing(false);
@@ -151,7 +151,9 @@ public class Movie_Fragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Custom_Header_VH.adapter.setDate(picstring);
+                            if (Custom_Header_VH.adapter != null) {
+                                Custom_Header_VH.adapter.setDate(picstring);
+                            }
                         }
                     });
                 } catch (JSONException e) {
