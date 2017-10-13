@@ -430,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
     private void initFragments(int position) {
         switch (position) {
             case 0:
-                fragments[0] = new Home_Fragment();
+                fragments[0] = new Movie_Fragment();
                 break;
             case 1:
                 fragments[1] = new Book_Fragment();
@@ -439,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                 fragments[2] = new Music_Fragment();
                 break;
             case 3:
-                fragments[3] = new Movie_Fragment();
+                fragments[3] = new Home_Fragment();
                 break;
             case 4:
                 fragments[4] = new Game_Fragment();

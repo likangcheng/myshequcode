@@ -40,9 +40,7 @@ import okhttp3.Response;
 public class Custom_Header_VH extends RecyclerView.ViewHolder {
     ImageView imageView, titleimg;
     TextView headtext, headdate;
-    ViewPager viewPager;
-//    private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
-//    private List<String> picstring = new ArrayList<>();
+    private ViewPager viewPager;
     private int Viewpager_flag = 0;
     private static final int VIEWPAGER_TIME = 3500;
     private PageIndicatorView circlePageIndicator;

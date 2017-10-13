@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/song_list_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/play_list" />
+
+    <LinearLayout
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/song_list_play"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/song_list_songname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="演员" />
+
+        <TextView
+            android:id="@+id/song_list_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-薛之谦"
+            android:textColor="@color/text_dark"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:padding="5dp"
+        android:id="@+id/ssong_list_soucang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/soucang_list_1" />
+</RelativeLayout>

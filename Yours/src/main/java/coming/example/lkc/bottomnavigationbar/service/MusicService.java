@@ -32,7 +32,7 @@ public class MusicService extends Service {
     private static int count = 0;//1为暂停,0为播放
     private boolean PLAYSTAUCT_PAUSE;
     private MusicBinder mBinder = new MusicBinder();
-    private boolean MUSIC_PREPARE_SUCUTS = false;
+    private boolean MUSIC_PREPARE_SUCUTS = false;//判断是否加载完成
 
     @Override
     public void onCreate() {
@@ -72,13 +72,13 @@ public class MusicService extends Service {
                     count = 1;
                     listener.Pause();
                 } else {
-                    if (MUSIC_PREPARE_SUCUTS){
+                    if (MUSIC_PREPARE_SUCUTS) {
                         mediaPlayer.start();
                         count = 0;
                         listener.Play();
                         UpdateProgress();
-                    }else {
-                        Toast.makeText(context,"音乐资源错误",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "音乐资源错误", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -87,16 +87,20 @@ public class MusicService extends Service {
             }
         }
 
-        public void setloop() {
+        public boolean setloop() {
             if (mediaPlayer != null) {
                 if (mediaPlayer.isLooping()) {
                     mediaPlayer.setLooping(false);
                     listener.isLooping(false);
+                    return false;
                 } else {
                     mediaPlayer.setLooping(true);
                     listener.isLooping(true);
+                    return true;
                 }
+
             }
+            return false;
         }
 
         public void nextMusic(SingList singlist) {
@@ -120,9 +124,11 @@ public class MusicService extends Service {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
                             MUSIC_PREPARE_SUCUTS = true;
+                            listener.isLooping(false);
                             mp.start();
                             count = 0;
                             UpdateProgress();
+                            listener.SwitchBackground();
                             listener.Play();
                         }
                     });
@@ -173,7 +179,9 @@ public class MusicService extends Service {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     if (count == 0) {
-                        listener.AutoNext();
+                        if (!mp.isLooping()) {
+                            listener.AutoNext();
+                        }
                     }
                 }
             });
@@ -209,6 +217,7 @@ public class MusicService extends Service {
             mBinder.listener.Progress(progress, current, current1);
         }
     };
+
 
 }
 

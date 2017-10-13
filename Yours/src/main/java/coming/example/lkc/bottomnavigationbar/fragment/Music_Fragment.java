@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -44,6 +45,7 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +69,7 @@ import okhttp3.Response;
 /**
  * Created by lkc on 2017/7/31.
  */
-public class Music_Fragment extends Fragment  {
+public class Music_Fragment extends Fragment {
     private RecyclerView musicrecyclerView;
     private GridLayoutManager gridLayoutManager;
     private Music_rc_Adapter madapter;
@@ -116,14 +118,14 @@ public class Music_Fragment extends Fragment  {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (music != null){
+                        if (music != null) {
                             if (music.showapi_res_code == 0) {
                                 Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
                                 madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
                             } else {
                                 Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
                             }
-                        }else {
+                        } else {
                             Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                         }
                         CloseProgressDialog();
@@ -134,66 +136,14 @@ public class Music_Fragment extends Fragment  {
         madapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
             @Override
             public void MusicData(int Position) {
-                SingList sing = singlist.get(Position);
-                Intent intent=new Intent(getActivity(), MusicPlayer.class);
-                intent.putExtra("MUSIC_DATA",sing);
+                Log.d("1111", "MusicData: "+singlist.size());
+                Intent intent = new Intent(getActivity(), MusicPlayer.class);
+                intent.putExtra("MUSIC_DATA", (Serializable) singlist);
+                intent.putExtra("MUSIC_DATA_INT", Position);
                 getActivity().startActivity(intent);
-//                Music_Fragment.this.position = Position;
-//                Glide.with(getActivity()).load(sing.albumpic_small).into(music_icon);
-//                sing_name.setText(sing.songname);
-//                singer.setText(sing.singername);
-//                NextMusic_Select();
-//                if (First_AUTONEXT == 0) {
-//                    initPlayer();
-//                    musicBinder.initMusicBinder(listener);
-//                    musicBinder.initMusicPlayAutoNext();
-//                    First_AUTONEXT = 1;
-//                }
             }
         });
     }
-
-
-
-//    private void Next() {
-//        //下一首
-//        musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
-//        Glide.with(getActivity()).load(singlist.get(position + Next_Music_Code).albumpic_small).into(music_icon);
-//        sing_name.setText(singlist.get(position + Next_Music_Code).songname);
-//        singer.setText(singlist.get(position + Next_Music_Code).singername);
-//        position = position + Next_Music_Code;
-//        poisition_copy = position;
-//    }
-
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.music_go:
-//                musicBinder.startMusic(getActivity());
-//                break;
-//            case R.id.music_next:
-//                musicBinder.nextMusic(singlist.get(position + Next_Music_Code));
-//                Next();
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    private void NextMusic_Select() {
-//        //当前播放曲目序列号如果为初始化值，则直接跳position
-//        if (poisition_copy == -1) {
-//            musicBinder.nextMusic(singlist.get(position));
-//            poisition_copy = position;
-//        } else if (poisition_copy != position) {
-//            //不想等则直接next
-//            musicBinder.nextMusic(singlist.get(position));
-//            poisition_copy = position;
-//        } else {
-//            //相等则暂停
-//            musicBinder.startMusic(getActivity());
-//        }
-//    }
 
     private void CloseProgressDialog() {
         if (dialog != null) {

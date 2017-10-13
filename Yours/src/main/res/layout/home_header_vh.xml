@@ -27,8 +27,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
             attrs:piv_radius="5dp"
-            attrs:piv_padding="3dp"
-            attrs:piv_viewPager="@id/viewpager_movie" />
+            attrs:piv_padding="3dp" />
     </RelativeLayout>
 
 
