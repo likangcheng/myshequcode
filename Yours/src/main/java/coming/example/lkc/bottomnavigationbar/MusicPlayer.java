@@ -63,15 +63,15 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class MusicPlayer extends AppCompatActivity implements View.OnClickListener {
     private ImageView mp_backimg;
-    private List<SingList> singLists;
+    private List<SingList> singLists;//音乐资源文件
     private CircleImageView mp_icon;
     private ObjectAnimator mp_icon_obanimator;
     private TextView time_left, time_right;
     private ImageView mp_play, mp_l_next, mp_r_next, mp_loop, mp_list;
-    private Dialog songlist_dialog;
+    private Dialog songlist_dialog;//播放列表dialog
     private MusicService.MusicBinder musicBinder;
     private DiscreteSeekBar seekBar;
-    private Song_List_BaseAdapter Song_listview_adapter;
+    private Song_List_BaseAdapter Song_listview_adapter;//播放列表适配器
     private ListView SonglistView;
     private int MUSIC_POSITION;//当前播放音乐序列号
     private SingList sing;

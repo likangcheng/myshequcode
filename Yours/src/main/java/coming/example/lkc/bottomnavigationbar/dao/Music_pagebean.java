@@ -9,4 +9,6 @@ import java.util.List;
 public class Music_pagebean implements Serializable {
     public List<SingList> songlist;
     public String update_time;
+    public int allPages;
+    public List<SingList> contentlist;
 }

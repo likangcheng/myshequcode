@@ -46,6 +46,7 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,30 +114,29 @@ public class Music_Fragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String singResponse = response.body().string();
-                final Music music = Utility.handelMusicResponse(singResponse);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (music != null) {
-                            if (music.showapi_res_code == 0) {
-                                Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
-                                madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
+                    String singResponse = response.body().string();
+                    final Music music = Utility.handelMusicResponse(singResponse);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (music != null) {
+                                if (music.showapi_res_code == 0) {
+                                    Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
+                                    madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
+                                } else {
+                                    Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
+                            CloseProgressDialog();
                         }
-                        CloseProgressDialog();
-                    }
-                });
+                    });
             }
         });
         madapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
             @Override
             public void MusicData(int Position) {
-                Log.d("1111", "MusicData: "+singlist.size());
                 Intent intent = new Intent(getActivity(), MusicPlayer.class);
                 intent.putExtra("MUSIC_DATA", (Serializable) singlist);
                 intent.putExtra("MUSIC_DATA_INT", Position);

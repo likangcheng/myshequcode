@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Created by lkc on 2017/8/7.
  */
 public class SingList implements Serializable {
+    public String m4a;
     public String songname;
     public String albumpic_big;
     public String albumpic_small;

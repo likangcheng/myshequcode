@@ -2,6 +2,9 @@ package coming.example.lkc.bottomnavigationbar;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -34,11 +37,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
+import coming.example.lkc.bottomnavigationbar.adapter.Search_TablayoutAndFragment_Adapter;
 import coming.example.lkc.bottomnavigationbar.adapter.Suggest_list_BaseAdapter;
 import coming.example.lkc.bottomnavigationbar.dao.Search_History;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
+import coming.example.lkc.bottomnavigationbar.fragment.Search_Music_Fragment;
+import coming.example.lkc.bottomnavigationbar.fragment.Search_WeiXin_Fragment;
+import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.Tablayout_Width_Utility;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,17 +56,17 @@ import okhttp3.Response;
 public class SearchActivity extends AppCompatActivity {
     private EditText search_et;
     private ImageView search_cancel;
-    private RecyclerView search_rc;
-    private Book_rc_Adapter adapter;
+    private Search2Fragment listener1, listener2;
     private Suggest_list_BaseAdapter suggest_adapter;
-    private CustomDialog dialog;
-    private LinearLayout suggest;
+    private LinearLayout suggest, search_layout;
     private List<String> suggest_list_data = new ArrayList<>();
     private TextView search_back, histour_header;
     private ListView listview;
     private Button histour_cancel;
     private boolean NO_HISITOUR = false;
     private InputMethodManager imManager;
+    private ViewPager viewpager;
+    private Search_TablayoutAndFragment_Adapter fragmentadapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +79,41 @@ public class SearchActivity extends AppCompatActivity {
         initSearchListen();//搜索栏相关的事件监听
         initBack();//取消返回键
         initCancelHistour();//清空历史搜索
+        initSearch_FragmentViewPager();
+    }
+
+    private void initSearch_FragmentViewPager() {
+        final TabLayout tablayout = (TabLayout) findViewById(R.id.search_tablayout);
+        viewpager = (ViewPager) findViewById(R.id.search_viewpager);
+        List<String> tabtitle = new ArrayList<>(Arrays.asList("微信", "音乐"));
+        List<Fragment> fragmentlist = new ArrayList<>();
+        fragmentlist.add(new Search_WeiXin_Fragment());
+        fragmentlist.add(new Search_Music_Fragment());
+        fragmentadapter =
+                new Search_TablayoutAndFragment_Adapter(getSupportFragmentManager(), tabtitle, fragmentlist);
+        tablayout.setupWithViewPager(viewpager);
+        viewpager.setAdapter(fragmentadapter);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (fragment instanceof Search_WeiXin_Fragment) {
+            try {
+                Log.d("test2", "onAttachFragment:WEIXIN ");
+                listener1 = (Search2Fragment) fragment;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (fragment instanceof Search_Music_Fragment) {
+            try {
+                Log.d("test2", "onAttachFragment:Music ");
+                listener2 = (Search2Fragment) fragment;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        super.onAttachFragment(fragment);
     }
 
     private void initCancelHistour() {
@@ -79,8 +122,10 @@ public class SearchActivity extends AppCompatActivity {
         if (suggest_list_data.size() == 0 || suggest_list_data == null) {
             histour_cancel.setVisibility(View.GONE);
             histour_header.setVisibility(View.GONE);
+
             NO_HISITOUR = true;
         }
+        //历史记录清除
         histour_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +134,7 @@ public class SearchActivity extends AppCompatActivity {
                 histour_cancel.setVisibility(View.GONE);
                 histour_header.setVisibility(View.GONE);
                 NO_HISITOUR = true;
+                Toast.makeText(SearchActivity.this, "清除成功", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -98,8 +144,7 @@ public class SearchActivity extends AppCompatActivity {
         search_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imManager.isActive()){
-                    Log.d("search", "onClick: ");
+                if (imManager.isActive()) {
                     imManager.hideSoftInputFromWindow(search_et.getWindowToken(), 0);
                 }
                 finish();
@@ -121,7 +166,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     suggest.setVisibility(View.VISIBLE);
-                    search_rc.setVisibility(View.GONE);
+                    search_layout.setVisibility(View.GONE);
                 } else {
                     suggest.setVisibility(View.GONE);
                 }
@@ -159,7 +204,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    initFousce(search_rc);//搜索结果获取焦点
+                    initFousce(search_layout);//搜索结果获取焦点
                     remove32(suggest_list_data, v.getText().toString());//取消历史搜索相同搜索
                     suggest_list_data.add(0, v.getText().toString());//增加此次搜索
                     suggest_adapter.notifyDataSetChanged();
@@ -169,8 +214,11 @@ public class SearchActivity extends AppCompatActivity {
                         histour_cancel.setVisibility(View.VISIBLE);
                         NO_HISITOUR = false;
                     }
-                    showProgressDialog();
-                    Search(v.getText().toString());
+//                    Search(v.getText().toString());
+                    viewpager.removeAllViews();
+                    viewpager.setAdapter(fragmentadapter);
+                    listener1.SearchString(v.getText().toString());
+                    listener2.SearchString(v.getText().toString());
                 }
                 return false;
             }
@@ -213,9 +261,12 @@ public class SearchActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 search_et.setText(suggest_list_data.get(position));
                 search_et.setSelection(suggest_list_data.get(position).length());
-                initFousce(search_rc);
-                showProgressDialog();
-                Search(suggest_list_data.get(position));
+                initFousce(search_layout);
+//                Search(suggest_list_data.get(position));
+                viewpager.removeAllViews();
+                viewpager.setAdapter(fragmentadapter);
+                listener1.SearchString(suggest_list_data.get(position));
+                listener2.SearchString(suggest_list_data.get(position));
             }
         });
     }
@@ -232,64 +283,16 @@ public class SearchActivity extends AppCompatActivity {
         search_et.setFocusableInTouchMode(false);
         search_et.requestFocus();
         suggest.setVisibility(View.GONE);
-        search_rc.setVisibility(View.VISIBLE);
+        search_layout.setVisibility(View.VISIBLE);
     }
 
     private void initSearch() {
         search_et = (EditText) findViewById(R.id.search_edtx);
         search_cancel = (ImageView) findViewById(R.id.search_cancel);
         search_cancel.setVisibility(View.GONE);
-        search_rc = (RecyclerView) findViewById(R.id.search_rc);
-        search_rc.setLayoutManager(new GridLayoutManager(this, 2));
-        adapter = new Book_rc_Adapter();
-        search_rc.setAdapter(adapter);
+        search_layout = (LinearLayout) findViewById(R.id.search_layout);
     }
 
-    private void Search(String text) {
-        String NewsUrl = "http://route.showapi.com/582-2?showapi_appid=42977&showapi_sign=5e9e2850cf574e4fbb358230ff31fafe"
-                + "&key=" + text;
-        HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(SearchActivity.this, "网络状况异常", Toast.LENGTH_SHORT).show();
-                            CloseProgressDialog();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String newsResponse = response.body().string();
-                final WeiXinNew weiXinNew = Utility.handelWeiXinResponse(newsResponse);
-                if (!call.isCanceled()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (weiXinNew != null) {
-                                if (weiXinNew.showapi_res_body.pagebean.allNum != 0) {
-                                    adapter.setBookData(weiXinNew.showapi_res_body.pagebean.contentlist);
-                                    search_rc.smoothScrollToPosition(0);
-                                } else {
-                                    Toast.makeText(SearchActivity.this, "搜索的内容不存在", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                //获取对象为空，一般是网络可以访问，但已被拦截，而且能够获取到JSON返回值，但是值乱码所以JSon序列化
-                                //会失效。
-                                Toast.makeText(SearchActivity.this, "请检测网络是否连接异常", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                            CloseProgressDialog();
-                        }
-                    });
-                }
-            }
-        });
-    }
 
     @Override
     protected void onDestroy() {
@@ -304,18 +307,5 @@ public class SearchActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    private void CloseProgressDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
-        }
-    }
-
-    private void showProgressDialog() {
-        if (dialog == null) {
-            dialog = new CustomDialog(this, R.style.CustomDialog);
-            dialog.show();
-        }
-        dialog.show();
-    }
 
 }
