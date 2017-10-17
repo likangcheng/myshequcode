@@ -79,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
         initSearchListen();//搜索栏相关的事件监听
         initBack();//取消返回键
         initCancelHistour();//清空历史搜索
-        initSearch_FragmentViewPager();
+        initSearch_FragmentViewPager();//搜索Fragment viewpager分类搜索
     }
 
     private void initSearch_FragmentViewPager() {
@@ -97,9 +97,9 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onAttachFragment(Fragment fragment) {
+        //调用方法将listener传入Fragment实现通信
         if (fragment instanceof Search_WeiXin_Fragment) {
             try {
-                Log.d("test2", "onAttachFragment:WEIXIN ");
                 listener1 = (Search2Fragment) fragment;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -107,7 +107,6 @@ public class SearchActivity extends AppCompatActivity {
         }
         if (fragment instanceof Search_Music_Fragment) {
             try {
-                Log.d("test2", "onAttachFragment:Music ");
                 listener2 = (Search2Fragment) fragment;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,10 +118,10 @@ public class SearchActivity extends AppCompatActivity {
     private void initCancelHistour() {
         histour_cancel = (Button) findViewById(R.id.cancel_histour);
         histour_header = (TextView) findViewById(R.id.header);
+        //初始化判断是否为空
         if (suggest_list_data.size() == 0 || suggest_list_data == null) {
             histour_cancel.setVisibility(View.GONE);
             histour_header.setVisibility(View.GONE);
-
             NO_HISITOUR = true;
         }
         //历史记录清除
@@ -140,6 +139,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initBack() {
+        //取消返回
         search_back = (TextView) findViewById(R.id.search_back);
         search_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,22 +203,27 @@ public class SearchActivity extends AppCompatActivity {
         search_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    initFousce(search_layout);//搜索结果获取焦点
-                    remove32(suggest_list_data, v.getText().toString());//取消历史搜索相同搜索
-                    suggest_list_data.add(0, v.getText().toString());//增加此次搜索
-                    suggest_adapter.notifyDataSetChanged();
-                    //有搜索记录则显示出来
-                    if (NO_HISITOUR) {
-                        histour_header.setVisibility(View.VISIBLE);
-                        histour_cancel.setVisibility(View.VISIBLE);
-                        NO_HISITOUR = false;
+                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    String search_content=v.getText().toString();
+                    if (!TextUtils.isEmpty(search_content)){
+                        initFousce(search_layout);//搜索结果获取焦点
+                        remove32(suggest_list_data, search_content);//取消历史搜索相同搜索
+                        suggest_list_data.add(0, search_content);//增加此次搜索
+                        suggest_adapter.notifyDataSetChanged();
+                        //有搜索记录则显示出来
+                        if (NO_HISITOUR) {
+                            histour_header.setVisibility(View.VISIBLE);
+                            histour_cancel.setVisibility(View.VISIBLE);
+                            NO_HISITOUR = false;
+                        }
+                        //上一次搜索结婚清空
+                        viewpager.removeAllViews();
+                        viewpager.setAdapter(fragmentadapter);
+                        listener1.SearchString(search_content);
+                        listener2.SearchString(search_content);
+                    }else {
+                        Toast.makeText(SearchActivity.this,"搜索内容不能为空",Toast.LENGTH_SHORT).show();
                     }
-//                    Search(v.getText().toString());
-                    viewpager.removeAllViews();
-                    viewpager.setAdapter(fragmentadapter);
-                    listener1.SearchString(v.getText().toString());
-                    listener2.SearchString(v.getText().toString());
                 }
                 return false;
             }

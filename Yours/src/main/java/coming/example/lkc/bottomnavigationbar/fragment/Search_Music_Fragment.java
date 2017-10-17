@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ import okhttp3.Response;
 
 public class Search_Music_Fragment extends Fragment implements Search2Fragment {
     private RecyclerView music_recyclerview;
+    private LinearLayout no_search;
     private Music_rc_Adapter adapter;
     private List<SingList> singlist;
     private CustomDialog dialog;
@@ -47,6 +49,7 @@ public class Search_Music_Fragment extends Fragment implements Search2Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_music_layout, null);
         music_recyclerview = (RecyclerView) view.findViewById(R.id.search_music_recyclerview);
+        no_search = (LinearLayout) view.findViewById(R.id.no_music_search);
         adapter = new Music_rc_Adapter();
         music_recyclerview.setLayoutManager(new GridLayoutManager(getContext(), 1));
         music_recyclerview.setAdapter(adapter);
@@ -117,6 +120,8 @@ public class Search_Music_Fragment extends Fragment implements Search2Fragment {
                             }
                             if (music.showapi_res_body.pagebean.allPages == 0) {
                                 Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
+                                music_recyclerview.setVisibility(View.GONE);
+                                no_search.setVisibility(View.VISIBLE);
                             }
                         } else {
                             Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();

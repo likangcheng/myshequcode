@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -117,7 +118,11 @@ public class MusicService extends Service {
                 count = 1;
                 mediaPlayer.reset();
                 try {
-                    mediaPlayer.setDataSource(singlist.musicurl);
+                    if (!TextUtils.isEmpty(singlist.musicurl)) {
+                        mediaPlayer.setDataSource(singlist.musicurl);
+                    } else {
+                        mediaPlayer.setDataSource(singlist.m4a);
+                    }
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mediaPlayer.prepareAsync();//异步加载
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

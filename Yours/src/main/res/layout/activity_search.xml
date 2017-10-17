@@ -122,7 +122,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:background="@color/wirte_dark"
             android:id="@+id/search_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -132,8 +131,6 @@
             <android.support.design.widget.TabLayout
                 android:id="@+id/search_tablayout"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_height="42dp"
                 app:tabBackground="@color/wirte_dark"
                 app:tabIndicatorColor="@color/colorPrimary"
@@ -143,10 +140,10 @@
             </android.support.design.widget.TabLayout>
 
             <android.support.v4.view.ViewPager
-                android:background="#F2F2F2"
                 android:id="@+id/search_viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#F2F2F2">
 
             </android.support.v4.view.ViewPager>
         </LinearLayout>

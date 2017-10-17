@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -34,17 +35,18 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
     private Book_rc_Adapter search_weixin_adapter;
     private RecyclerView recyclerView;
     private CustomDialog dialog;
+    private LinearLayout no_search;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_weixin_layout, null);
+        no_search= (LinearLayout) view.findViewById(R.id.no_weixin_search);
         recyclerView = (RecyclerView) view.findViewById(R.id.search_weixin_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
         search_weixin_adapter = new Book_rc_Adapter();
         recyclerView.setAdapter(search_weixin_adapter);
-        Log.d("test2", "onCreateView: WeixinFragment ");
         return view;
     }
 
@@ -87,6 +89,8 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
                                     recyclerView.smoothScrollToPosition(0);
                                 } else {
                                     Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
+                                    recyclerView.setVisibility(View.GONE);
+                                    no_search.setVisibility(View.VISIBLE);
                                 }
                             } else {
                                 //获取对象为空，一般是网络可以访问，但已被拦截，而且能够获取到JSON返回值，但是值乱码所以JSon序列化
