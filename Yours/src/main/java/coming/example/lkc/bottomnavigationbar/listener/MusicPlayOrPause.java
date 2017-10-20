@@ -18,4 +18,6 @@ public interface MusicPlayOrPause {
     void isLooping(boolean looping);
 
     void Progress(int progress, int lefttext, int righttext);
+
+    void OnError();
 }

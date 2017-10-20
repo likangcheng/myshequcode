@@ -79,7 +79,7 @@ public class MusicService extends Service {
                         listener.Play();
                         UpdateProgress();
                     } else {
-                        Toast.makeText(context, "音乐资源错误", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MusicService.this, "音乐资源错误", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -125,6 +125,14 @@ public class MusicService extends Service {
                     }
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mediaPlayer.prepareAsync();//异步加载
+                    mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                        @Override
+                        public boolean onError(MediaPlayer mp, int what, int extra) {
+                            Toast.makeText(MusicService.this, "音频资源出现错误", Toast.LENGTH_SHORT).show();
+                            listener.OnError();
+                            return false;
+                        }
+                    });
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {

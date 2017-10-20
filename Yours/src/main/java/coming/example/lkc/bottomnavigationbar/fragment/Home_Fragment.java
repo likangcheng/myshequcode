@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,12 +8,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
@@ -40,12 +45,14 @@ public class Home_Fragment extends Fragment {
     private GridLayoutManager layoutManager;
     private Home_rc_Adapter newsAdapter;
     private int newspage = 1;
+    private LinearLayout li;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home, null);
         recyclerView = (XRecyclerView) view.findViewById(R.id.home_recyclerView);
+        li= (LinearLayout) view.findViewById(R.id.home_linearlayout);
         layoutManager = new GridLayoutManager(view.getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setPullRefreshEnabled(true);
@@ -116,6 +123,7 @@ public class Home_Fragment extends Fragment {
                                 Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                             }
                             recyclerView.refreshComplete();
+//                            OnRefrsh_Success_Dialog();
                         }
                     });
                 }
@@ -161,5 +169,21 @@ public class Home_Fragment extends Fragment {
             }
         });
     }
-
+//    private void OnRefrsh_Success_Dialog(){
+//        Dialog dialog=new Dialog(getActivity(),R.style.OnRefrwsh_Suceess_DialogStyle);
+//        View view=LayoutInflater.from(getActivity()).inflate(R.layout.refresh_success_layout,null);
+//        dialog.setContentView(view);
+//        Window dialogWindow = dialog.getWindow();
+//        dialogWindow.setGravity(Gravity.TOP);
+//        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+//        int y[]=new int[2];
+//        li.getLocationInWindow(y);
+//        Log.d("test2", "OnRefrsh_Success_Dialog: "+y[1]);
+//        lp.y=100;
+//        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//        dialogWindow.setAttributes(lp);
+//        dialog.show();
+//
+//    }
 }

@@ -107,15 +107,13 @@ public class Movie_Fragment extends Fragment {
                         public void run() {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status.equals("0")) {
-                                    adapter.GameAdapterSetData(jiSuApi_body.result.Newslist);
-                                    initPic2Json();
+                                    initPic2Json(jiSuApi_body);
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                             }
-                            swip.setRefreshing(false);
                         }
                     });
                 }
@@ -124,7 +122,7 @@ public class Movie_Fragment extends Fragment {
 
     }
 
-    private void initPic2Json() {
+    private void initPic2Json(final JiSuApi_Body jiSuApi_body) {
         Log.d("wode", "initPic2Json: ");
         HttpUnitily.sendOkHttpRequest(picurl, new Callback() {
             @Override
@@ -133,6 +131,7 @@ public class Movie_Fragment extends Fragment {
                     @Override
                     public void run() {
                         Toast.makeText(getActivity(), "广告数据异常", Toast.LENGTH_SHORT).show();
+                        swip.setRefreshing(false);
                     }
                 });
             }
@@ -151,10 +150,11 @@ public class Movie_Fragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (Custom_Header_VH.adapter != null) {
-                                Custom_Header_VH.adapter.setDate(picstring);
-                            }
+                            Log.d("test2", "run: pic");
+                            adapter.GameAdapterSetData(jiSuApi_body.result.Newslist, picstring);
+                            swip.setRefreshing(false);
                         }
+
                     });
                 } catch (JSONException e) {
                     e.printStackTrace();

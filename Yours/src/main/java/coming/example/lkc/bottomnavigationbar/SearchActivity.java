@@ -7,19 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,29 +24,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.adapter.Search_TablayoutAndFragment_Adapter;
 import coming.example.lkc.bottomnavigationbar.adapter.Suggest_list_BaseAdapter;
-import coming.example.lkc.bottomnavigationbar.dao.Search_History;
-import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
 import coming.example.lkc.bottomnavigationbar.fragment.Search_Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Search_WeiXin_Fragment;
 import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
-import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
-import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
-import coming.example.lkc.bottomnavigationbar.unitl.Tablayout_Width_Utility;
-import coming.example.lkc.bottomnavigationbar.unitl.Utility;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 
 public class SearchActivity extends AppCompatActivity {

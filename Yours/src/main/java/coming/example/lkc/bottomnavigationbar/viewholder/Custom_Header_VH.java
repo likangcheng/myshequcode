@@ -74,6 +74,7 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
 
 
     private void initViewPagerAdapter(Activity activity) {
+        Log.d("test2", "initViewPagerAdapter: ");
         adapter = new MoviePager_Adapter(activity);
         viewPager.setAdapter(adapter);
         circlePageIndicator.setAnimationType(AnimationType.WORM);
@@ -110,5 +111,9 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
         headtext.setText(text);
         String content = "当前有<font color='red'>" + date + "</font>个新闻";
         headdate.setText(Html.fromHtml(content));
+    }
+
+    public void refresh(List<String> piclist){
+        adapter.setDate(piclist);
     }
 }

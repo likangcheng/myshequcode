@@ -44,6 +44,8 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
             "http://img5.mtime.cn/mg/2017/10/09/095014.10028933.jpg",
             "http://img5.mtime.cn/mg/2017/10/08/090813.97621772.jpg"
     };
+    private List<String> hear_viewpager_pic;
+    private boolean onRefresh = false;
 
     public Game_rc_Apapter(Activity context) {
         this.context = context;
@@ -87,7 +89,7 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
     @Override
     protected Custom_Header_VH onCreateSectionHeaderViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.home_header_vh, parent, false);
-        Log.d("wode", "onCreateSectionHeaderViewHolder: ");
+        Log.d("test2", "onCreateSectionHeaderViewHolder: ");
         return new Custom_Header_VH(view, context);
     }
 
@@ -105,8 +107,12 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
 
     @Override
     protected void onBindSectionHeaderViewHolder(Custom_Header_VH holder, int section) {
+        Log.d("test2", "onBindSectionHeaderViewHolder: ");
         holder.setDate(Header_text.get(section), Header_date.get(section), Header_img.get(section), imgurl[section], section, context);
-
+        if (onRefresh) {
+            holder.refresh(hear_viewpager_pic);
+            onRefresh = false;
+        }
     }
 
     @Override
@@ -149,13 +155,20 @@ public class Game_rc_Apapter extends SectionedRecyclerViewAdapter<Custom_Header_
 
     }
 
-    public void GameAdapterSetData(List<JiSuApi_List> list0) {
+    public void GameAdapterSetData(List<JiSuApi_List> list0, List<String> piclist) {
         if (jiSuApi_lists0 == null) {
             this.jiSuApi_lists0 = list0;
         } else {
             jiSuApi_lists0.clear();
             jiSuApi_lists0 = list0;
         }
+        if (hear_viewpager_pic == null) {
+            this.hear_viewpager_pic = piclist;
+        } else {
+            hear_viewpager_pic.clear();
+            hear_viewpager_pic = piclist;
+        }
+        onRefresh = true;
         notifyDataSetChanged();
     }
 }

@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -165,6 +166,17 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
             seekBar.setProgress(progress);
             time_left.setText(new SimpleDateFormat("mm:ss").format(lefttext));
             time_right.setText(new SimpleDateFormat("mm:ss").format(righttext));
+        }
+
+        @Override
+        public void OnError() {
+            if (MUSIC_POSITION != singLists.size()) {
+                musicBinder.nextMusic(singLists.get(MUSIC_POSITION + 1));
+                MUSIC_POSITION++;
+            } else if (MUSIC_POSITION == singLists.size()) {
+                musicBinder.nextMusic(singLists.get(0));
+                MUSIC_POSITION = 0;
+            }
         }
     };
 
@@ -370,7 +382,11 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 WXMusicObject wxmusic = new WXMusicObject();
-                wxmusic.musicUrl = sing.musicurl;
+                if (!TextUtils.isEmpty(sing.musicurl)){
+                    wxmusic.musicUrl = sing.musicurl;
+                }else {
+                    wxmusic.musicUrl=sing.m4a;
+                }
                 WXMediaMessage mediaMessage = new WXMediaMessage();
                 mediaMessage.mediaObject = wxmusic;
                 mediaMessage.title = sing.songname;
