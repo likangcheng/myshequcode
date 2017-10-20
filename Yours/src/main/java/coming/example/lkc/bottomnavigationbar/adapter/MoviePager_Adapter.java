@@ -30,23 +30,25 @@ public class MoviePager_Adapter extends PagerAdapter {
 
     public MoviePager_Adapter(Context context) {
         this.mcontext = context;
-        for (int i = 0; i < Title_img.size(); i++) {
-            View view = View.inflate(mcontext, R.layout.viewpager_movie_item, null);
-            ImageView imageView = (ImageView) view;
-            Glide.with(mcontext).load(Title_img.get(i)).into(imageView);
-            data.add(imageView);
-        }
+//        for (int i = 0; i < Title_img.size(); i++) {
+//            View view = View.inflate(mcontext, R.layout.viewpager_movie_item, null);
+//            ImageView imageView = (ImageView) view;
+//            Glide.with(mcontext).load(Title_img.get(i)).into(imageView);
+//            data.add(imageView);
+//        }
     }
 
     public void setDate(List<String> list) {
-        data.clear();
-        for (int i = 0; i < list.size(); i++) {
-            View view = View.inflate(mcontext, R.layout.viewpager_movie_item, null);
-            ImageView imageView = (ImageView) view;
-            Glide.with(mcontext).load(list.get(i)).into(imageView);
-            data.add(imageView);
+        if (list != null && list.size() > 0) {
+            data.clear();
+            for (int i = 0; i < list.size(); i++) {
+                View view = View.inflate(mcontext, R.layout.viewpager_movie_item, null);
+                ImageView imageView = (ImageView) view;
+                Glide.with(mcontext).load(list.get(i)).into(imageView);
+                data.add(imageView);
+            }
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
     }
 
     @Override

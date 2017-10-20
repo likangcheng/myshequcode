@@ -464,7 +464,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.delete:
-                Toast.makeText(this, "删除", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.settings:
                 Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();

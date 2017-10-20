@@ -4,6 +4,6 @@
     <version value="5" />
     <list>
         <mapping class="coming.example.lkc.bottomnavigationbar.dao.Users" />
-        <mapping class="coming.example.lkc.bottomnavigationbar.dao.Search_History" />
+        <mapping class="coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection"/>
     </list>
 </litepal>

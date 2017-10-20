@@ -21,7 +21,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
-
+    <!--分享底部弹出对话框风格-->
     <style name="ActionSheetDialogStyle" parent="@android:style/Theme.Dialog">
         <!-- 背景透明 -->
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -39,12 +39,14 @@
         <!-- Dialog进入及退出动画 -->
         <item name="android:windowAnimationStyle">@style/ActionSheetDialogAnimation</item>
     </style>
+
     <!-- ActionSheet进出动画 -->
     <style name="ActionSheetDialogAnimation" parent="@android:style/Animation.Dialog">
         <item name="android:windowEnterAnimation">@anim/actionsheet_dialog_in</item>
         <item name="android:windowExitAnimation">@anim/actionsheet_dialog_out</item>
     </style>
-
+    <!--分享底部弹出对话框风格-->
+    <!--自定义dialog Style-->
     <style name="PhotographAndPicture_DialogStyle" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -60,9 +62,33 @@
         <item name="android:windowEnterAnimation">@anim/dialog_scale_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_scale_out</item>
     </style>
-
+    <!--自定义dialog Style-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!--刷新成功对话框的风格-->
+    <style name="OnRefrwsh_Suceess_DialogStyle" parent="@android:style/Theme.Dialog">
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- 浮于Activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- Dialog以外的区域模糊效果 -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/OnRefrwsh_Suceess_DialogStyle_Animation
+        </item>
+    </style>
+
+    <style name="OnRefrwsh_Suceess_DialogStyle_Animation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/onrefresh_success_dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/onrefresh_success_dialog_out</item>
+    </style>
+    <!--刷新成功对话框的风格-->
 </resources>
