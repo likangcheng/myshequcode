@@ -56,6 +56,7 @@ import org.litepal.crud.DataSupport;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.fragment.Book_Fragment;
@@ -65,6 +66,7 @@ import coming.example.lkc.bottomnavigationbar.fragment.Movie_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.UpdataAppCreat;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -117,8 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFirstStart() {
-        SharedPreferences sharedPreferences = getSharedPreferences("FirstOpen", 0);
-        boolean firstopen = sharedPreferences.getBoolean("firstopen", true);
+        boolean firstopen = SharedPreferencesUnitl.getFirstOpen_SharedPreferencesEditor(MainActivity.this);
         if (firstopen) {
             Intent intent = new Intent(MainActivity.this, Start_Activity.class);
             startActivity(intent);
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     //启动页面检测是否有更新
     private void initUpdata() {
         HttpUnitily.sendOkHttpRequest(Url, new Callback() {
@@ -204,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     private void initReceiver() {
         //广播
         /**
-         * @p
+         *
          */
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -220,10 +222,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login_status_ok() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        LOGIN_STATUS = sp.getBoolean(Login_User_Activity.LOGIN_STATUS, false);
-        USERNAME_LOGIN = sp.getString(Login_User_Activity.USERNAME_LOGIN, "");
         //本地配置文件查询登录状态，登录用户名
+        LOGIN_STATUS = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MainActivity.this);
+        USERNAME_LOGIN = SharedPreferencesUnitl.getUsername_SharedPreferencesEditor(MainActivity.this);
         if (LOGIN_STATUS) {
             main_login.setText("欢迎：" + USERNAME_LOGIN);
             List<Users> usersList = DataSupport.where("username = ?", USERNAME_LOGIN).find(Users.class);
@@ -308,8 +309,14 @@ public class MainActivity extends AppCompatActivity {
                         updataAppCreat.setUpdataDialog();
                         break;
                     case R.id.nav_location:
-                        Intent intent2collection = new Intent(MainActivity.this, CollectionActivity.class);
-                        startActivity(intent2collection);
+                        boolean flag=SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MainActivity.this);
+                        if (flag){
+                            Intent intent2collection = new Intent(MainActivity.this, CollectionActivity.class);
+                            startActivity(intent2collection);
+                        }else {
+                            Intent intent2login=new Intent(MainActivity.this,Login_User_Activity.class);
+                            startActivityForResult(intent2login, REQUESTCODE);
+                        }
                         break;
                     default:
                         break;
@@ -329,10 +336,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(MainActivity.this).edit();
-                editor.clear();
-                editor.apply();
+                SharedPreferencesUnitl.cancelLoginstatus_SharedPreferences(MainActivity.this);
 //                              //Activity重新启动
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());

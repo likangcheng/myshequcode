@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.LinePageIndicator;
 
+import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
+
 /**
  * Created by lkc on 2017/8/22.
  */
@@ -68,9 +70,7 @@ public class Start_Activity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = getSharedPreferences("FirstOpen", 0).edit();
-                editor.putBoolean("firstopen", false);
-                editor.commit();
+                SharedPreferencesUnitl.PutFirstOpen_SharedPreferencesEditor(Start_Activity.this, false);
                 finish();
             }
         });

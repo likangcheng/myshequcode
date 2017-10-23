@@ -26,6 +26,7 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 
 /**
  * Created by lkc on 2017/8/3.
@@ -59,11 +60,7 @@ public class Login_User_Activity extends AppCompatActivity {
                 if (queryLogin(user_name, user_password) &&
                         !TextUtils.isEmpty(user_name) &&
                         !TextUtils.isEmpty(user_password)) {
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(Login_User_Activity.this).edit();
-                    editor.putBoolean(LOGIN_STATUS, true);
-                    editor.putString(USERNAME_LOGIN, user_name);
-                    editor.apply();
+                    SharedPreferencesUnitl.PutLoginstatus_SharedPreferencesEditor(Login_User_Activity.this, user_name, true);
                     Intent mintent = new Intent();
                     mintent.putExtra(USERNAME_LOGIN, user_name);
                     Login_User_Activity.this.setResult(RESULT_OK, mintent);
@@ -133,6 +130,7 @@ public class Login_User_Activity extends AppCompatActivity {
             }
         });
         builder.create();
+        builder.setCancelable(false);
         builder.show();
     }
 
