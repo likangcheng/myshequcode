@@ -1,15 +1,14 @@
 package coming.example.lkc.bottomnavigationbar;
 
-import android.app.AlertDialog;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -127,19 +126,26 @@ public class Register_User extends AppCompatActivity {
     }
 
     private void Register_Dialog() {
-        CustomDialog_lkc dialog_lkc = new CustomDialog_lkc(this);
-        dialog_lkc.SetDialog("恭喜你注册成功了！你可以在用户栏更改你的头像，可以将新闻分享至您的微信。", "确定");
-        dialog_lkc.setOnDialogMenuClick(new CustomDialog_lkc.OnDialogMenuClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage("恭喜你！注册成功！");
+        builder.setIcon(R.mipmap.icon_yours);
+        builder.setPositiveButton("返回登录界面", new DialogInterface.OnClickListener() {
             @Override
-            public void OnOkClick(View view) {
-                finish();
-            }
-
-            @Override
-            public void OnCancelClick(View view) {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
                 finish();
             }
         });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create();
+        builder.setCancelable(false);
+        builder.show();
     }
 
     public boolean validateUser(String email) {

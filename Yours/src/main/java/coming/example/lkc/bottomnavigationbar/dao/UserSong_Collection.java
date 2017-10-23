@@ -1,12 +1,14 @@
 package coming.example.lkc.bottomnavigationbar.dao;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.Date;
 
 /**
  * Created by lkc on 2017/10/20.
  */
 
-public class UserSong_Collection {
+public class UserSong_Collection extends DataSupport{
     private int id;
     private String username;
     private String songname;

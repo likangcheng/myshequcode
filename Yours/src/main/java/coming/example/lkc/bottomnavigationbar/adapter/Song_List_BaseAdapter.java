@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,11 +8,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.litepal.crud.DataSupport;
+
+import java.util.Date;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
+import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
+import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 
 /**
  * Created by lkc on 2017/10/13.
@@ -48,7 +55,7 @@ public class Song_List_BaseAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final SongListViewHolder holder;
         if (convertView == null) {
             holder = new SongListViewHolder();
@@ -72,7 +79,33 @@ public class Song_List_BaseAdapter extends BaseAdapter {
             holder.song.setTextColor(context.getResources().getColor(R.color.red_select));
             holder.singer.setTextColor(context.getResources().getColor(R.color.red_select));
         }
-        holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list_1));
+        holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list));
+        holder.soucang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean flag = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor((Activity) context);
+                if (flag) {
+                    String username = SharedPreferencesUnitl.getUsername_SharedPreferencesEditor((Activity) context);
+                    UserSong_Collection userSong_collection = new UserSong_Collection();
+                    SingList song = singLists.get(position);
+                    int count = DataSupport.where("songname = ?", song.songname).count(UserSong_Collection.class);
+                    if (count > 0) {
+                        Toast.makeText(context, "该歌曲已收录", Toast.LENGTH_SHORT).show();
+                    } else {
+                        userSong_collection.setBigpic(song.albumpic_small);
+                        userSong_collection.setSongname(song.songname);
+                        userSong_collection.setSinger(song.singername);
+                        userSong_collection.setM4aurl(song.musicurl);
+                        userSong_collection.setUsername(username);
+                        userSong_collection.setCollection_date(new Date());
+                        userSong_collection.save();
+                        Toast.makeText(context, "收藏成功", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return convertView;
     }
 
