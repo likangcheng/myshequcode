@@ -76,6 +76,11 @@ public class Start_Activity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     class MyAdapter extends PagerAdapter {
 
         public MyAdapter() {

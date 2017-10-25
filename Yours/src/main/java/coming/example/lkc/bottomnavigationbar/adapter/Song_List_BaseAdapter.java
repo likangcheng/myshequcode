@@ -79,29 +79,33 @@ public class Song_List_BaseAdapter extends BaseAdapter {
             holder.song.setTextColor(context.getResources().getColor(R.color.red_select));
             holder.singer.setTextColor(context.getResources().getColor(R.color.red_select));
         }
-        holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list));
+        //为真是可以收藏，为假为已经收藏
+        if (!collection_song_query(position)) {
+            //已经收藏，显示红色。
+            holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list));
+        } else {
+            //为收藏可以点击进行收藏
+            holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list_1));
+        }
         holder.soucang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //判断当前登录状态
                 boolean flag = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor((Activity) context);
-                if (flag) {
+                if (flag && collection_song_query(position)) {
                     String username = SharedPreferencesUnitl.getUsername_SharedPreferencesEditor((Activity) context);
                     UserSong_Collection userSong_collection = new UserSong_Collection();
                     SingList song = singLists.get(position);
-                    int count = DataSupport.where("songname = ?", song.songname).count(UserSong_Collection.class);
-                    if (count > 0) {
-                        Toast.makeText(context, "该歌曲已收录", Toast.LENGTH_SHORT).show();
-                    } else {
-                        userSong_collection.setBigpic(song.albumpic_small);
-                        userSong_collection.setSongname(song.songname);
-                        userSong_collection.setSinger(song.singername);
-                        userSong_collection.setM4aurl(song.musicurl);
-                        userSong_collection.setUsername(username);
-                        userSong_collection.setCollection_date(new Date());
-                        userSong_collection.save();
-                        Toast.makeText(context, "收藏成功", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
+                    userSong_collection.setBigpic(song.albumpic_small);
+                    userSong_collection.setSongname(song.songname);
+                    userSong_collection.setSinger(song.singername);
+                    userSong_collection.setM4aurl(song.musicurl);
+                    userSong_collection.setUsername(username);
+                    userSong_collection.setCollection_date(new Date());
+                    userSong_collection.save();
+                    holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list));
+                    Toast.makeText(context, "收藏成功", Toast.LENGTH_SHORT).show();
+                } else if (!flag){
                     Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -112,5 +116,14 @@ public class Song_List_BaseAdapter extends BaseAdapter {
     class SongListViewHolder {
         ImageView play, soucang;
         TextView song, singer;
+    }
+
+    private boolean collection_song_query(int position) {
+        String songname_collection = singLists.get(position).songname;
+        //查询是否已经收藏
+        int count = DataSupport.where("songname = ?", songname_collection).count(UserSong_Collection.class);
+        if (count == 0) {
+            return true;
+        } else return false;
     }
 }

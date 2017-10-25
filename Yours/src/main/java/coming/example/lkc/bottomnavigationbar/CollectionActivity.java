@@ -17,12 +17,20 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.adapter.Collection_Song_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
+import coming.example.lkc.bottomnavigationbar.listener.SongCount_Listener;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 
 public class CollectionActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Collection_Song_Adapter adapter;
     private TextView user_tv, songsize_tv;
+    private SongCount_Listener listener = new SongCount_Listener() {
+        @Override
+        public void getCount(int count) {
+            songsize_tv.setText("当前收藏" + count + "首歌");
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +49,10 @@ public class CollectionActivity extends AppCompatActivity {
             if (datalist.size() == 0) {
                 Toast.makeText(this, "你还没有收藏歌曲", Toast.LENGTH_SHORT).show();
             }
-            adapter = new Collection_Song_Adapter(datalist, this);
+            adapter = new Collection_Song_Adapter(datalist, this, listener);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
         }
     }
+
 }
