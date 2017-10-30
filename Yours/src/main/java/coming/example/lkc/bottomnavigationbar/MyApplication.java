@@ -2,6 +2,7 @@ package coming.example.lkc.bottomnavigationbar;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import org.litepal.LitePal;
 
@@ -16,6 +17,7 @@ public class MyApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         LitePal.initialize(context);
+        Log.d("wode","nima");
     }
 
 
