@@ -38,7 +38,6 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("wode", "MusicService onCreate: ");
     }
 
     @Override

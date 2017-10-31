@@ -2,6 +2,7 @@ package coming.example.lkc.bottomnavigationbar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,13 +100,17 @@ public class Song_List_BaseAdapter extends BaseAdapter {
                     userSong_collection.setBigpic(song.albumpic_small);
                     userSong_collection.setSongname(song.songname);
                     userSong_collection.setSinger(song.singername);
-                    userSong_collection.setM4aurl(song.musicurl);
+                    if (TextUtils.isEmpty(song.musicurl)) {
+                        userSong_collection.setM4aurl(song.m4a);
+                    } else {
+                        userSong_collection.setM4aurl(song.musicurl);
+                    }
                     userSong_collection.setUsername(username);
                     userSong_collection.setCollection_date(new Date());
                     userSong_collection.save();
                     holder.soucang.setImageDrawable(context.getResources().getDrawable(R.drawable.soucang_list));
                     Toast.makeText(context, "收藏成功", Toast.LENGTH_SHORT).show();
-                } else if (!flag){
+                } else if (!flag) {
                     Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
                 }
             }
