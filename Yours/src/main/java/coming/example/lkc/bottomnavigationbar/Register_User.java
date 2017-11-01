@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog_lkc;
+import coming.example.lkc.bottomnavigationbar.unitl.MD5;
 
 public class Register_User extends AppCompatActivity {
     private EditText username, password, password_2;
@@ -56,9 +57,10 @@ public class Register_User extends AppCompatActivity {
                 String pass_word_2 = password_2.getText().toString();
                 if (!queryUsername(user_name) && pass_word.equals(pass_word_2) && validatePassword(pass_word) && validateUser(user_name)) {
                     //用户名不存在&二次密码一直&密码长度&用户名规则
+                    String pass_word_md5 = MD5.md5(pass_word, 2);
                     Users users_updata = new Users();
                     users_updata.setUsername(user_name);
-                    users_updata.setPassword(pass_word);
+                    users_updata.setPassword(pass_word_md5);
                     users_updata.setPath("");
                     users_updata.save();
                     //存入本地数据库

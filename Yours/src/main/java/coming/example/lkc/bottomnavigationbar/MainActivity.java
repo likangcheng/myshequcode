@@ -8,14 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,14 +46,13 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 
-import org.json.JSONException;
+
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.fragment.Book_Fragment;
@@ -70,8 +66,6 @@ import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -94,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_CONTACTS
     };
 
     @Override
@@ -306,17 +300,21 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_mail:
                         UpdataAppCreat updataAppCreat = new UpdataAppCreat(MainActivity.this);
-                        updataAppCreat.setUpdataDialog();
+                        updataAppCreat.setUpdataDialog(false);
                         break;
                     case R.id.nav_location:
-                        boolean flag=SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MainActivity.this);
-                        if (flag){
+                        boolean flag = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MainActivity.this);
+                        if (flag) {
                             Intent intent2collection = new Intent(MainActivity.this, CollectionActivity.class);
                             startActivity(intent2collection);
-                        }else {
-                            Intent intent2login=new Intent(MainActivity.this,Login_User_Activity.class);
+                        } else {
+                            Intent intent2login = new Intent(MainActivity.this, Login_User_Activity.class);
                             startActivityForResult(intent2login, REQUESTCODE);
                         }
+                        break;
+                    case R.id.nav_aboutversion:
+                        Intent intent2aboutversion = new Intent(MainActivity.this, About_Version_Activity.class);
+                        startActivity(intent2aboutversion);
                         break;
                     default:
                         break;

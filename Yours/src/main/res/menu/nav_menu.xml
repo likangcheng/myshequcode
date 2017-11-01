@@ -3,20 +3,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_frends"
-
             android:title="用户信息"></item>
         <item
             android:id="@+id/nav_location"
-
             android:title="我的收藏"></item>
         <item
             android:id="@+id/nav_mail"
-
             android:title="版本更新"></item>
         <item
             android:id="@+id/nav_Logout"
-
             android:title="退出登录"></item>
+        <item
+            android:id="@+id/nav_aboutversion"
+            android:title="关于版本"></item>
     </group>
 
 </menu>

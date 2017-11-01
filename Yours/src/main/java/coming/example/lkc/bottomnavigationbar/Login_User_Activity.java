@@ -26,6 +26,7 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.unitl.MD5;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 
 /**
@@ -56,20 +57,20 @@ public class Login_User_Activity extends AppCompatActivity {
             public void onClick(View v) {
                 String user_name = username.getText().toString();
                 String user_password = password.getText().toString();
-                Log.d("wode", "onClick: " + queryLogin(user_name, user_password));
-                if (queryLogin(user_name, user_password) &&
-                        !TextUtils.isEmpty(user_name) &&
-                        !TextUtils.isEmpty(user_password)) {
-                    SharedPreferencesUnitl.PutLoginstatus_SharedPreferencesEditor(Login_User_Activity.this, user_name, true);
-                    Intent mintent = new Intent();
-                    mintent.putExtra(USERNAME_LOGIN, user_name);
-                    Login_User_Activity.this.setResult(RESULT_OK, mintent);
-                    Register_Dialog();
+                if (!TextUtils.isEmpty(user_name) && !TextUtils.isEmpty(user_password)) {
+                    if (queryLogin(user_name, user_password)) {
+                        //登陆成功
+                        SharedPreferencesUnitl.PutLoginstatus_SharedPreferencesEditor(Login_User_Activity.this, user_name, true);
+                        Intent mintent = new Intent();
+                        mintent.putExtra(USERNAME_LOGIN, user_name);
+                        Login_User_Activity.this.setResult(RESULT_OK, mintent);
+                        Register_Dialog();
+                    } else {
+                        Toast.makeText(Login_User_Activity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (TextUtils.isEmpty(user_name) ||
                         TextUtils.isEmpty(user_password)) {
                     Toast.makeText(Login_User_Activity.this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(Login_User_Activity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -105,16 +106,14 @@ public class Login_User_Activity extends AppCompatActivity {
     }
 
     private boolean queryLogin(String username, String password) {
-        //     List<Users> users=DataSupport.findAll(Users.class);
+        String password_md5 = MD5.md5(password, 2);
         List<Users> users = DataSupport.where("username = ?", username).find(Users.class);
         if (users.size() == 0 || users == null) {
             return false;
-        } else if (users.get(0).getPassword().equals(password)) {
-            Log.d("wode", "queryLogin: true");
+        } else if (TextUtils.equals(password_md5, users.get(0).getPassword())) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void Register_Dialog() {

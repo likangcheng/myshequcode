@@ -33,26 +33,27 @@ public class UpdataAppCreat {
         this.context = context;
     }
 
-    public void setUpdataDialog() {
+    public void setUpdataDialog(final boolean flag) {
         new UpdateAppManager
                 .Builder()
                 .setActivity(context)
-                        //实现httpManager接口的对象
+                //实现httpManager接口的对象
                 .setHttpManager(new UpdateAppHttpUtil())
-                        //设置请求方式 默认get,
+                //设置请求方式 默认get,
                 .setPost(false)
-                        //更新地址
+                //更新地址
                 .setUpdateUrl(UpdateUrl)
-                        //设置头部
+                //设置头部
                 .setTopPic(R.mipmap.top_3)
                 .setTargetPath(path)
-                        //设置主题色
+                //设置主题色
                 .setThemeColor(0xff63B8FF)
                 .build()
-                        //检测是否有新版本
+                //检测是否有新版本
                 .checkNewApp(new UpdateCallback() {
                     @Override
                     protected void hasNewApp(UpdateAppBean updateApp, UpdateAppManager updateAppManager) {
+                        Log.d("wode", "hasNewApp: ");
                         updateAppManager.showDialogFragment();
                     }
 
@@ -67,15 +68,15 @@ public class UpdataAppCreat {
                             updateAppBean
                                     //是否更新Yes,No
                                     .setUpdate(update)
-                                            //新版本号
+                                    //新版本号
                                     .setNewVersion(newVersionName)
-                                            //下载地址
+                                    //下载地址
                                     .setApkFileUrl(jsonObject.getString("apk_file_url"))
-                                            //大小
+                                    //大小
                                     .setTargetSize(jsonObject.getString("target_size"))
-                                            //更新内容
+                                    //更新内容
                                     .setUpdateLog(jsonObject.getString("update_log"))
-                                            //是否强制更新
+                                    //是否强制更新
                                     .setConstraint(jsonObject.getBoolean("constraint"));
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -85,7 +86,9 @@ public class UpdataAppCreat {
 
                     @Override
                     protected void onAfter() {
-                        CProgressDialogUtils.cancelProgressDialog(context);
+                        if (flag) {
+                            CProgressDialogUtils.cancelProgressDialog(context);
+                        }
                     }
 
                     @Override
@@ -95,7 +98,9 @@ public class UpdataAppCreat {
 
                     @Override
                     protected void onBefore() {
-                        CProgressDialogUtils.showProgressDialog(context);
+                        if (flag) {
+                            CProgressDialogUtils.showProgressDialog(context);
+                        }
                     }
                 });
     }
