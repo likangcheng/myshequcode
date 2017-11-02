@@ -27,7 +27,7 @@ public class Start_Activity extends AppCompatActivity {
     private Button button;
     private LinePageIndicator circlePageIndicator;
     private int img[] = {
-            R.drawable.img01, R.drawable.ing02, R.drawable.img03
+            R.drawable.img1, R.drawable.img2, R.drawable.img0
     };
 
     @Override

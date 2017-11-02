@@ -125,8 +125,9 @@ public class Song_List_BaseAdapter extends BaseAdapter {
 
     private boolean collection_song_query(int position) {
         String songname_collection = singLists.get(position).songname;
+        String singer_collection = singLists.get(position).singername;
         //查询是否已经收藏
-        int count = DataSupport.where("songname = ?", songname_collection).count(UserSong_Collection.class);
+        int count = DataSupport.where("songname = ? and singer = ?", songname_collection, singer_collection).count(UserSong_Collection.class);
         if (count == 0) {
             return true;
         } else return false;

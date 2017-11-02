@@ -46,7 +46,6 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 
-
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             //登录状态为否，隐藏退出登录按钮，全部初始化。
-            navigationView.getMenu().getItem(3).setVisible(false);
+            navigationView.getMenu().getItem(5).setVisible(false);
         }
 
     }
@@ -250,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Glide.with(this).load(user.get(0).getPath()).into(circleImageView);
                     }
-                    navigationView.getMenu().getItem(3).setVisible(true);
+                    navigationView.getMenu().getItem(5).setVisible(true);
                     LOGIN_STATUS = true;
                     USERNAME_LOGIN = username;
                 }
@@ -261,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
                     pathList = Matisse.obtainPathResult(data);
                     Users userupdate = new Users();
                     userupdate.setPath(pathList.get(0));
-                    Log.d("wode", "onActivityResult: " + pathList.get(0));
                     userupdate.updateAll("username = ?", USERNAME_LOGIN);
                     Glide.with(this).load(pathList.get(0)).into(circleImageView);
                 }
@@ -287,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
         View nav_head = navigationView.getHeaderView(0);
         circleImageView = (CircleImageView) nav_head.findViewById(R.id.icon_image);
         main_login = (TextView) nav_head.findViewById(R.id.maim_login);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -300,9 +299,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_mail:
                         UpdataAppCreat updataAppCreat = new UpdataAppCreat(MainActivity.this);
-                        updataAppCreat.setUpdataDialog(false);
+                        updataAppCreat.setUpdataDialog(true);
                         break;
-                    case R.id.nav_location:
+                    case R.id.nav_collection_song:
                         boolean flag = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MainActivity.this);
                         if (flag) {
                             Intent intent2collection = new Intent(MainActivity.this, CollectionActivity.class);

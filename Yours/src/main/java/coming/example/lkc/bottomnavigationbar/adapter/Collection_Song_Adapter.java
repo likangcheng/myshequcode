@@ -50,7 +50,7 @@ public class Collection_Song_Adapter extends RecyclerView.Adapter<Collection_Son
 
     @Override
     public Collection_Song_Adapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.song_collection_rc, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.song_collection_rc, parent,false);
         return new MyViewHolder(view);
     }
 

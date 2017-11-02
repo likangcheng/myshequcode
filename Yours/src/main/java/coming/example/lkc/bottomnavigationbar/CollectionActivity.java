@@ -2,6 +2,7 @@ package coming.example.lkc.bottomnavigationbar;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,7 +51,7 @@ public class CollectionActivity extends AppCompatActivity {
                 Toast.makeText(this, "你还没有收藏歌曲", Toast.LENGTH_SHORT).show();
             }
             adapter = new Collection_Song_Adapter(datalist, this, listener);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setLayoutManager(new GridLayoutManager(this,1));
             recyclerView.setAdapter(adapter);
         }
     }

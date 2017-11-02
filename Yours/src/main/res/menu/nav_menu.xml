@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_frends"
+            android:icon="@drawable/nav_item1"
             android:title="用户信息"></item>
         <item
-            android:id="@+id/nav_location"
-            android:title="我的收藏"></item>
+            android:id="@+id/nav_collection_song"
+            android:icon="@drawable/nav_item2"
+            android:title="我的音乐"></item>
+        <item
+            android:id="@+id/nav_collection_news"
+            android:icon="@drawable/nav_item7"
+            android:title="我的新闻"></item>
+        <item
+            android:id="@+id/nav_collection_weixin"
+            android:icon="@drawable/nav_item6"
+            android:title="我的文章"></item>
         <item
             android:id="@+id/nav_mail"
+            android:icon="@drawable/nav_item3"
             android:title="版本更新"></item>
         <item
             android:id="@+id/nav_Logout"
+            android:icon="@drawable/nav_item4"
             android:title="退出登录"></item>
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/nav_setting"
+            android:title="设置"></item>
         <item
             android:id="@+id/nav_aboutversion"
+            android:icon="@drawable/nav_item5"
             android:title="关于版本"></item>
     </group>
 

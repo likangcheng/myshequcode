@@ -21,6 +21,7 @@ import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
 import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.other_view.GridSpacingItemDecoration;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
@@ -42,10 +43,12 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_weixin_layout, null);
-        no_search= (LinearLayout) view.findViewById(R.id.no_weixin_search);
+        no_search = (LinearLayout) view.findViewById(R.id.no_weixin_search);
         recyclerView = (RecyclerView) view.findViewById(R.id.search_weixin_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
         search_weixin_adapter = new Book_rc_Adapter();
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, getResources()
+                .getDimensionPixelSize(R.dimen.recycleview_dimen), true));
         recyclerView.setAdapter(search_weixin_adapter);
         return view;
     }
@@ -53,7 +56,6 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("test2", "onActivityCreated: weixin");
 
     }
 
@@ -124,7 +126,6 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
 
     @Override
     public void SearchString(String s) {
-        Log.d("test2", "SearchString:weixin");
         showProgressDialog();
         initSearch(s);
     }

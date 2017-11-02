@@ -46,15 +46,19 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.adapter.Song_List_BaseAdapter;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
+import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
 import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
+import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -366,15 +370,63 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.icon_yours);
         builder.setTitle("分享到");
-        String[] items = {"微信好友", "朋友圈"};
+        String[] items = {"收藏", "微信好友", "朋友圈"};
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                share2WeiXin(which);
+                switch (which) {
+                    case 0:
+                        boolean login_flag = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MusicPlayer.this);
+                        if (login_flag) {
+                            String username = SharedPreferencesUnitl.getUsername_SharedPreferencesEditor(MusicPlayer.this);
+                            SingList song = singLists.get(MUSIC_POSITION);
+                            String songname = song.songname;
+                            String singer = song.singername;
+                            if (collection_song_query(songname, singer)) {
+                                UserSong_Collection us_c = new UserSong_Collection();
+                                us_c.setBigpic(song.albumpic_small);
+                                us_c.setSongname(song.songname);
+                                us_c.setSinger(song.singername);
+                                if (TextUtils.isEmpty(song.musicurl)) {
+                                    us_c.setM4aurl(song.m4a);
+                                } else {
+                                    us_c.setM4aurl(song.musicurl);
+                                }
+                                us_c.setUsername(username);
+                                us_c.setCollection_date(new Date());
+                                us_c.save();
+                                Toast.makeText(MusicPlayer.this, "收藏成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MusicPlayer.this, "收藏失败，歌曲已存在", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(MusicPlayer.this, "收藏失败，请先登录", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case 1:
+                        share2WeiXin(1);
+                        break;
+                    case 2:
+                        share2WeiXin(2);
+                        break;
+                }
             }
         });
         builder.create();
         builder.show();
+    }
+
+    /**
+     * @param songname_collection 歌曲名
+     * @param singer_collection   歌手名
+     * @return 真为以收藏，假为未收藏
+     */
+    private boolean collection_song_query(String songname_collection, String singer_collection) {
+        //查询是否已经收藏
+        int count = DataSupport.where("songname = ? and singer = ?", songname_collection, singer_collection).count(UserSong_Collection.class);
+        if (count == 0) {
+            return true;
+        } else return false;
     }
 
     private void share2WeiXin(final int which) {
@@ -382,10 +434,10 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 WXMusicObject wxmusic = new WXMusicObject();
-                if (!TextUtils.isEmpty(sing.musicurl)){
+                if (!TextUtils.isEmpty(sing.musicurl)) {
                     wxmusic.musicUrl = sing.musicurl;
-                }else {
-                    wxmusic.musicUrl=sing.m4a;
+                } else {
+                    wxmusic.musicUrl = sing.m4a;
                 }
                 WXMediaMessage mediaMessage = new WXMediaMessage();
                 mediaMessage.mediaObject = wxmusic;
@@ -395,11 +447,11 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
                 req.transaction = String.valueOf(System.currentTimeMillis());
                 req.message = mediaMessage;
-                if (which == 0) {
-                    //0分享至微信好友
+                if (which == 1) {
+                    //1分享至微信好友
                     req.scene = SendMessageToWX.Req.WXSceneSession;
-                } else if (which == 1) {
-                    //1分享至朋友圈
+                } else if (which == 2) {
+                    //2分享至朋友圈
                     req.scene = SendMessageToWX.Req.WXSceneTimeline;
                 }
                 iwxapi.sendReq(req);

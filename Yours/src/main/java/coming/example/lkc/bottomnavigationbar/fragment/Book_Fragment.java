@@ -26,6 +26,8 @@ import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.adapter.EndLessOnScrollListener;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.other_view.GridSpacingItemDecoration;
+import coming.example.lkc.bottomnavigationbar.other_view.SpacesItemDecoration;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
@@ -50,18 +52,9 @@ public class Book_Fragment extends Fragment {
         networkerro = (LinearLayout) view.findViewById(R.id.book_network_erro);
         springView = (SpringView) view.findViewById(R.id.springview);
         springView.setType(SpringView.Type.FOLLOW);
-        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        //RecyclerView滑动过程中不断请求layout的Request，不断调整item见的间隙，并且是在item尺寸显示前预处理，因此解决RecyclerView滑动到顶部时仍会出现移动问题
-        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         bookrecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        bookrecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                layoutManager.invalidateSpanAssignments();
-            }
-        });
         adapter = new Book_rc_Adapter();
+        bookrecyclerView.addItemDecoration(new GridSpacingItemDecoration(2,getResources().getDimensionPixelSize(R.dimen.recycleview_dimen),true));
         bookrecyclerView.setAdapter(adapter);
         return view;
     }
