@@ -1,6 +1,7 @@
 package coming.example.lkc.bottomnavigationbar;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -81,6 +83,10 @@ public class Login_User_Activity extends AppCompatActivity {
         login_register = (Button) findViewById(R.id.login_register);
         username = (EditText) findViewById(R.id.login_user);
         password = (EditText) findViewById(R.id.login_password);
+        View view = findViewById(R.id.login_focuse);
+        view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
     }
 
     private void initToolbar() {

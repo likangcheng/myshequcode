@@ -97,7 +97,8 @@ public class Song_List_BaseAdapter extends BaseAdapter {
                     String username = SharedPreferencesUnitl.getUsername_SharedPreferencesEditor((Activity) context);
                     UserSong_Collection userSong_collection = new UserSong_Collection();
                     SingList song = singLists.get(position);
-                    userSong_collection.setBigpic(song.albumpic_small);
+                    userSong_collection.setBigpic(song.albumpic_big);
+                    userSong_collection.setSmallpic(song.albumpic_small);
                     userSong_collection.setSongname(song.songname);
                     userSong_collection.setSinger(song.singername);
                     if (TextUtils.isEmpty(song.musicurl)) {

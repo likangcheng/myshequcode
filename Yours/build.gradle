@@ -10,11 +10,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "coming.example.lkc.bottomnavigationbar"
+        applicationId "coming.example.lkc.yours"
         minSdkVersion 18
         targetSdkVersion 25
         versionCode 12
-        versionName "1.6.1"
+        versionName "1.7.0"
     }
     buildTypes {
         release {

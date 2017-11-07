@@ -65,18 +65,27 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
                 Toast.makeText(WXEntryActivity.this, "认证失败", Toast.LENGTH_SHORT).show();
                 //认证被否决
+                finish();
                 break;
             case BaseResp.ErrCode.ERR_SENT_FAILED:
+                Toast.makeText(WXEntryActivity.this, "发送失败", Toast.LENGTH_SHORT).show();
                 //发送失败
+                finish();
                 break;
             case BaseResp.ErrCode.ERR_UNSUPPORT:
+                Toast.makeText(WXEntryActivity.this, "不支持错误", Toast.LENGTH_SHORT).show();
                 //不支持错误
+                finish();
                 break;
             case BaseResp.ErrCode.ERR_COMM:
+                Toast.makeText(WXEntryActivity.this, "一般错误", Toast.LENGTH_SHORT).show();
                 //一般错误
+                finish();
                 break;
             default:
+                Toast.makeText(WXEntryActivity.this, "其他不可名状的情况", Toast.LENGTH_SHORT).show();
                 //其他不可名状的情况
+                finish();
                 break;
         }
 

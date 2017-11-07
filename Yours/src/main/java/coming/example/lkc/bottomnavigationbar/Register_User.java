@@ -1,6 +1,8 @@
 package coming.example.lkc.bottomnavigationbar;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
@@ -12,8 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -94,6 +98,10 @@ public class Register_User extends AppCompatActivity {
         regiset_button = (Button) findViewById(R.id.register_in);
         userinput = (TextInputLayout) findViewById(R.id.user_input);
         passinput = (TextInputLayout) findViewById(R.id.pass_input);
+        View view = findViewById(R.id.foucuse_view);
+        view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
     }
 
     private void initToolbar() {
@@ -152,7 +160,6 @@ public class Register_User extends AppCompatActivity {
 
     public boolean validateUser(String email) {
         Matcher matcher = pattern.matcher(email);
-        Log.i("wode", "validateUser: " + matcher.matches());
         return matcher.matches();
     }
 

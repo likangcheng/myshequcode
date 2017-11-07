@@ -384,7 +384,8 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
                             String singer = song.singername;
                             if (collection_song_query(songname, singer)) {
                                 UserSong_Collection us_c = new UserSong_Collection();
-                                us_c.setBigpic(song.albumpic_small);
+                                us_c.setSmallpic(song.albumpic_small);
+                                us_c.setBigpic(song.albumpic_big);
                                 us_c.setSongname(song.songname);
                                 us_c.setSinger(song.singername);
                                 if (TextUtils.isEmpty(song.musicurl)) {

@@ -1,7 +1,8 @@
 {
-  "new_version": "1.6.2",
+  "new_version": "1.7.1",
   "apk_file_url": "https://raw.githubusercontent.com/likangcheng/myshequcode/master/Yours/Yours-release.apk",
-  "update_log": "1，增加新的音乐播放器。\r\n2，搜索功能更加完善好用。\r\n3，优化了部分UI。\r\n4，搜索内容可以为微信文章和音乐。\r\n5，增加webview加载进度条。",
-  "target_size": "7.08M",
+  "update_log": "1，增加新的音乐播放器。\r\n2，搜索功能更加完善好用。\r\n3，优化了部分UI。\r\n4，搜索内容可以为微信文章和音乐。\r\n5，增加webview加载进度条。
+  \r\n6，增加定位信息和天气系统。",
+  "target_size": "17.00M",
   "constraint": false
 }

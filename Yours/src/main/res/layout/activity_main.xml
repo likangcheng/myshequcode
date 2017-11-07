@@ -31,11 +31,11 @@
             </android.support.design.widget.AppBarLayout>
 
             <FrameLayout
-                android:background="#F2F2F2"
                 android:id="@+id/frameLayout_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/appbar" />
+                android:layout_below="@id/appbar"
+                android:background="#F2F2F2" />
 
         </RelativeLayout>
 
@@ -51,6 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:scrollbars="none"
         app:headerLayout="@layout/nav_head"
         app:menu="@menu/nav_menu">
 

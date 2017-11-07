@@ -13,6 +13,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.READ_CONTACTS
+            Manifest.permission.READ_CONTACTS,
     };
 
     @Override
@@ -230,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             //登录状态为否，隐藏退出登录按钮，全部初始化。
-            navigationView.getMenu().getItem(5).setVisible(false);
+            navigationView.getMenu().getItem(6).setVisible(false);
         }
 
     }
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Glide.with(this).load(user.get(0).getPath()).into(circleImageView);
                     }
-                    navigationView.getMenu().getItem(5).setVisible(true);
+                    navigationView.getMenu().getItem(6).setVisible(true);
                     LOGIN_STATUS = true;
                     USERNAME_LOGIN = username;
                 }
@@ -285,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
         View nav_head = navigationView.getHeaderView(0);
         circleImageView = (CircleImageView) nav_head.findViewById(R.id.icon_image);
         main_login = (TextView) nav_head.findViewById(R.id.maim_login);
+        NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);
+        navigationMenuView.setVerticalScrollBarEnabled(false);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -314,6 +317,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_aboutversion:
                         Intent intent2aboutversion = new Intent(MainActivity.this, About_Version_Activity.class);
                         startActivity(intent2aboutversion);
+                        break;
+                    case R.id.nav_weather:
+                        Intent intent2weather = new Intent(MainActivity.this, WeatherActivity.class);
+                        startActivity(intent2weather);
                         break;
                     default:
                         break;
@@ -465,6 +472,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.delete:
+
                 break;
             case R.id.settings:
                 Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();

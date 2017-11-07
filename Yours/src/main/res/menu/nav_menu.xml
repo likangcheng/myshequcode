@@ -4,6 +4,10 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_weather"
+            android:icon="@drawable/tianqi"
+            android:title="天气" />
+        <item
             android:id="@+id/nav_frends"
             android:icon="@drawable/nav_item1"
             android:title="用户信息"></item>

@@ -16,7 +16,6 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
-import coming.example.lkc.bottomnavigationbar.listener.SongCount_Listener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -26,12 +25,28 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Collection_Song_Adapter extends RecyclerView.Adapter<Collection_Song_Adapter.MyViewHolder> {
     private List<UserSong_Collection> datalist;
     private Context context;
-    private SongCount_Listener listener;
+    private Songcount_listener listener_count;
+    private OnClicklistener onClicklistener;
 
-    public Collection_Song_Adapter(List<UserSong_Collection> datalist, Context context, SongCount_Listener listener) {
+    public Collection_Song_Adapter(List<UserSong_Collection> datalist, Context context) {
         this.datalist = datalist;
         this.context = context;
-        this.listener = listener;
+    }
+
+    public interface Songcount_listener {
+        void getCount(int position);
+    }
+
+    public interface OnClicklistener {
+        void OnClick(View v, int position);
+    }
+
+    public void setOnPositionClikcListener(OnClicklistener listener) {
+        this.onClicklistener = listener;
+    }
+
+    public void setgetCountonChangeListener(Songcount_listener listener) {
+        this.listener_count = listener;
     }
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -50,8 +65,16 @@ public class Collection_Song_Adapter extends RecyclerView.Adapter<Collection_Son
 
     @Override
     public Collection_Song_Adapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.song_collection_rc, parent,false);
-        return new MyViewHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.song_collection_rc, parent, false);
+        final MyViewHolder holder = new MyViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = holder.getAdapterPosition();
+                onClicklistener.OnClick(view, position);
+            }
+        });
+        return holder;
     }
 
     @Override
@@ -64,7 +87,9 @@ public class Collection_Song_Adapter extends RecyclerView.Adapter<Collection_Son
             public void onClick(View v) {
                 DataSupport.deleteAll(UserSong_Collection.class, "songname = ?", datalist.get(position).getSongname());
                 datalist.remove(position);
-                listener.getCount(datalist.size());
+                if (listener_count != null) {
+                    listener_count.getCount(datalist.size());
+                }
                 notifyDataSetChanged();
             }
         });
