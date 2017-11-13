@@ -75,6 +75,11 @@
         <activity android:name=".MusicPlayer" />
         <activity android:name=".About_Version_Activity" />
         <activity android:name=".WeatherActivity"></activity>
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote"></service>
     </application>
 
 </manifest>

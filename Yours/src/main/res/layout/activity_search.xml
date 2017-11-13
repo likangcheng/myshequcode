@@ -74,6 +74,11 @@
                     android:padding="5dp"
                     android:text="取消"
                     android:textColor="@color/wirte" />
+
+                <View
+                    android:id="@+id/foucus_search"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp" />
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
@@ -102,6 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="#21000000"
+                android:scrollbars="none"
                 android:dividerHeight="1px"></ListView>
 
             <View

@@ -36,7 +36,7 @@ import okhttp3.Response;
  * Created by lkc on 2017/10/16.
  */
 
-public class Search_Music_Fragment extends Fragment implements Search2Fragment {
+public class Search_Music_Fragment extends Fragment {
     private RecyclerView music_recyclerview;
     private LinearLayout no_search;
     private Music_rc_Adapter adapter;
@@ -53,7 +53,7 @@ public class Search_Music_Fragment extends Fragment implements Search2Fragment {
         adapter = new Music_rc_Adapter();
         music_recyclerview.setLayoutManager(new GridLayoutManager(getContext(), 1));
         music_recyclerview.setAdapter(adapter);
-        Log.d("test2", "onCreateView: music");
+        Log.d("wode", "onCreateView: music");
         return view;
     }
 
@@ -84,7 +84,6 @@ public class Search_Music_Fragment extends Fragment implements Search2Fragment {
         }
     }
 
-    @Override
     public void SearchString(String s) {
         search = s;
     }

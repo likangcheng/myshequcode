@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import coming.example.lkc.bottomnavigationbar.MyApplication;
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.SearchActivity;
 import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
@@ -23,6 +25,7 @@ import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.other_view.GridSpacingItemDecoration;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.Logwrite;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -32,17 +35,18 @@ import okhttp3.Response;
  * Created by lkc on 2017/10/16.
  */
 
-public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment {
+public class Search_WeiXin_Fragment extends Fragment {
     private Book_rc_Adapter search_weixin_adapter;
     private RecyclerView recyclerView;
     private CustomDialog dialog;
     private LinearLayout no_search;
+    private String search_text;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_weixin_layout, null);
+        View view = inflater.inflate(R.layout.search_weixin_layout, container,false);
         no_search = (LinearLayout) view.findViewById(R.id.no_weixin_search);
         recyclerView = (RecyclerView) view.findViewById(R.id.search_weixin_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
@@ -57,6 +61,17 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            if (search_text != null) {
+                initSearch(search_text);
+                search_text = null;
+            }
+        }
     }
 
     private void initSearch(String s) {
@@ -74,7 +89,6 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
                         }
                     });
                 }
-                CloseProgressDialog();
             }
 
             @Override
@@ -104,7 +118,6 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
                         }
                     });
                 }
-                CloseProgressDialog();
             }
         });
 
@@ -124,9 +137,8 @@ public class Search_WeiXin_Fragment extends Fragment implements Search2Fragment 
         dialog.show();
     }
 
-    @Override
+
     public void SearchString(String s) {
-        showProgressDialog();
-        initSearch(s);
+        this.search_text = s;
     }
 }

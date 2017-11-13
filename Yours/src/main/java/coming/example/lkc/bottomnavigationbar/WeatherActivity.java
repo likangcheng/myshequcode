@@ -1,13 +1,17 @@
 package coming.example.lkc.bottomnavigationbar;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,13 +23,19 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.location.f;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.werb.permissionschecker.PermissionChecker;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import coming.example.lkc.bottomnavigationbar.unitl.WeatherString2Imgid;
 import coming.example.lkc.bottomnavigationbar.weather.Forecast;
@@ -44,12 +54,14 @@ public class WeatherActivity extends AppCompatActivity {
     };
     private LocationClient mlocationclient;
     private TextView weather_city, weather_time, weather_back, weather_tmp, weather_cond_text,
-            weather_aqi, weather_pm25, weather_sport, weather_carwash, weather_comfort, weather_location;
+            weather_aqi, weather_pm25, weather_qlty, weather_sport, weather_carwash, weather_comfort, weather_location;
     private LinearLayout forecast_layout;
     private ImageView weather_backimg;
     private PermissionChecker permissionChecker;
     private SwipeRefreshLayout swipeRefreshLayout;
     private NestedScrollView nestedScrollView;
+    private MyLocationListener listener=new MyLocationListener();
+    private final static String BINGURL = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +75,17 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
         initPermissions();
         initView();
+        initBing();
         initSwip();
+    }
+
+    private void initBing() {
+        String bingpath = SharedPreferencesUnitl.getBingPic_SharedPreferences(WeatherActivity.this);
+        if (TextUtils.isEmpty(bingpath)) {
+            getBingPic(BINGURL);
+        } else {
+            glideload(bingpath);
+        }
     }
 
     private void initSwip() {
@@ -79,13 +101,14 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initlocation();
-                mlocationclient.start();
+                mlocationclient.requestLocation();
+                getBingPic(BINGURL);
             }
         });
     }
 
     private void initView() {
+        weather_qlty = (TextView) findViewById(R.id.weather_qlty);
         weather_city = (TextView) findViewById(R.id.weather_city);
         weather_time = (TextView) findViewById(R.id.weather_time);
         weather_back = (TextView) findViewById(R.id.weather_back);
@@ -103,8 +126,6 @@ public class WeatherActivity extends AppCompatActivity {
         nestedScrollView.setVisibility(View.GONE);
         weather_location = (TextView) findViewById(R.id.weather_location);
         weather_backimg = (ImageView) findViewById(R.id.weather_backimg);
-        Glide.with(this).load("http://api.dujin.org/bing/1920.php").bitmapTransform(new BlurTransformation(this, 5),
-                new CenterCrop(this)).into(weather_backimg);
         weather_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,6 +145,8 @@ public class WeatherActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mlocationclient.stop();
+        mlocationclient.unRegisterLocationListener(listener);
+        stopService(new Intent(this, f.class));
     }
 
 
@@ -134,14 +157,14 @@ public class WeatherActivity extends AppCompatActivity {
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-            String location = bdLocation.getAddrStr();
+            StringBuilder stringBuilder=new StringBuilder();
             if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
-
+                stringBuilder.append("GPS定位：").append(bdLocation.getAddrStr());
             } else if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-
+                stringBuilder.append("网络定位：").append(bdLocation.getAddrStr());
             }
             weather_city.setText(bdLocation.getCity());
-            weather_location.setText(location);
+            weather_location.setText(stringBuilder);
             getWeather(bdLocation.getCity());
             switch (bdLocation.getLocType()) {
                 case 167:
@@ -165,12 +188,12 @@ public class WeatherActivity extends AppCompatActivity {
      */
     private void initlocation() {
         mlocationclient = new LocationClient(getApplicationContext());
-        mlocationclient.registerLocationListener(new MyLocationListener());
         LocationClientOption option = new LocationClientOption();
-//        option.setScanSpan(5000);
         //获取地址
         option.setIsNeedAddress(true);
+        option.setOpenGps(true);
         mlocationclient.setLocOption(option);
+        mlocationclient.registerLocationListener(listener);
     }
 
     @Override
@@ -227,6 +250,7 @@ public class WeatherActivity extends AppCompatActivity {
         if (weather.aqi != null) {
             weather_aqi.setText(weather.aqi.aqiCity.aqi);
             weather_pm25.setText(weather.aqi.aqiCity.pm25);
+            weather_qlty.setText(weather.aqi.aqiCity.qlty);
         }
         forecast_layout.removeAllViews();
         for (Forecast forecast : weather.forecastList) {
@@ -250,5 +274,48 @@ public class WeatherActivity extends AppCompatActivity {
         weather_carwash.setText(carWash);
         weather_sport.setText(sport);
         nestedScrollView.setVisibility(View.VISIBLE);
+    }
+
+    private void getBingPic(String Url) {
+        HttpUnitily.sendOkHttpRequest(Url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            /**
+             *
+             * @param call
+             * @param response
+             * @throws IOException
+             * 解析逻辑，提取数组来在解析。存入缓存，加载。
+             */
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String content = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(content);
+                    JSONArray jsonArray = jsonObject.getJSONArray("images");
+                    String jsonString = jsonArray.get(0).toString();
+                    JSONObject jsonObject2imgs = new JSONObject(jsonString);
+                    String picstring = jsonObject2imgs.getString("url");
+                    final String bingpath = "https://cn.bing.com" + picstring;
+                    SharedPreferencesUnitl.setBingPic_SharedPreferences(WeatherActivity.this, bingpath);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            glideload(bingpath);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void glideload(String bingpath) {
+        Glide.with(WeatherActivity.this).load(bingpath).bitmapTransform(new BlurTransformation(WeatherActivity.this, 10),
+                new CenterCrop(WeatherActivity.this)).into(weather_backimg);
     }
 }

@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
 
     @Override
     public void onResp(BaseResp baseResp) {
+        Log.d("wode", "onResp: "+baseResp.errCode);
         switch (baseResp.errCode) { //根据需要的情况进行处理
             case BaseResp.ErrCode.ERR_OK:
                 Toast.makeText(WXEntryActivity.this, "分享成功", Toast.LENGTH_SHORT).show();

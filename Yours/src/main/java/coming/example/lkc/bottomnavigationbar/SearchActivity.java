@@ -35,17 +35,20 @@ import coming.example.lkc.bottomnavigationbar.adapter.Suggest_list_BaseAdapter;
 import coming.example.lkc.bottomnavigationbar.fragment.Search_Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Search_WeiXin_Fragment;
 import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
+import coming.example.lkc.bottomnavigationbar.unitl.Logwrite;
 
 
 public class SearchActivity extends AppCompatActivity {
     private EditText search_et;
     private ImageView search_cancel;
-    private Search2Fragment listener1, listener2;
+    //    private Search2Fragment listener1, listener2;
     private Suggest_list_BaseAdapter suggest_adapter;
     private LinearLayout suggest, search_layout;
     private List<String> suggest_list_data = new ArrayList<>();
     private TextView search_back, histour_header;
     private ListView listview;
+    private Search_Music_Fragment music_fragment = new Search_Music_Fragment();
+    private Search_WeiXin_Fragment weiXin_fragment = new Search_WeiXin_Fragment();
     private Button histour_cancel;
     private boolean NO_HISITOUR = false;
     private InputMethodManager imManager;
@@ -59,12 +62,12 @@ public class SearchActivity extends AppCompatActivity {
         //软键盘
         imManager = (InputMethodManager) getSystemService(SearchActivity.this.INPUT_METHOD_SERVICE);
         initSearch();//声明Search相关变量
+        initSearch_FragmentViewPager();//搜索Fragment viewpager分类搜索
         initSuggest();//历史记录相关变量
         initHistour();//获取历史记录
         initSearchListen();//搜索栏相关的事件监听
         initBack();//取消返回键
         initCancelHistour();//清空历史搜索
-        initSearch_FragmentViewPager();//搜索Fragment viewpager分类搜索
     }
 
     private void initSearch_FragmentViewPager() {
@@ -72,21 +75,27 @@ public class SearchActivity extends AppCompatActivity {
         viewpager = (ViewPager) findViewById(R.id.search_viewpager);
         List<String> tabtitle = new ArrayList<>(Arrays.asList("微信", "音乐"));
         List<Fragment> fragmentlist = new ArrayList<>();
-        fragmentlist.add(new Search_WeiXin_Fragment());
-        fragmentlist.add(new Search_Music_Fragment());
+        fragmentlist.add(weiXin_fragment);
+        fragmentlist.add(music_fragment);
         fragmentadapter =
                 new Search_TablayoutAndFragment_Adapter(getSupportFragmentManager(), tabtitle, fragmentlist);
         tablayout.setupWithViewPager(viewpager);
+        viewpager.setOffscreenPageLimit(1);
         viewpager.setAdapter(fragmentadapter);
     }
 
-    @Override
+/**
+ *  @Override
     public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        Log.d("wode", "onAttachFragment:1 ");
         //调用方法将listener传入Fragment实现通信
         if (fragment instanceof Search_WeiXin_Fragment) {
             try {
+                Log.d("wode", "onAttachFragment:2 ");
                 listener1 = (Search2Fragment) fragment;
             } catch (Exception e) {
+                Log.d("wode", "onAttachFragment: 3");
                 e.printStackTrace();
             }
         }
@@ -97,8 +106,7 @@ public class SearchActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        super.onAttachFragment(fragment);
-    }
+    }**/
 
     private void initCancelHistour() {
         histour_cancel = (Button) findViewById(R.id.cancel_histour);
@@ -153,6 +161,7 @@ public class SearchActivity extends AppCompatActivity {
                     suggest.setVisibility(View.VISIBLE);
                     search_layout.setVisibility(View.GONE);
                 } else {
+                    search_layout.setVisibility(View.VISIBLE);
                     suggest.setVisibility(View.GONE);
                 }
             }
@@ -174,24 +183,25 @@ public class SearchActivity extends AppCompatActivity {
                     search_cancel.setVisibility(View.GONE);
                 }
             }
-        });//监听搜索栏上内容，根据内容显示cancel项
-        search_et.setOnTouchListener(new View.OnTouchListener() {
+        });
+
+        //监听搜索栏上内容，根据内容显示cancel项
+/**        search_et.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View view) {
                 search_et.setFocusable(true);
                 search_et.setFocusableInTouchMode(true);
                 search_et.requestFocus();
                 imManager.showSoftInput(search_et, InputMethodManager.SHOW_FORCED);
-                return true;
             }
-        });
+        });*/
         search_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    String search_content=v.getText().toString();
-                    if (!TextUtils.isEmpty(search_content)){
-                        initFousce(search_layout);//搜索结果获取焦点
+                    String search_content = v.getText().toString();
+                    if (!TextUtils.isEmpty(search_content)) {
+                        initFousce();//搜索结果获取焦点
                         remove32(suggest_list_data, search_content);//取消历史搜索相同搜索
                         suggest_list_data.add(0, search_content);//增加此次搜索
                         suggest_adapter.notifyDataSetChanged();
@@ -204,10 +214,10 @@ public class SearchActivity extends AppCompatActivity {
                         //上一次搜索结婚清空
                         viewpager.removeAllViews();
                         viewpager.setAdapter(fragmentadapter);
-                        listener1.SearchString(search_content);
-                        listener2.SearchString(search_content);
-                    }else {
-                        Toast.makeText(SearchActivity.this,"搜索内容不能为空",Toast.LENGTH_SHORT).show();
+                        weiXin_fragment.SearchString(search_content);
+                        music_fragment.SearchString(search_content);
+                    } else {
+                        Toast.makeText(SearchActivity.this, "搜索内容不能为空", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return false;
@@ -251,29 +261,31 @@ public class SearchActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 search_et.setText(suggest_list_data.get(position));
                 search_et.setSelection(suggest_list_data.get(position).length());
-                initFousce(search_layout);
-//                Search(suggest_list_data.get(position));
+                initFousce();
                 viewpager.removeAllViews();
                 viewpager.setAdapter(fragmentadapter);
-                listener1.SearchString(suggest_list_data.get(position));
-                listener2.SearchString(suggest_list_data.get(position));
+                weiXin_fragment.SearchString(suggest_list_data.get(position));
+                music_fragment.SearchString(suggest_list_data.get(position));
             }
         });
     }
 
 
-    private void initFousce(View view) {
+    private void initFousce() {
+        View view = findViewById(R.id.foucus_search);
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         //隐藏输入法
         imManager.hideSoftInputFromWindow(search_et.getWindowToken(), 0);
         //搜索栏失去焦点
-        search_et.setFocusable(false);
+
+/*        search_et.setFocusable(false);
         search_et.setFocusableInTouchMode(false);
         search_et.requestFocus();
         suggest.setVisibility(View.GONE);
         search_layout.setVisibility(View.VISIBLE);
+        Logwrite.LOG("setVisibility");*/
     }
 
     private void initSearch() {
