@@ -13,8 +13,8 @@ android {
         applicationId "coming.example.lkc.bottomnavigationbar"
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 12
-        versionName "1.7.0"
+        versionCode 13
+        versionName "1.7.1"
     }
     buildTypes {
         release {

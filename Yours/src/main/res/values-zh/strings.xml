@@ -12,4 +12,9 @@
     <string name="refresh_done">刷新完成</string>
     <string name="loading_done">加载完成</string>
     <string name="listview_header_last_time">上次更新时间：</string>
+    <string name="home_text">首页</string>
+    <string name="article_text">文章</string>
+    <string name="music_text">音乐</string>
+    <string name="headline_text">头条</string>
+    <string name="game_text">NBA</string>
 </resources>

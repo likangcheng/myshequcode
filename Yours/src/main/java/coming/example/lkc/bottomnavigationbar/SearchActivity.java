@@ -84,29 +84,29 @@ public class SearchActivity extends AppCompatActivity {
         viewpager.setAdapter(fragmentadapter);
     }
 
-/**
- *  @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
-        Log.d("wode", "onAttachFragment:1 ");
-        //调用方法将listener传入Fragment实现通信
-        if (fragment instanceof Search_WeiXin_Fragment) {
-            try {
-                Log.d("wode", "onAttachFragment:2 ");
-                listener1 = (Search2Fragment) fragment;
-            } catch (Exception e) {
-                Log.d("wode", "onAttachFragment: 3");
-                e.printStackTrace();
-            }
-        }
-        if (fragment instanceof Search_Music_Fragment) {
-            try {
-                listener2 = (Search2Fragment) fragment;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }**/
+    /**
+     * @Override public void onAttachFragment(Fragment fragment) {
+     * super.onAttachFragment(fragment);
+     * Log.d("wode", "onAttachFragment:1 ");
+     * //调用方法将listener传入Fragment实现通信
+     * if (fragment instanceof Search_WeiXin_Fragment) {
+     * try {
+     * Log.d("wode", "onAttachFragment:2 ");
+     * listener1 = (Search2Fragment) fragment;
+     * } catch (Exception e) {
+     * Log.d("wode", "onAttachFragment: 3");
+     * e.printStackTrace();
+     * }
+     * }
+     * if (fragment instanceof Search_Music_Fragment) {
+     * try {
+     * listener2 = (Search2Fragment) fragment;
+     * } catch (Exception e) {
+     * e.printStackTrace();
+     * }
+     * }
+     * }
+     **/
 
     private void initCancelHistour() {
         histour_cancel = (Button) findViewById(R.id.cancel_histour);
@@ -160,9 +160,12 @@ public class SearchActivity extends AppCompatActivity {
                 if (hasFocus) {
                     suggest.setVisibility(View.VISIBLE);
                     search_layout.setVisibility(View.GONE);
+                    imManager.showSoftInput(search_et, InputMethodManager.SHOW_FORCED);
                 } else {
                     search_layout.setVisibility(View.VISIBLE);
                     suggest.setVisibility(View.GONE);
+                    //隐藏输入法
+                    imManager.hideSoftInputFromWindow(search_et.getWindowToken(), 0);
                 }
             }
         });//搜索栏获取焦点显示历史搜索
@@ -187,20 +190,19 @@ public class SearchActivity extends AppCompatActivity {
 
         //监听搜索栏上内容，根据内容显示cancel项
 /**        search_et.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                search_et.setFocusable(true);
-                search_et.setFocusableInTouchMode(true);
-                search_et.requestFocus();
-                imManager.showSoftInput(search_et, InputMethodManager.SHOW_FORCED);
-            }
-        });*/
+@Override public void onClick(View view) {
+search_et.setFocusable(true);
+search_et.setFocusableInTouchMode(true);
+search_et.requestFocus();
+imManager.showSoftInput(search_et, InputMethodManager.SHOW_FORCED);
+}
+});*/
         search_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    String search_content = v.getText().toString();
-                    if (!TextUtils.isEmpty(search_content)) {
+                String search_content = v.getText().toString();
+                if (!TextUtils.isEmpty(search_content)) {
+                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                         initFousce();//搜索结果获取焦点
                         remove32(suggest_list_data, search_content);//取消历史搜索相同搜索
                         suggest_list_data.add(0, search_content);//增加此次搜索
@@ -214,13 +216,17 @@ public class SearchActivity extends AppCompatActivity {
                         //上一次搜索结婚清空
                         viewpager.removeAllViews();
                         viewpager.setAdapter(fragmentadapter);
-                        weiXin_fragment.SearchString(search_content);
+                        weiXin_fragment.SearchString(search_content, SearchActivity.this);
                         music_fragment.SearchString(search_content);
+                        Logwrite.LOG("1");
+                        return true;
                     } else {
-                        Toast.makeText(SearchActivity.this, "搜索内容不能为空", Toast.LENGTH_SHORT).show();
+                        return false;
                     }
+                } else {
+                    Toast.makeText(SearchActivity.this, "搜索内容不能为空", Toast.LENGTH_SHORT).show();
+                    return true;
                 }
-                return false;
             }
         });
     }
@@ -264,7 +270,7 @@ public class SearchActivity extends AppCompatActivity {
                 initFousce();
                 viewpager.removeAllViews();
                 viewpager.setAdapter(fragmentadapter);
-                weiXin_fragment.SearchString(suggest_list_data.get(position));
+                weiXin_fragment.SearchString(suggest_list_data.get(position), SearchActivity.this);
                 music_fragment.SearchString(suggest_list_data.get(position));
             }
         });

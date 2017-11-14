@@ -60,7 +60,6 @@ public class Search_Music_Fragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("test2", "onActivityCreated: music");
         adapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
             @Override
             public void MusicData(int Position) {
@@ -118,7 +117,7 @@ public class Search_Music_Fragment extends Fragment {
                                 Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
                             }
                             if (music.showapi_res_body.pagebean.allPages == 0) {
-                                Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
                                 music_recyclerview.setVisibility(View.GONE);
                                 no_search.setVisibility(View.VISIBLE);
                             }

@@ -1,6 +1,7 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
 import android.content.Context;
+import android.os.Binder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.tencent.mm.opensdk.constants.Build;
 
 import java.io.IOException;
 
@@ -40,13 +43,13 @@ public class Search_WeiXin_Fragment extends Fragment {
     private RecyclerView recyclerView;
     private CustomDialog dialog;
     private LinearLayout no_search;
-    private String search_text;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_weixin_layout, container,false);
+        Logwrite.LOG("onCreateView");
+        View view = inflater.inflate(R.layout.search_weixin_layout, container, false);
         no_search = (LinearLayout) view.findViewById(R.id.no_weixin_search);
         recyclerView = (RecyclerView) view.findViewById(R.id.search_weixin_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
@@ -59,19 +62,9 @@ public class Search_WeiXin_Fragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Logwrite.LOG("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (getUserVisibleHint()) {
-            if (search_text != null) {
-                initSearch(search_text);
-                search_text = null;
-            }
-        }
     }
 
     private void initSearch(String s) {
@@ -85,7 +78,7 @@ public class Search_WeiXin_Fragment extends Fragment {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(), "网络状况异常", Toast.LENGTH_SHORT).show();
-
+                            CloseProgressDialog();
                         }
                     });
                 }
@@ -104,7 +97,7 @@ public class Search_WeiXin_Fragment extends Fragment {
                                     search_weixin_adapter.setBookData(weiXinNew.showapi_res_body.pagebean.contentlist);
                                     recyclerView.smoothScrollToPosition(0);
                                 } else {
-                                    Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
                                     recyclerView.setVisibility(View.GONE);
                                     no_search.setVisibility(View.VISIBLE);
                                 }
@@ -114,7 +107,7 @@ public class Search_WeiXin_Fragment extends Fragment {
                                 Toast.makeText(getActivity(), "请检测网络是否连接异常", Toast.LENGTH_SHORT).show();
                                 getActivity().finish();
                             }
-
+                            CloseProgressDialog();
                         }
                     });
                 }
@@ -129,16 +122,17 @@ public class Search_WeiXin_Fragment extends Fragment {
         }
     }
 
-    private void showProgressDialog() {
+    private void showProgressDialog(Context context) {
         if (dialog == null) {
-            dialog = new CustomDialog(getActivity(), R.style.CustomDialog);
+            dialog = new CustomDialog(context, R.style.CustomDialog);
             dialog.show();
         }
         dialog.show();
     }
 
 
-    public void SearchString(String s) {
-        this.search_text = s;
+    public void SearchString(String s,Context context) {
+        showProgressDialog(context);
+        initSearch(s);
     }
 }

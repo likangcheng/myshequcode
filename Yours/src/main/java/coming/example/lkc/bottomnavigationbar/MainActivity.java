@@ -394,15 +394,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initBottomNavigationBar() {
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-        bottomNavigationBar.setActiveColor(R.color.wirte_dark).setBarBackgroundColor(R.color.fill);
+        bottomNavigationBar.setActiveColor(R.color.wirte_dark).setBarBackgroundColor(R.color.colorAccent);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE);
         bottomNavigationBar
-                .addItem(new BottomNavigationItem(R.drawable.home_fill, "Home").setInactiveIconResource(R.drawable.home))
-                .addItem(new BottomNavigationItem(R.drawable.book_fill, "Book").setInactiveIconResource(R.drawable.book))
-                .addItem(new BottomNavigationItem(R.drawable.music_fill, "Music").setInactiveIconResource(R.drawable.music))
-                .addItem(new BottomNavigationItem(R.drawable.tv_fill, "Movie").setInactiveIconResource(R.drawable.tv))
-                .addItem(new BottomNavigationItem(R.drawable.gamepad_fill, "Games").setInactiveIconResource(R.drawable.gamepad))
+                .addItem(new BottomNavigationItem(R.drawable.home_fill, R.string.home_text).setInactiveIconResource(R.drawable.home))
+                .addItem(new BottomNavigationItem(R.drawable.book_fill, R.string.article_text).setInactiveIconResource(R.drawable.book))
+                .addItem(new BottomNavigationItem(R.drawable.music_fill, R.string.music_text).setInactiveIconResource(R.drawable.music))
+                .addItem(new BottomNavigationItem(R.drawable.toutiao_fill, R.string.headline_text).setInactiveIconResource(R.drawable.toutiao))
+                .addItem(new BottomNavigationItem(R.drawable.tiyu_fill, R.string.game_text).setInactiveIconResource(R.drawable.tiyu))
                 .setFirstSelectedPosition(0)
                 .initialise();
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
