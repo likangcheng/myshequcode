@@ -58,6 +58,7 @@ import coming.example.lkc.bottomnavigationbar.dao.SingList;
 import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
 import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
+import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -460,12 +461,22 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         });
     }
 
+    long lastPressTime = 0;
+
+    /**
+     * 后台播放提示
+     */
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        startActivity(intent);
+        if (new Date().getTime() - lastPressTime < 2000) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        } else {
+            lastPressTime = new Date().getTime();//重置lastPressTime
+            Toast.makeText(MusicPlayer.this, "再按一次后台播放", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public byte[] Bitmap2Bytes(Bitmap bm) {

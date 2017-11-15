@@ -218,7 +218,6 @@ imManager.showSoftInput(search_et, InputMethodManager.SHOW_FORCED);
                         viewpager.setAdapter(fragmentadapter);
                         weiXin_fragment.SearchString(search_content, SearchActivity.this);
                         music_fragment.SearchString(search_content);
-                        Logwrite.LOG("1");
                         return true;
                     } else {
                         return false;

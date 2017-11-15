@@ -60,7 +60,7 @@ public class WeatherActivity extends AppCompatActivity {
     private PermissionChecker permissionChecker;
     private SwipeRefreshLayout swipeRefreshLayout;
     private NestedScrollView nestedScrollView;
-    private MyLocationListener listener=new MyLocationListener();
+    private MyLocationListener listener = new MyLocationListener();
     private final static String BINGURL = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
 
     @Override
@@ -80,12 +80,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void initBing() {
-        String bingpath = SharedPreferencesUnitl.getBingPic_SharedPreferences(WeatherActivity.this);
-        if (TextUtils.isEmpty(bingpath)) {
-            getBingPic(BINGURL);
-        } else {
-            glideload(bingpath);
-        }
+        getBingPic(BINGURL);
     }
 
     private void initSwip() {
@@ -157,7 +152,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
                 stringBuilder.append("GPS定位：").append(bdLocation.getAddrStr());
             } else if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
@@ -300,7 +295,7 @@ public class WeatherActivity extends AppCompatActivity {
                     JSONObject jsonObject2imgs = new JSONObject(jsonString);
                     String picstring = jsonObject2imgs.getString("url");
                     final String bingpath = "https://cn.bing.com" + picstring;
-                    SharedPreferencesUnitl.setBingPic_SharedPreferences(WeatherActivity.this, bingpath);
+//                    SharedPreferencesUnitl.setBingPic_SharedPreferences(WeatherActivity.this, bingpath);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
