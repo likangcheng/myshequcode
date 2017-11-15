@@ -1,6 +1,6 @@
 {
   "new_version": "1.7.2",
-  "apk_file_url": "http://app-global.pgyer.com/2cbba91bb67af5065335dd9fa5d4a8d4.apk?attname=Yours-release.apk&sign=ad761f75d71b901497b6161cb3738a4c&t=5a090c50",
+  "apk_file_url": "http://app-global.pgyer.com/6099a4e2d5a1f4bd7cc83b50893a8ea4.apk?attname=Yours-release.apk&sign=f30d7ee676872d7d2350386f3c22b3d4&t=5a0be2e0",
   "update_log": "1，增加新的音乐播放器。\r\n2，搜索功能更加完善好用。\r\n3，优化了部分UI。\r\n4，搜索内容可以为微信文章和音乐。\r\n5，增加webview加载进度条。\r\n6，增加定位信息和天气系统。",
   "target_size": "7.98M",
   "constraint": false
