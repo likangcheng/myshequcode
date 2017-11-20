@@ -21,7 +21,7 @@ import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 /**
  * Created by lkc on 2017/8/22.
  */
-public class Start_Activity extends AppCompatActivity {
+public class Start_Activity extends MyBaseActivity {
     private ViewPager viewPager;
     private ImageView[] imageView;
     private Button button;

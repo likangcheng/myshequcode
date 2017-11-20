@@ -1,55 +1,18 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
-import android.animation.ObjectAnimator;
-import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-
-import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.SocketException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.MusicPlayer;
@@ -57,12 +20,9 @@ import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Music_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.Music;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
-import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
-import coming.example.lkc.bottomnavigationbar.service.MusicService;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
-import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -76,6 +36,7 @@ public class Music_Fragment extends Fragment {
     private Music_rc_Adapter madapter;
     private CustomDialog dialog;//显示加载的对话框
     private List<SingList> singlist;//音乐资源
+    private static int lastposition = -1;
 
     @Nullable
     @Override
@@ -114,35 +75,57 @@ public class Music_Fragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                    String singResponse = response.body().string();
-                    final Music music = Utility.handelMusicResponse(singResponse);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (music != null) {
-                                if (music.showapi_res_code == 0) {
-                                    Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
-                                    madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
-                                } else {
-                                    Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
-                                }
+                String singResponse = response.body().string();
+                final Music music = Utility.handelMusicResponse(singResponse);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (music != null) {
+                            if (music.showapi_res_code == 0) {
+                                Music_Fragment.this.singlist = music.showapi_res_body.pagebean.songlist;
+                                madapter.setMusicData(music.showapi_res_body.pagebean.songlist);
                             } else {
-                                Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "数据出现问题", Toast.LENGTH_SHORT).show();
                             }
-                            CloseProgressDialog();
+                        } else {
+                            Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                        CloseProgressDialog();
+                    }
+                });
             }
         });
         madapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
             @Override
             public void MusicData(int Position) {
-                Intent intent = new Intent(getActivity(), MusicPlayer.class);
-                intent.putExtra("MUSIC_DATA", (Serializable) singlist);
-                intent.putExtra("MUSIC_DATA_INT", Position);
-                getActivity().startActivity(intent);
+                click2musicplayer(Position);
             }
         });
+    }
+
+    private void click2musicplayer(int position) {
+        if (lastposition == -1 || lastposition == position) {
+            lastposition = position;
+            Intent intent = new Intent(getActivity(), MusicPlayer.class);
+            intent.putExtra("MUSIC_DATA", (Serializable) singlist);
+            intent.putExtra("MUSIC_DATA_INT", position);
+            intent.putExtra("FLAG", 1);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            getActivity().startActivity(intent);
+        } else {
+            lastposition = position;
+            Intent broadcastintent = new Intent("coming.example.lkc.bottomnavigationbar." +
+                    "FINISH_MUSICPLAYER");
+            broadcastintent.putExtra("MUSIC_DATA_NEWPOSITION", position);
+            getActivity().sendBroadcast(broadcastintent);
+            Intent intent = new Intent(getActivity(), MusicPlayer.class);
+            intent.putExtra("MUSIC_DATA", (Serializable) singlist);
+            intent.putExtra("MUSIC_DATA_INT", position);
+            intent.putExtra("FLAG", 1);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            getActivity().startActivity(intent);
+
+        }
     }
 
     private void CloseProgressDialog() {

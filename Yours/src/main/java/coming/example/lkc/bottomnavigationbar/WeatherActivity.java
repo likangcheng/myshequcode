@@ -46,7 +46,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class WeatherActivity extends AppCompatActivity {
+public class WeatherActivity extends MyBaseActivity {
     private String[] PERMISSIONS = {
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -64,7 +64,7 @@ public class WeatherActivity extends AppCompatActivity {
     private final static String BINGURL = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
@@ -310,7 +310,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void glideload(String bingpath) {
-        Glide.with(WeatherActivity.this).load(bingpath).bitmapTransform(new BlurTransformation(WeatherActivity.this, 10),
+        Glide.with(WeatherActivity.this).load(bingpath).bitmapTransform(new BlurTransformation(WeatherActivity.this, 25),
                 new CenterCrop(WeatherActivity.this)).into(weather_backimg);
     }
 }

@@ -38,7 +38,7 @@ import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
 import coming.example.lkc.bottomnavigationbar.unitl.Logwrite;
 
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends MyBaseActivity {
     private EditText search_et;
     private ImageView search_cancel;
     //    private Search2Fragment listener1, listener2;
@@ -56,7 +56,7 @@ public class SearchActivity extends AppCompatActivity {
     private Search_TablayoutAndFragment_Adapter fragmentadapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         //软键盘

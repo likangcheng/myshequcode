@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:layout_marginBottom="5dp"
-    android:background="#fff">
+    android:background="@drawable/layout_selectoochange">
 
     <TextView
         android:id="@+id/music_rc_sing"

@@ -2,7 +2,6 @@ package coming.example.lkc.bottomnavigationbar.viewholder;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
@@ -13,26 +12,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rd.PageIndicatorView;
 import com.rd.animation.AnimationType;
-import com.viewpagerindicator.CirclePageIndicator;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.MoviePager_Adapter;
-import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 /**
  * Created by lkc on 2017/9/8.

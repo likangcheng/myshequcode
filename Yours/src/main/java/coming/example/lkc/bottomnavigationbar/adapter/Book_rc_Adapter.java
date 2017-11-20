@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 import coming.example.lkc.bottomnavigationbar.Book_Card_Activity;
 import coming.example.lkc.bottomnavigationbar.R;

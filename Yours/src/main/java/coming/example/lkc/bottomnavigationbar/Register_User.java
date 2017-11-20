@@ -33,7 +33,7 @@ import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog_lkc;
 import coming.example.lkc.bottomnavigationbar.unitl.MD5;
 
-public class Register_User extends AppCompatActivity {
+public class Register_User extends MyBaseActivity {
     private EditText username, password, password_2;
     private Button regiset_button;
     private Animation shake;
@@ -44,7 +44,7 @@ public class Register_User extends AppCompatActivity {
     private TextInputLayout userinput, passinput;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register__user);
         initToolbar();

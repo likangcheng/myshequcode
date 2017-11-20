@@ -3,7 +3,6 @@ package coming.example.lkc.bottomnavigationbar.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -11,21 +10,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.annotation.IntDef;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.List;
 
-import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.dao.Music;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
-import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 
 public class MusicService extends Service {

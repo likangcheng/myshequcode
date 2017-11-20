@@ -61,6 +61,7 @@ import coming.example.lkc.bottomnavigationbar.fragment.Home_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Movie_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.UpdataAppCreat;
+import coming.example.lkc.bottomnavigationbar.unitl.ActivityCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -68,7 +69,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MyBaseActivity {
     private String Url = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/json";
     private Fragment[] fragments;
     private BottomNavigationBar bottomNavigationBar;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //权限声明
         permissionChecker = new PermissionChecker(this);
@@ -495,7 +496,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             if (new Date().getTime() - lastPressTime < 2000) {
                 HttpUnitily.call.cancel();
-                finish();//结束程序
+                ActivityCollector.finishAll();
             } else {
                 lastPressTime = new Date().getTime();//重置lastPressTime
                 Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();

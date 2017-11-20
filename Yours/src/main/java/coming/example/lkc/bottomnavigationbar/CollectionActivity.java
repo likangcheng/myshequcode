@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,15 +20,16 @@ import java.util.List;
 import coming.example.lkc.bottomnavigationbar.adapter.Collection_Song_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
 import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
+import coming.example.lkc.bottomnavigationbar.unitl.ActivityCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 
-public class CollectionActivity extends AppCompatActivity {
+public class CollectionActivity extends MyBaseActivity {
     private RecyclerView recyclerView;
     private Collection_Song_Adapter adapter;
     private TextView user_tv, songsize_tv;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
         recyclerView = (RecyclerView) findViewById(R.id.song_collection_rcview);
@@ -53,10 +55,17 @@ public class CollectionActivity extends AppCompatActivity {
             adapter.setOnPositionClikcListener(new Collection_Song_Adapter.OnClicklistener() {
                 @Override
                 public void OnClick(View v, int position) {
+                    Activity activity = ActivityCollector.queryActivity("MusicPlayer");
+                    if (activity != null) {
+                        if (!activity.isFinishing()) {
+                            activity.finish();
+                        }
+                    }
                     Intent intent = new Intent(CollectionActivity.this, MusicPlayer.class);
                     List<SingList> singLists = collection2singlist(datalist);
                     intent.putExtra("MUSIC_DATA", (Serializable) singLists);
                     intent.putExtra("MUSIC_DATA_INT", position);
+                    intent.putExtra("FLAG", 2);
                     startActivity(intent);
                 }
             });

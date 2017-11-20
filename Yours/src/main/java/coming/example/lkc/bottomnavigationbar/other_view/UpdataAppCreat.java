@@ -1,7 +1,6 @@
 package coming.example.lkc.bottomnavigationbar.other_view;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Environment;
@@ -14,7 +13,6 @@ import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
 import com.vector.update_app.UpdateCallback;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import coming.example.lkc.bottomnavigationbar.R;

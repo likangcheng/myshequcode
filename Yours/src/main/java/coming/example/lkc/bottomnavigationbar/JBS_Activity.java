@@ -19,7 +19,7 @@ import coming.example.lkc.bottomnavigationbar.dao.Users;
 /**
  * Created by lkc on 2017/8/28.
  */
-public class JBS_Activity extends AppCompatActivity {
+public class JBS_Activity extends MyBaseActivity {
     private List<Users> usersList;
 
     @Override

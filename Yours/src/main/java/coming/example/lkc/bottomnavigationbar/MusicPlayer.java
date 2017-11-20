@@ -3,10 +3,12 @@ package coming.example.lkc.bottomnavigationbar;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -67,7 +69,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
  * Created by lkc on 2017/10/11.
  */
 
-public class MusicPlayer extends AppCompatActivity implements View.OnClickListener {
+public class MusicPlayer extends MyBaseActivity implements View.OnClickListener {
     private ImageView mp_backimg;
     private List<SingList> singLists;//音乐资源文件
     private CircleImageView mp_icon;
@@ -84,6 +86,8 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
     private Toolbar toolbar;
     private final static String APP_ID = "wxd6ab7c22e73907b9";//微信ID
     private IWXAPI iwxapi;
+    private FinishThisReceiver receiver;
+    private int Start_flag = 0;//0为默认，1为Main进来，2从用户音乐，3从搜索
 
     private void regtoWX(Context context) {
         iwxapi = WXAPIFactory.createWXAPI(context, APP_ID, true);
@@ -203,6 +207,16 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         initsonglist();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("coming.example.lkc.bottomnavigationbar." +
+                "FINISH_MUSICPLAYER");
+        receiver = new FinishThisReceiver();
+        registerReceiver(receiver, intentFilter);
+    }
+
     private void initseekBar() {
         //滚动条时间监听
         seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
@@ -237,6 +251,7 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         //获取音频资源
         singLists = (List<SingList>) getIntent().getSerializableExtra("MUSIC_DATA");
         MUSIC_POSITION = getIntent().getIntExtra("MUSIC_DATA_INT", 0);
+        Start_flag = getIntent().getIntExtra("FLAG", 0);
         seekBar = (DiscreteSeekBar) findViewById(R.id.seekbar_1);
         time_left = (TextView) findViewById(R.id.time_left);
         time_right = (TextView) findViewById(R.id.time_right);
@@ -461,21 +476,36 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    long lastPressTime = 0;
+//    long lastPressTime = 0;
 
     /**
      * 后台播放提示
      */
     @Override
     public void onBackPressed() {
-        if (new Date().getTime() - lastPressTime < 2000) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
-        } else {
-            lastPressTime = new Date().getTime();//重置lastPressTime
-            Toast.makeText(MusicPlayer.this, "再按一次后台播放", Toast.LENGTH_SHORT).show();
+//        if (new Date().getTime() - lastPressTime < 2000) {
+//            Intent intent = new Intent(Intent.ACTION_MAIN);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.addCategory(Intent.CATEGORY_HOME);
+//            startActivity(intent);
+//        } else {
+//            lastPressTime = new Date().getTime();//重置lastPressTime
+//            Toast.makeText(MusicPlayer.this, "再按一次后台播放", Toast.LENGTH_SHORT).show();
+//        }
+        switch (Start_flag) {
+            case 0:
+                break;
+            case 1:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                break;
+            case 2:
+                finish();
+                break;
+            case 3:
+                finish();
+                break;
         }
     }
 
@@ -488,7 +518,24 @@ public class MusicPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
         unbindService(connection);
         stopService(new Intent(this, MusicService.class));
+    }
+
+
+    class FinishThisReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int position = intent.getIntExtra("MUSIC_DATA_NEWPOSITION", -1);
+            if (position != -1) {
+                MUSIC_POSITION = position;
+                musicBinder.nextMusic(singLists.get(MUSIC_POSITION));
+            }
+        }
     }
 }

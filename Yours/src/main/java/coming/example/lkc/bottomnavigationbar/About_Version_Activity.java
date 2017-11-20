@@ -11,7 +11,7 @@ import android.widget.TextView;
  * Created by 李康成 on 2017/11/1.
  */
 
-public class About_Version_Activity extends AppCompatActivity {
+public class About_Version_Activity extends MyBaseActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

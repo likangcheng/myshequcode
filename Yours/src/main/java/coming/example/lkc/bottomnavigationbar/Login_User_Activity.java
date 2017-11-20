@@ -34,7 +34,7 @@ import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 /**
  * Created by lkc on 2017/8/3.
  */
-public class Login_User_Activity extends AppCompatActivity {
+public class Login_User_Activity extends MyBaseActivity {
     private EditText username, password;
     private Button login_register, longin_to;
     public static final int RquestCode = 1;

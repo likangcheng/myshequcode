@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutionException;
 import coming.example.lkc.bottomnavigationbar.adapter.Fenxaing_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
 
-public class Book_Card_Activity extends AppCompatActivity implements View.OnClickListener {
+public class Book_Card_Activity extends MyBaseActivity implements View.OnClickListener {
     private final static String APP_ID = "wxd6ab7c22e73907b9";
     private IWXAPI iwxapi;
     public static final String WEIXIN_DATA = "weixin data";
@@ -52,7 +52,7 @@ public class Book_Card_Activity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book__card_);
         regtoWX(this);

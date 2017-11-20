@@ -18,10 +18,10 @@ public class Fenxaing_Adapter extends RecyclerView.Adapter<Fenxaing_Adapter.View
     private OnItemClickListener mOnItemClickListener = null;
     private int[] fximg = {
             R.drawable.fxwx, R.drawable.fxpyq, R.drawable.fxqq,
-            R.drawable.fxqzone, R.drawable.fxwb, R.drawable.fxzfb
+            R.drawable.fxwb, R.drawable.fxzfb
     };
     private String[] fxname = {
-            "微信好友", "微信朋友圈", "QQ", "QQ空间", "微博", "支付宝",
+            "微信好友", "微信朋友圈", "QQ", "微博", "支付宝",
     };
 
     public Fenxaing_Adapter(Context context) {

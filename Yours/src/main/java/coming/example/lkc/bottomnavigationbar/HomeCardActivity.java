@@ -17,13 +17,13 @@ import com.bumptech.glide.Glide;
 
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 
-public class HomeCardActivity extends AppCompatActivity {
+public class HomeCardActivity extends MyBaseActivity {
     public static final String CONTENTLIST_DATA = "contentlist data";
     private WebView webView;
     private ProgressBar progressBar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_card);
         JiSuApi_List jiSuApi_list = (JiSuApi_List) getIntent().getSerializableExtra(CONTENTLIST_DATA);

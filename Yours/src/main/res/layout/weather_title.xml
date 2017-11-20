@@ -5,34 +5,37 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:gravity="center_vertical">
+        android:layout_height="?attr/actionBarSize">
 
         <TextView
-            android:textColor="@color/wirte"
             android:id="@+id/weather_back"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
             android:layout_marginLeft="6dp"
-            android:text="Back" />
+            android:text="Back"
+            android:textColor="@color/wirte" />
 
         <TextView
-            android:textColor="@color/wirte"
             android:id="@+id/weather_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:text="南昌市"
+            android:textColor="@color/wirte"
             android:textSize="18sp" />
 
         <TextView
-            android:textColor="@color/wirte"
             android:id="@+id/weather_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="6dp"
-            android:text="13:54" />
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="6dp"
+            android:text="13:54"
+            android:textColor="@color/wirte" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

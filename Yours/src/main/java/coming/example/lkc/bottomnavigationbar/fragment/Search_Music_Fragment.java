@@ -1,18 +1,24 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -24,25 +30,27 @@ import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Music_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.Music;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
-import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.unitl.ActivityCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+
 /**
  * Created by lkc on 2017/10/16.
  */
 
-public class Search_Music_Fragment extends Fragment {
+public class Search_Music_Fragment extends Fragment implements View.OnClickListener {
     private RecyclerView music_recyclerview;
     private LinearLayout no_search;
     private Music_rc_Adapter adapter;
     private List<SingList> singlist;
     private CustomDialog dialog;
     private String search;
+    private PopupWindow popupWindow;
 
     @Nullable
     @Override
@@ -53,7 +61,6 @@ public class Search_Music_Fragment extends Fragment {
         adapter = new Music_rc_Adapter();
         music_recyclerview.setLayoutManager(new GridLayoutManager(getContext(), 1));
         music_recyclerview.setAdapter(adapter);
-        Log.d("wode", "onCreateView: music");
         return view;
     }
 
@@ -63,10 +70,25 @@ public class Search_Music_Fragment extends Fragment {
         adapter.setOnItemClickListener(new Music_rc_Adapter.OnclickMusicData() {
             @Override
             public void MusicData(int Position) {
+                Activity activity = ActivityCollector.queryActivity("MusicPlayer");
+                if (activity != null) {
+                    if (!activity.isFinishing()) {
+                        activity.finish();
+                    }
+                }
                 Intent intent = new Intent(getActivity(), MusicPlayer.class);
                 intent.putExtra("MUSIC_DATA", (Serializable) singlist);
                 intent.putExtra("MUSIC_DATA_INT", Position);
+                intent.putExtra("FLAG", 3);
                 getActivity().startActivity(intent);
+            }
+        });
+        adapter.setOnLongItemClickListenter(new Music_rc_Adapter.OnLongClick() {
+            @Override
+            public void FengXiang(final View v, int Position) {
+                int width = v.getWidth();
+                int height = v.getHeight();
+                created_popupwindow(v, width / 2, -height);
             }
         });
     }
@@ -131,6 +153,29 @@ public class Search_Music_Fragment extends Fragment {
         });
     }
 
+    private void created_popupwindow(View view, int x, int y) {
+        if (popupWindow == null) {
+
+            popupWindow = new PopupWindow(getActivity());
+            popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+            popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+            View contentview = LayoutInflater.from(getActivity()).inflate(R.layout.tips_layout, null);
+            TextView pp_text1 = (TextView) contentview.findViewById(R.id.pp_text1);
+            pp_text1.setOnClickListener(this);
+            TextView pp_text2 = (TextView) contentview.findViewById(R.id.pp_text2);
+            pp_text2.setOnClickListener(this);
+            popupWindow.setContentView(contentview);
+            popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
+            popupWindow.setOutsideTouchable(false);
+            popupWindow.setFocusable(true);
+            //获取弹框的高与宽。用一般的getwidth是获取不到，方法是先测量，在获取。
+        }
+        popupWindow.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int py = popupWindow.getContentView().getMeasuredHeight();
+        int px = popupWindow.getContentView().getMeasuredWidth();
+        popupWindow.showAsDropDown(view, x - (px / 2), y - py+5);
+    }
+
     private void CloseProgressDialog() {
         if (dialog != null) {
             dialog.dismiss();
@@ -143,5 +188,22 @@ public class Search_Music_Fragment extends Fragment {
             dialog.show();
         }
         dialog.show();
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+            case R.id.pp_text1:
+                Toast.makeText(getActivity(),"111", Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
+                break;
+            case R.id.pp_text2:
+                Toast.makeText(getActivity(),"222", Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
+                break;
+
+        }
+
     }
 }

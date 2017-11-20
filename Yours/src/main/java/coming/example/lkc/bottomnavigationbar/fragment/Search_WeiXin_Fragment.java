@@ -1,30 +1,22 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
 import android.content.Context;
-import android.os.Binder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.tencent.mm.opensdk.constants.Build;
-
 import java.io.IOException;
 
-import coming.example.lkc.bottomnavigationbar.MyApplication;
 import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.SearchActivity;
 import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
-import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
-import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.other_view.GridSpacingItemDecoration;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
