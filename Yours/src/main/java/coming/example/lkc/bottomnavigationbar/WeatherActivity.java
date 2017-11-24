@@ -25,7 +25,6 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.f;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.werb.permissionschecker.PermissionChecker;
 
 import org.json.JSONArray;
@@ -310,7 +309,7 @@ public class WeatherActivity extends MyBaseActivity {
     }
 
     private void glideload(String bingpath) {
-        Glide.with(WeatherActivity.this).load(bingpath).bitmapTransform(new BlurTransformation(WeatherActivity.this, 25),
-                new CenterCrop(WeatherActivity.this)).into(weather_backimg);
+        Glide.with(WeatherActivity.this).load(bingpath).bitmapTransform(new BlurTransformation(WeatherActivity.this, 25))
+                .into(weather_backimg);
     }
 }

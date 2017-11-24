@@ -476,7 +476,6 @@ public class MainActivity extends MyBaseActivity {
 
                 break;
             case R.id.settings:
-                Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
                 break;
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);

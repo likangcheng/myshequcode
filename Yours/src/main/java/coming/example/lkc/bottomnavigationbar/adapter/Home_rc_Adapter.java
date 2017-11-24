@@ -87,9 +87,9 @@ public class Home_rc_Adapter extends RecyclerView.Adapter<Home_rc_Adapter.ViewHo
         holder.newsTime.setText(jiSuApi_list.NewsTime);
         holder.newsTitle.setText(jiSuApi_list.NewsTitle);
         if (!TextUtils.isEmpty(jiSuApi_list.pic)) {
-            Glide.with(context).load(jiSuApi_list.pic).centerCrop().into(holder.newsimg);
+            Glide.with(context).load(jiSuApi_list.pic).into(holder.newsimg);
         } else {
-            Glide.with(context).load(R.drawable.zwtp111).centerCrop().into(holder.newsimg);
+            Glide.with(context).load(R.drawable.zwtp111).into(holder.newsimg);
         }
     }
 

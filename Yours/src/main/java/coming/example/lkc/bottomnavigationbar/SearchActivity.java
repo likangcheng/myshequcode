@@ -1,5 +1,6 @@
 package coming.example.lkc.bottomnavigationbar;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
@@ -35,6 +36,7 @@ import coming.example.lkc.bottomnavigationbar.adapter.Suggest_list_BaseAdapter;
 import coming.example.lkc.bottomnavigationbar.fragment.Search_Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Search_WeiXin_Fragment;
 import coming.example.lkc.bottomnavigationbar.listener.Search2Fragment;
+import coming.example.lkc.bottomnavigationbar.other_view.AlertDIalog;
 import coming.example.lkc.bottomnavigationbar.unitl.Logwrite;
 
 
@@ -121,12 +123,21 @@ public class SearchActivity extends MyBaseActivity {
         histour_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                suggest_list_data.clear();
-                suggest_adapter.notifyDataSetChanged();
-                histour_cancel.setVisibility(View.GONE);
-                histour_header.setVisibility(View.GONE);
-                NO_HISITOUR = true;
-                Toast.makeText(SearchActivity.this, "清除成功", Toast.LENGTH_SHORT).show();
+                AlertDIalog alertDIalog = new AlertDIalog(SearchActivity.this, "提示", "真的要删除吗？", AlertDIalog.DETERMINE_CANCEL);
+                alertDIalog.ShowDialog();
+                alertDIalog.setOnDiaglogClickListener(new AlertDIalog.OnAdialogClickListener() {
+                    @Override
+                    public void OnClick(DialogInterface dialogInterface) {
+                        suggest_list_data.clear();
+                        suggest_adapter.notifyDataSetChanged();
+                        histour_cancel.setVisibility(View.GONE);
+                        histour_header.setVisibility(View.GONE);
+                        NO_HISITOUR = true;
+                        Toast.makeText(SearchActivity.this, "清除成功", Toast.LENGTH_SHORT).show();
+                        dialogInterface.dismiss();
+                    }
+                });
+
             }
         });
     }

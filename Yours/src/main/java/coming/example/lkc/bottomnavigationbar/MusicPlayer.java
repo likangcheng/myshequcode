@@ -39,8 +39,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
@@ -54,6 +52,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import coming.example.lkc.bottomnavigationbar.adapter.Song_List_BaseAdapter;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
@@ -163,8 +162,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
             toolbar.setTitle(sing.songname);
             toolbar.setSubtitle(sing.singername);
             setSupportActionBar(toolbar);
-            Glide.with(MusicPlayer.this).load(sing.albumpic_big).bitmapTransform(new BlurTransformation(MusicPlayer.this, 25),
-                    new CenterCrop(MusicPlayer.this)).into(mp_backimg);
+            Glide.with(MusicPlayer.this).load(sing.albumpic_big).bitmapTransform(new BlurTransformation(MusicPlayer.this, 25)).into(mp_backimg);
             Glide.with(MusicPlayer.this).load(sing.albumpic_big).into(mp_icon);
             mp_icon.setRotation(0f);
         }
@@ -447,9 +445,9 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
     }
 
     private void share2WeiXin(final int which) {
-        Glide.with(this).load(sing.albumpic_small).asBitmap().into(new SimpleTarget<Bitmap>() {
+        new Thread(new Runnable() {
             @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+            public void run() {
                 WXMusicObject wxmusic = new WXMusicObject();
                 if (!TextUtils.isEmpty(sing.musicurl)) {
                     wxmusic.musicUrl = sing.musicurl;
@@ -460,7 +458,14 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
                 mediaMessage.mediaObject = wxmusic;
                 mediaMessage.title = sing.songname;
                 mediaMessage.description = sing.singername;
-                mediaMessage.thumbData = Bitmap2Bytes(resource);
+                try {
+                    Bitmap bitmap = Glide.with(MusicPlayer.this).load(sing.albumpic_big).asBitmap().into(100, 100).get();
+                    mediaMessage.thumbData = Bitmap2Bytes(bitmap);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
                 req.transaction = String.valueOf(System.currentTimeMillis());
                 req.message = mediaMessage;
@@ -473,7 +478,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
                 }
                 iwxapi.sendReq(req);
             }
-        });
+        }).start();
     }
 
 //    long lastPressTime = 0;
