@@ -39,6 +39,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
@@ -59,6 +61,7 @@ import coming.example.lkc.bottomnavigationbar.dao.SingList;
 import coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection;
 import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 import coming.example.lkc.bottomnavigationbar.service.MusicService;
+import coming.example.lkc.bottomnavigationbar.unitl.GlideApp;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -87,6 +90,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
     private IWXAPI iwxapi;
     private FinishThisReceiver receiver;
     private int Start_flag = 0;//0为默认，1为Main进来，2从用户音乐，3从搜索
+    private DrawableTransitionOptions drawableTransitionOptions;
 
     private void regtoWX(Context context) {
         iwxapi = WXAPIFactory.createWXAPI(context, APP_ID, true);
@@ -162,8 +166,8 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
             toolbar.setTitle(sing.songname);
             toolbar.setSubtitle(sing.singername);
             setSupportActionBar(toolbar);
-            Glide.with(MusicPlayer.this).load(sing.albumpic_big).bitmapTransform(new BlurTransformation(MusicPlayer.this, 25)).into(mp_backimg);
-            Glide.with(MusicPlayer.this).load(sing.albumpic_big).into(mp_icon);
+            GlideApp.with(MusicPlayer.this).load(sing.albumpic_big).transition(drawableTransitionOptions).apply(RequestOptions.bitmapTransform(new BlurTransformation(25))).into(mp_backimg);
+            GlideApp.with(MusicPlayer.this).load(sing.albumpic_big).into(mp_icon);
             mp_icon.setRotation(0f);
         }
 
@@ -263,6 +267,8 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
         mp_r_next.setOnClickListener(this);
         mp_list = (ImageView) findViewById(R.id.mp_list);
         mp_list.setOnClickListener(this);
+        //Glide4.0加载动画
+        drawableTransitionOptions = new DrawableTransitionOptions().crossFade();
     }
 
     //播放器背景
@@ -459,7 +465,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
                 mediaMessage.title = sing.songname;
                 mediaMessage.description = sing.singername;
                 try {
-                    Bitmap bitmap = Glide.with(MusicPlayer.this).load(sing.albumpic_big).asBitmap().into(100, 100).get();
+                    Bitmap bitmap = GlideApp.with(MusicPlayer.this).asBitmap().load(sing.albumpic_big).into(100, 100).get();
                     mediaMessage.thumbData = Bitmap2Bytes(bitmap);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

@@ -25,6 +25,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.f;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.werb.permissionschecker.PermissionChecker;
 
 import org.json.JSONArray;
@@ -34,7 +35,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
-import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import coming.example.lkc.bottomnavigationbar.unitl.WeatherString2Imgid;
 import coming.example.lkc.bottomnavigationbar.weather.Forecast;
@@ -309,7 +309,8 @@ public class WeatherActivity extends MyBaseActivity {
     }
 
     private void glideload(String bingpath) {
-        Glide.with(WeatherActivity.this).load(bingpath).bitmapTransform(new BlurTransformation(WeatherActivity.this, 25))
+        Glide.with(WeatherActivity.this).load(bingpath)
+                .apply(RequestOptions.bitmapTransform(new BlurTransformation(25)))
                 .into(weather_backimg);
     }
 }

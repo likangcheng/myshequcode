@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 
 import coming.example.lkc.bottomnavigationbar.adapter.Fenxaing_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
+import coming.example.lkc.bottomnavigationbar.unitl.GlideApp;
 
 public class Book_Card_Activity extends MyBaseActivity implements View.OnClickListener {
     private final static String APP_ID = "wxd6ab7c22e73907b9";
@@ -118,7 +119,7 @@ public class Book_Card_Activity extends MyBaseActivity implements View.OnClickLi
                 message.description = "来自你的社区APP最新的微信文章精选";
                 Bitmap bitmap = null;
                 try {
-                    bitmap = Glide.with(Book_Card_Activity.this).load(data.userLogo).asBitmap().into(100, 100).get();
+                    bitmap = GlideApp.with(Book_Card_Activity.this).asBitmap().load(data.userLogo).into(100, 100).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -182,7 +183,6 @@ public class Book_Card_Activity extends MyBaseActivity implements View.OnClickLi
     public byte[] Bitmap2Bytes(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        Log.d("wode", "Bitmap2Bytes: ");
         return baos.toByteArray();
     }
 }

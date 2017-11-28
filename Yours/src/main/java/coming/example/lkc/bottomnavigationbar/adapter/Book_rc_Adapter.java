@@ -17,6 +17,7 @@ import java.util.List;
 import coming.example.lkc.bottomnavigationbar.Book_Card_Activity;
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
+import coming.example.lkc.bottomnavigationbar.unitl.GlideApp;
 
 /**
  * Created by lkc on 2017/8/1.
@@ -83,7 +84,7 @@ public class Book_rc_Adapter extends RecyclerView.Adapter<Book_rc_Adapter.ViewHo
         String[] timedata = weixinclass.ct.split(" ");
         holder.weixin_time.setText(timedata[0]);
         holder.weixin_title.setText(weixinclass.weixintitle);
-        Glide.with(mcontext).load(weixinclass.contentImg).into(holder.weixin_img);
+        GlideApp.with(mcontext).load(weixinclass.contentImg).into(holder.weixin_img);
     }
 
     @Override

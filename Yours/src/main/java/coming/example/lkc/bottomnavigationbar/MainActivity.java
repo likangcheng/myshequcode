@@ -63,6 +63,7 @@ import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.UpdataAppCreat;
 import coming.example.lkc.bottomnavigationbar.unitl.ActivityCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
+import coming.example.lkc.bottomnavigationbar.unitl.NewGlideEngine;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -194,7 +195,7 @@ public class MainActivity extends MyBaseActivity {
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)//图像选择和预览活动所需的方向。
                 .thumbnailScale(0.85f)//缩放比例
                 .theme(R.style.Matisse_Zhihu)//主题  暗色主题 R.style.Matisse_Dracula
-                .imageEngine(new GlideEngine())//加载方式
+                .imageEngine(new NewGlideEngine())//加载方式
                 .forResult(REQUEST_CODE_CHOOSE);//请求码
     }
 

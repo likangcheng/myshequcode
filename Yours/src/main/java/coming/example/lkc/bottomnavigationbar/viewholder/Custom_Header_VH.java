@@ -21,6 +21,7 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.MoviePager_Adapter;
+import coming.example.lkc.bottomnavigationbar.unitl.GlideApp;
 
 /**
  * Created by lkc on 2017/9/8.
@@ -94,8 +95,8 @@ public class Custom_Header_VH extends RecyclerView.ViewHolder {
         } else {
             viewpager_RL.setVisibility(View.GONE);
         }
-        Glide.with(context).load(imgid).into(imageView);
-        Glide.with(context).load(titleurl).into(titleimg);
+        GlideApp.with(context).load(imgid).into(imageView);
+        GlideApp.with(context).load(titleurl).into(titleimg);
         headtext.setText(text);
         String content = "当前有<font color='red'>" + date + "</font>个新闻";
         headdate.setText(Html.fromHtml(content));
