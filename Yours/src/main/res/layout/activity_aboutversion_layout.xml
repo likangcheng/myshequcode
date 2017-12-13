@@ -34,4 +34,25 @@
         android:layout_margin="5dp"
         android:text="The Yours Version:" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:text="如果你觉得应用做的还不错，可以点击按钮分享出去。" />
+
+    <Button
+        android:id="@+id/share_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:background="@drawable/bianyuanjiao"
+        android:paddingBottom="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
+        android:text="点击分享应用"
+        android:textColor="@color/wirte" />
+
 </LinearLayout>

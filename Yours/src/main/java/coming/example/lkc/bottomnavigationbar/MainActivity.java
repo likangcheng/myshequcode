@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.internal.NavigationMenuView;
@@ -34,12 +35,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.werb.permissionschecker.PermissionChecker;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -66,6 +70,7 @@ import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.NewGlideEngine;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -82,6 +87,8 @@ public class MainActivity extends MyBaseActivity {
     public boolean LOGIN_STATUS;//登录状态
     public String USERNAME_LOGIN;//登录用户名
     private NetWorkReceiver netWorkReceiver;
+    //头像背景
+    private ImageView head_backimg;
     private Dialog dialog;
     private static final int REQUEST_CODE_CHOOSE = 23;
     private List<String> pathList;
@@ -111,7 +118,7 @@ public class MainActivity extends MyBaseActivity {
         initFirstonClick();//底部导航栏第一次点击
         initReceiver();//检测网络状态
         initUpdata();//检测更新状态
-        initcircleImageView();//头像
+        initcircleImageView();//头像点击事件
     }
 
     private void initFirstStart() {
@@ -222,14 +229,18 @@ public class MainActivity extends MyBaseActivity {
         LOGIN_STATUS = SharedPreferencesUnitl.getLoginstatus_SharedPreferencesEditor(MainActivity.this);
         USERNAME_LOGIN = SharedPreferencesUnitl.getUsername_SharedPreferencesEditor(MainActivity.this);
         if (LOGIN_STATUS) {
-            main_login.setText("欢迎：" + USERNAME_LOGIN);
+            main_login.setText("用户：" + USERNAME_LOGIN);
             List<Users> usersList = DataSupport.where("username = ?", USERNAME_LOGIN).find(Users.class);
             if (TextUtils.isEmpty(usersList.get(0).getPath())) {
-//                Log.d("wode", "login_status_ok: no picture" + usersList.get(0).getPath());
                 circleImageView.setImageResource(R.drawable.ww2017719);
+                circleImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.nav_head_img));
                 //用户头像path是否为空，为空设置为初始化头像，否则设置path路径头像。
             } else {
                 Glide.with(this).load(usersList.get(0).getPath()).into(circleImageView);
+                Glide.with(this).load(usersList.get(0).getPath())
+                        .transition(new DrawableTransitionOptions().crossFade())
+                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(25)))
+                        .into(head_backimg);
             }
         } else {
             //登录状态为否，隐藏退出登录按钮，全部初始化。
@@ -245,12 +256,16 @@ public class MainActivity extends MyBaseActivity {
                 //接收登录返回内容
                 if (resultCode == RESULT_OK) {
                     String username = data.getStringExtra(Login_User_Activity.USERNAME_LOGIN);
-                    main_login.setText("欢迎：" + username);
+                    main_login.setText("用户：" + username);
                     List<Users> user = DataSupport.where("username = ?", username).find(Users.class);
                     if (TextUtils.isEmpty(user.get(0).getPath())) {
-                        circleImageView.setImageResource(R.drawable.ww2017719);
+                        circleImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.nav_head_img));
                     } else {
                         Glide.with(this).load(user.get(0).getPath()).into(circleImageView);
+                        Glide.with(this).load(user.get(0).getPath())
+                                .transition(new DrawableTransitionOptions().crossFade())
+                                .apply(RequestOptions.bitmapTransform(new BlurTransformation(25)))
+                                .into(head_backimg);
                     }
                     navigationView.getMenu().getItem(6).setVisible(true);
                     LOGIN_STATUS = true;
@@ -265,6 +280,10 @@ public class MainActivity extends MyBaseActivity {
                     userupdate.setPath(pathList.get(0));
                     userupdate.updateAll("username = ?", USERNAME_LOGIN);
                     Glide.with(this).load(pathList.get(0)).into(circleImageView);
+                    Glide.with(this).load(pathList.get(0))
+                            .transition(new DrawableTransitionOptions().crossFade())
+                            .apply(RequestOptions.bitmapTransform(new BlurTransformation(25)))
+                            .into(head_backimg);
                 }
                 break;
         }
@@ -287,6 +306,7 @@ public class MainActivity extends MyBaseActivity {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         View nav_head = navigationView.getHeaderView(0);
         circleImageView = (CircleImageView) nav_head.findViewById(R.id.icon_image);
+        head_backimg= (ImageView) nav_head.findViewById(R.id.nav_head_backimg);
         main_login = (TextView) nav_head.findViewById(R.id.maim_login);
         NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);
         navigationMenuView.setVerticalScrollBarEnabled(false);
@@ -343,7 +363,7 @@ public class MainActivity extends MyBaseActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 SharedPreferencesUnitl.cancelLoginstatus_SharedPreferences(MainActivity.this);
-//                              //Activity重新启动
+    //Activity重新启动
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

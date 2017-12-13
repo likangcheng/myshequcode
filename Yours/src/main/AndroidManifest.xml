@@ -81,7 +81,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote"></service>
-        <activity android:name=".Joke_Activity" />
     </application>
 
 </manifest>

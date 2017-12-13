@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00fafafa"
+    android:background="@drawable/weather_background_gradient"
     tools:context="coming.example.lkc.bottomnavigationbar.WeatherActivity">
 
     <ImageView

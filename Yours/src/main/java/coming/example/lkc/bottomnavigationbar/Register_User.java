@@ -60,7 +60,7 @@ public class Register_User extends MyBaseActivity {
                 String pass_word = password.getText().toString();
                 String pass_word_2 = password_2.getText().toString();
                 if (!queryUsername(user_name) && pass_word.equals(pass_word_2) && validatePassword(pass_word) && validateUser(user_name)) {
-                    //用户名不存在&二次密码一直&密码长度&用户名规则
+                    //用户名不存在&二次密码不一致&密码长度&用户名规则
                     String pass_word_md5 = MD5.md5(pass_word, 2);
                     Users users_updata = new Users();
                     users_updata.setUsername(user_name);

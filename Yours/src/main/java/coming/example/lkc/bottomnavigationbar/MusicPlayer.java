@@ -166,7 +166,10 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
             toolbar.setTitle(sing.songname);
             toolbar.setSubtitle(sing.singername);
             setSupportActionBar(toolbar);
-            GlideApp.with(MusicPlayer.this).load(sing.albumpic_big).transition(drawableTransitionOptions).apply(RequestOptions.bitmapTransform(new BlurTransformation(25))).into(mp_backimg);
+            GlideApp.with(MusicPlayer.this).load(sing.albumpic_big)
+                    .transition(drawableTransitionOptions)
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25)))
+                    .into(mp_backimg);
             GlideApp.with(MusicPlayer.this).load(sing.albumpic_big).into(mp_icon);
             mp_icon.setRotation(0f);
         }
@@ -212,6 +215,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("wode", "onPause: ");
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("coming.example.lkc.bottomnavigationbar." +
                 "FINISH_MUSICPLAYER");
@@ -494,15 +498,16 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
      */
     @Override
     public void onBackPressed() {
-//        if (new Date().getTime() - lastPressTime < 2000) {
-//            Intent intent = new Intent(Intent.ACTION_MAIN);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            intent.addCategory(Intent.CATEGORY_HOME);
-//            startActivity(intent);
-//        } else {
-//            lastPressTime = new Date().getTime();//重置lastPressTime
-//            Toast.makeText(MusicPlayer.this, "再按一次后台播放", Toast.LENGTH_SHORT).show();
-//        }
+/*   暂时注释掉，Back键相当于Home键得作用
+        if (new Date().getTime() - lastPressTime < 2000) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        } else {
+            lastPressTime = new Date().getTime();//重置lastPressTime
+            Toast.makeText(MusicPlayer.this, "再按一次后台播放", Toast.LENGTH_SHORT).show();
+        }*/
         switch (Start_flag) {
             case 0:
                 break;
