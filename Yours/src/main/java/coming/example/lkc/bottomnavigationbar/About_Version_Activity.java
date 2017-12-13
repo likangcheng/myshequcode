@@ -63,7 +63,7 @@ public class About_Version_Activity extends MyBaseActivity {
             public void run() {
                 WXWebpageObject wxWebpageObject = new WXWebpageObject();
                 wxWebpageObject.webpageUrl = "https://www.pgyer.com/THve";
-                WXMediaMessage wxMediaMessage = new WXMediaMessage();
+                WXMediaMessage wxMediaMessage = new WXMediaMessage(wxWebpageObject);
                 wxMediaMessage.title = "Yours 一款烂到爆的APP";
                 wxMediaMessage.description = "这是一款BUG很多、听歌没版权、新闻过时的APP，作者人蠢不帅还缺心眼。";
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_yours);
@@ -73,7 +73,6 @@ public class About_Version_Activity extends MyBaseActivity {
                 req.message = wxMediaMessage;
                 req.scene = SendMessageToWX.Req.WXSceneSession;
                 iwxapi.sendReq(req);
-
             }
         }).start();
 
