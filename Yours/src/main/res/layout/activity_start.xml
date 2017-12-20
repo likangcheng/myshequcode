@@ -23,20 +23,20 @@
         app:selectedColor="#DA5380"
         app:strokeWidth="2dp" />
 
-    <Button
+    <TextView
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/start_indicator"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/start_button"
         android:paddingBottom="11dp"
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
         android:paddingTop="11dp"
-        android:text="立即进入Yours"
+        android:textStyle="bold"
+        android:text="点击进入Yours"
         android:textColor="#fff"
-        android:textSize="14sp" />
+        android:textSize="16sp" />
 
 </RelativeLayout>

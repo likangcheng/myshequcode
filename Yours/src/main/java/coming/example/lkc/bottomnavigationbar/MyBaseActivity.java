@@ -16,7 +16,6 @@ public class MyBaseActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
-        Log.d("wode", "onCreate: "+this.toString());
     }
 
     @Override

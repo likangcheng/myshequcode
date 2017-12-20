@@ -24,6 +24,7 @@ import java.util.List;
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Game_rc_Apapter;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
+import coming.example.lkc.bottomnavigationbar.listener.ManiActivity2Fragment;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
@@ -33,7 +34,7 @@ import okhttp3.Response;
 /**
  * Created by lkc on 2017/7/31.
  */
-public class Movie_Fragment extends Fragment {
+public class Movie_Fragment extends Fragment implements ManiActivity2Fragment {
     private RecyclerView movie_recyclerview;
     private SwipeRefreshLayout swip;
     private Game_rc_Apapter adapter;
@@ -159,5 +160,12 @@ public class Movie_Fragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void setOnRefresh() {
+        movie_recyclerview.smoothScrollToPosition(0);
+        swip.setRefreshing(true);
+        requestNews();
     }
 }

@@ -5,6 +5,7 @@ import com.bumptech.glide.module.AppGlideModule;
 
 /**
  * Created by 李康成 on 2017/11/27.
+ * Glide4.0
  */
 @GlideModule
 public class MyGlideModule extends AppGlideModule {

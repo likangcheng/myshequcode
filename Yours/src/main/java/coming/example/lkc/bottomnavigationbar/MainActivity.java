@@ -3,6 +3,7 @@ package coming.example.lkc.bottomnavigationbar;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -64,10 +65,12 @@ import coming.example.lkc.bottomnavigationbar.fragment.Game_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Home_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Movie_Fragment;
 import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
+import coming.example.lkc.bottomnavigationbar.listener.ManiActivity2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.UpdataAppCreat;
 import coming.example.lkc.bottomnavigationbar.unitl.ActivityCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.NewGlideEngine;
+import coming.example.lkc.bottomnavigationbar.unitl.NotificationCreate_Unitl;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -89,6 +92,7 @@ public class MainActivity extends MyBaseActivity {
     private NetWorkReceiver netWorkReceiver;
     //头像背景
     private ImageView head_backimg;
+    private ManiActivity2Fragment listentr;//传入Fragment
     private Dialog dialog;
     private static final int REQUEST_CODE_CHOOSE = 23;
     private List<String> pathList;
@@ -117,8 +121,20 @@ public class MainActivity extends MyBaseActivity {
         login_status_ok();//登录状态
         initFirstonClick();//底部导航栏第一次点击
         initReceiver();//检测网络状态
-        initUpdata();//检测更新状态
         initcircleImageView();//头像点击事件
+        initNotifaction();
+        //检测更新
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10000);
+                    initUpdata();//检测更新状态
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void initFirstStart() {
@@ -163,7 +179,8 @@ public class MainActivity extends MyBaseActivity {
                     String version = packInfo.versionName;
                     //当前版本和后台版本不匹配，弹出通知
                     if (!TextUtils.equals(version, newVersionName)) {
-                        initNotifaction();//通知
+                        UpdataAppCreat updataAppCreat = new UpdataAppCreat(MainActivity.this);
+                        updataAppCreat.setUpdataDialog(false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -173,18 +190,8 @@ public class MainActivity extends MyBaseActivity {
     }
 
     private void initNotifaction() {
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("APP有新的版本了！")
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("系统检测到Yours有新的版本啦！可以在用户栏版本更新处进行下载更新。"))
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.icon_yours)
-//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.gx_icon))
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .build();
-        manager.notify(1, notification);
+        NotificationCreate_Unitl create_unitl=new NotificationCreate_Unitl(this);
+        create_unitl.sendNotification();
     }
 
     //打开图片选择器  知乎库
@@ -233,7 +240,7 @@ public class MainActivity extends MyBaseActivity {
             List<Users> usersList = DataSupport.where("username = ?", USERNAME_LOGIN).find(Users.class);
             if (TextUtils.isEmpty(usersList.get(0).getPath())) {
                 circleImageView.setImageResource(R.drawable.ww2017719);
-                circleImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.nav_head_img));
+                circleImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.nav_head_img));
                 //用户头像path是否为空，为空设置为初始化头像，否则设置path路径头像。
             } else {
                 Glide.with(this).load(usersList.get(0).getPath()).into(circleImageView);
@@ -259,7 +266,7 @@ public class MainActivity extends MyBaseActivity {
                     main_login.setText("用户：" + username);
                     List<Users> user = DataSupport.where("username = ?", username).find(Users.class);
                     if (TextUtils.isEmpty(user.get(0).getPath())) {
-                        circleImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.nav_head_img));
+                        circleImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.nav_head_img));
                     } else {
                         Glide.with(this).load(user.get(0).getPath()).into(circleImageView);
                         Glide.with(this).load(user.get(0).getPath())
@@ -306,7 +313,7 @@ public class MainActivity extends MyBaseActivity {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         View nav_head = navigationView.getHeaderView(0);
         circleImageView = (CircleImageView) nav_head.findViewById(R.id.icon_image);
-        head_backimg= (ImageView) nav_head.findViewById(R.id.nav_head_backimg);
+        head_backimg = (ImageView) nav_head.findViewById(R.id.nav_head_backimg);
         main_login = (TextView) nav_head.findViewById(R.id.maim_login);
         NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);
         navigationMenuView.setVerticalScrollBarEnabled(false);
@@ -363,7 +370,7 @@ public class MainActivity extends MyBaseActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 SharedPreferencesUnitl.cancelLoginstatus_SharedPreferences(MainActivity.this);
-    //Activity重新启动
+                //Activity重新启动
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -412,6 +419,7 @@ public class MainActivity extends MyBaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.gengduo);
         }
+
     }
 
     private void initBottomNavigationBar() {
@@ -450,9 +458,19 @@ public class MainActivity extends MyBaseActivity {
             }
 
             //选中到选中
+            long click_time = 0;
+
             @Override
             public void onTabReselected(int position) {
-
+                switch (position) {
+                    case 0:
+                        if (new Date().getTime() - click_time < 1000) {
+                            listentr.setOnRefresh();
+                        } else {
+                            click_time = new Date().getTime();
+                        }
+                        break;
+                }
             }
         });
     }
@@ -476,6 +494,14 @@ public class MainActivity extends MyBaseActivity {
                 break;
             default:
                 throw new NullPointerException();
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof Movie_Fragment) {
+            listentr = (ManiActivity2Fragment) fragment;
         }
     }
 

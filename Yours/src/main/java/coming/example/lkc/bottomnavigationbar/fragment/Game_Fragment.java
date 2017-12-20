@@ -74,7 +74,6 @@ public class Game_Fragment extends Fragment {
         springView.setFooter(new MeituanFooter(getActivity()));
 
     }
-
     private void requestNews() {
         String NewsUrl = "http://api.jisuapi.com/news/get?channel=NBA&start=0&num=40&appkey=9a46b272586356ee";
         HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {

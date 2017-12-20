@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.LinePageIndicator;
@@ -24,7 +25,7 @@ import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 public class Start_Activity extends MyBaseActivity {
     private ViewPager viewPager;
     private ImageView[] imageView;
-    private Button button;
+    private TextView button;
     private LinePageIndicator circlePageIndicator;
     private int img[] = {
             R.drawable.img1, R.drawable.img2, R.drawable.img0
@@ -42,7 +43,7 @@ public class Start_Activity extends MyBaseActivity {
         }
         setContentView(R.layout.activity_start);
         viewPager = (ViewPager) findViewById(R.id.start_viewpager);
-        button = (Button) findViewById(R.id.start_button);
+        button = (TextView) findViewById(R.id.start_button);
         circlePageIndicator = (LinePageIndicator) findViewById(R.id.start_indicator);
         viewPager.setAdapter(new MyAdapter());
         circlePageIndicator.setViewPager(viewPager);

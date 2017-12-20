@@ -10,7 +10,7 @@
         android:id="@+id/weather_backimg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swip_weather"

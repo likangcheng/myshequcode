@@ -15,7 +15,13 @@ import coming.example.lkc.bottomnavigationbar.weather.WeatherApi;
 /**
  * Created by lkc on 2017/7/31.
  */
+
 public class Utility {
+    /**
+     *
+     * @param response 为解析的JSON数据
+     * @return 解析好的JSON 数据类
+     */
     public static JiSuApi_Body handelNewsResponse(String response) {
         Gson gson = new Gson();
         try {
