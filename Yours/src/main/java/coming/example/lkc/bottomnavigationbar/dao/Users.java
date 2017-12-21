@@ -10,6 +10,15 @@ public class Users extends DataSupport {
     private String username;
     private String password;
     private String path;
+    private String backimgpath;
+
+    public String getBackimgpath() {
+        return backimgpath;
+    }
+
+    public void setBackimgpath(String backimgpath) {
+        this.backimgpath = backimgpath;
+    }
 
     public String getPath() {
         return path;

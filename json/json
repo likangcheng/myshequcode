@@ -1,7 +1,7 @@
 {
   "new_version": "1.7.3",
-  "apk_file_url": "http://app-global.pgyer.com/66facb56ecbcd669adfea7f229a5bc87.apk?attname=Yours-release.apk&sign=44a2b5ecdbbe80c9fa81114a2bfa6614&t=5a30e7a2",
-  "update_log": "1，优化用户登录界面。\r\n2，优化音乐播放器。\r\n3，可以将APP分享至微信。\r\n4，适配Android8.0。",
+  "apk_file_url": "http://app-global.pgyer.com/2cc6fc64093cac9c437fe40d699e0881.apk?attname=Yours-release.apk&sign=22057f78fc9f1962490b539d5bb0b896&t=5a3b5e84",
+  "update_log": "1，适配Android8.0。\r\n2，优化音乐播放器。\r\n3，优化用户设置头像和背景图片。\r\n4，可以将APP分享至微信。\r\n5，优化用户登录界面。",
   "target_size": "9.01M",
   "constraint": false
 }

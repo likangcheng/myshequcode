@@ -18,15 +18,17 @@ import coming.example.lkc.bottomnavigationbar.R;
 public class CustomDialog_lkc implements View.OnClickListener {
     private Dialog dialog;
     private Context context;
-    private View view1;
     private OnDialogMenuClick onDialogMenuClick = null;
 
     public CustomDialog_lkc(Context context) {
         this.context = context;
+        SetDialog();
     }
 
     public interface OnDialogMenuClick {
-        void OnOkClick(View view);
+        void OnCameraClick(View view);
+
+        void OnAblmClick(View view);
 
         void OnCancelClick(View view);
     }
@@ -35,65 +37,41 @@ public class CustomDialog_lkc implements View.OnClickListener {
         this.onDialogMenuClick = onDialogMenuClick;
     }
 
-    public void SetDialog(String oktext, String title, String canceltext) {
-        dialog = new Dialog(context, R.style.PhotographAndPicture_DialogStyle);
-        View view = LayoutInflater.from(context).inflate(R.layout.determine_cancel_dialog_layout, null);
-        TextView text = (TextView) view.findViewById(R.id.tcdl_text);
-        TextView ok = (TextView) view.findViewById(R.id.tcdl_ok);
-        TextView cancel = (TextView) view.findViewById(R.id.tcdl_cancel);
-        cancel.setText(canceltext);
-        ok.setText(oktext);
-        text.setText(title);
-        ok.setOnClickListener(this);
-        text.setOnClickListener(this);
+    public void SetDialog() {
+        dialog = new Dialog(context, R.style.ActionSheetDialogStyle);
+        View view = LayoutInflater.from(context).inflate(R.layout.custom_dialog_headpic_layout, null);
+        TextView camera = view.findViewById(R.id.dialog_head_camera);
+        TextView albm = view.findViewById(R.id.dialog_head_albm);
+        TextView cancel = view.findViewById(R.id.dialog_head_cancel);
+        camera.setOnClickListener(this);
+        albm.setOnClickListener(this);
         cancel.setOnClickListener(this);
         dialog.setContentView(view);
         Window dialogWindow = dialog.getWindow();
-        dialogWindow.setGravity(Gravity.CENTER);
+        dialogWindow.setGravity(Gravity.BOTTOM);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         dialogWindow.setAttributes(lp);
-        dialog.show();
-    }
-
-    public void SetDialog(String title, String oktext) {
-        dialog = new Dialog(context, R.style.PhotographAndPicture_DialogStyle);
-        View view = LayoutInflater.from(context).inflate(R.layout.determine_cancel_dialog_layout, null);
-        TextView text = (TextView) view.findViewById(R.id.tcdl_text);
-        TextView ok = (TextView) view.findViewById(R.id.tcdl_ok);
-        TextView cancel = (TextView) view.findViewById(R.id.tcdl_cancel);
-        view1 = view.findViewById(R.id.view_tcdl);
-        cancel.setVisibility(View.GONE);
-        view1.setVisibility(View.GONE);
-        ok.setText(oktext);
-        text.setText(title);
-        ok.setTextColor(Color.parseColor("#4A4A4A"));
-        ok.setOnClickListener(this);
-        text.setOnClickListener(this);
-        cancel.setOnClickListener(this);
-        dialog.setContentView(view);
-        Window dialogWindow = dialog.getWindow();
-        dialogWindow.setGravity(Gravity.CENTER);
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dialogWindow.setAttributes(lp);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
         dialog.show();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tcdl_ok:
+            case R.id.dialog_head_camera:
                 if (onDialogMenuClick != null) {
-                    onDialogMenuClick.OnOkClick(v);
+                    onDialogMenuClick.OnCameraClick(v);
                 }
                 dialog.dismiss();
                 break;
-            case R.id.tcdl_cancel:
+            case R.id.dialog_head_albm:
+                if (onDialogMenuClick != null) {
+                    onDialogMenuClick.OnAblmClick(v);
+                }
+                dialog.dismiss();
+                break;
+            case R.id.dialog_head_cancel:
                 if (onDialogMenuClick != null) {
                     onDialogMenuClick.OnCancelClick(v);
                 }

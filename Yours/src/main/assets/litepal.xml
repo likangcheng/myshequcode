@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="UserStore" />
-    <version value="8" />
+    <version value="9" />
     <list>
         <mapping class="coming.example.lkc.bottomnavigationbar.dao.Users" />
         <mapping class="coming.example.lkc.bottomnavigationbar.dao.UserSong_Collection"/>

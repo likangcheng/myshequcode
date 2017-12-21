@@ -66,6 +66,7 @@ public class Register_User extends MyBaseActivity {
                     users_updata.setUsername(user_name);
                     users_updata.setPassword(pass_word_md5);
                     users_updata.setPath("");
+                    users_updata.setBackimgpath("");
                     users_updata.save();
                     //存入本地数据库
                     Intent resultintent = new Intent();
