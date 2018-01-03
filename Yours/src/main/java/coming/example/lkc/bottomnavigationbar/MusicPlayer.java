@@ -263,7 +263,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
         time_right = (TextView) findViewById(R.id.time_right);
         mp_play = (ImageView) findViewById(R.id.mp_play);
         mp_play.setOnClickListener(this);
-        mp_loop = (ImageView) findViewById(R.id.mp_loop);
+            mp_loop = (ImageView) findViewById(R.id.mp_loop);
         mp_loop.setOnClickListener(this);
         mp_l_next = (ImageView) findViewById(R.id.mp_left_next);
         mp_l_next.setOnClickListener(this);

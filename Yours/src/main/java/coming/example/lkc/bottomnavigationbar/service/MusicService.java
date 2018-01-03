@@ -45,7 +45,6 @@ public class MusicService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("wode", "MusicService onBind: ");
         return mBinder;
     }
 

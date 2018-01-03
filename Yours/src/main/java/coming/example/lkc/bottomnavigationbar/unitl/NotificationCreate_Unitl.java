@@ -3,14 +3,17 @@ package coming.example.lkc.bottomnavigationbar.unitl;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import coming.example.lkc.bottomnavigationbar.R;
+import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
 
 /**
  * Created by 李康成 on 2017/12/18.
@@ -25,7 +28,7 @@ public class NotificationCreate_Unitl extends ContextWrapper {
 
     public NotificationCreate_Unitl(Context base) {
         super(base);
-        this.context=base;
+        this.context = base;
     }
 
     public void createNotificationChannel() {
@@ -49,6 +52,7 @@ public class NotificationCreate_Unitl extends ContextWrapper {
 
     /**
      * 8.0以上版本适配通知
+     *
      * @return
      */
     public Notification.Builder getChannelNotification() {
@@ -56,7 +60,7 @@ public class NotificationCreate_Unitl extends ContextWrapper {
             return new Notification.Builder(getApplicationContext(), id)
                     .setContentTitle("你喜不喜欢李钟硕？")
                     .setWhen(System.currentTimeMillis())
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.mipmap.nav_head_img))
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.nav_head_img))
                     .setStyle(new Notification.BigTextStyle().bigText("李钟硕（Lee Jong Suk），1989年9月14日出生于京" +
                             "畿道龙仁，韩国男演员、模特。2010年3月参演律政剧《检察官公主》，以演员身" +
                             "份正式出道；9月出演浪漫爱情剧《秘密花园》。2012年主演校园剧《学校2013》。2" +
@@ -70,24 +74,66 @@ public class NotificationCreate_Unitl extends ContextWrapper {
     }
 
     /**
-     * SDK25一下老板本通知
+     * @param pendingIntent
+     * @param title
+     * @param bitmap
+     * @param content
      * @return
      */
+    public Notification.Builder getChannelNotification(PendingIntent pendingIntent, String title, Bitmap bitmap, String content) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return new Notification.Builder(getApplicationContext(), id)
+                    .setContentTitle(title)
+                    .setWhen(System.currentTimeMillis())
+                    .setLargeIcon(bitmap)
+                    .setContentText(content)
+                    .setSmallIcon(android.R.drawable.stat_notify_more)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+        }
+        return null;
+    }
+
+    /**
+     * SDK25一下老板本通知
+     *
+     * @return
+     */
+    public NotificationCompat.Builder getNotification_25(PendingIntent pendingIntent, String title, Bitmap bitmap, String content) {
+        return new NotificationCompat.Builder(getApplicationContext())
+                .setContentTitle(title)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(android.R.drawable.stat_notify_more)
+                .setLargeIcon(bitmap)
+                .setContentText(content)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_MAX);
+    }
+
     public NotificationCompat.Builder getNotification_25() {
         return new NotificationCompat.Builder(getApplicationContext())
                 .setContentTitle("你喜不喜欢李钟硕？")
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("李钟硕（Lee Jong Suk），1989年9月14日出生于京" +
-                        "畿道龙仁，韩国男演员、模特。2010年3月参演律政剧《检察官公主》，以演员身" +
-                        "份正式出道；9月出演浪漫爱情剧《秘密花园》。2012年主演校园剧《学校2013》。2" +
-                        "013年6月首次担纲男主角的奇幻爱情剧《听见你的声音》夺得水木剧年度收视冠军，并凭" +
-                        "借该剧入围第50届百想艺术大赏电视部门最佳男演员奖；9月出演古装电影《观相》。"))
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(android.R.drawable.stat_notify_more)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.nav_head_img))
-//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.gx_icon))
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.nav_head_img))
+                .setContentText("你会怎么看")
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX);
+    }
+
+    public void sendNotification(PendingIntent pendingIntent, String title, Bitmap bitmap, String content) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            createNotificationChannel();
+            Notification notification = getChannelNotification
+                    (pendingIntent, title, bitmap, content).build();
+            getManager().notify(1, notification);
+        } else {
+            Notification notification = getNotification_25(pendingIntent, title, bitmap, content).build();
+            getManager().notify(1, notification);
+        }
     }
 
     public void sendNotification() {

@@ -74,11 +74,13 @@ import coming.example.lkc.bottomnavigationbar.fragment.Music_Fragment;
 import coming.example.lkc.bottomnavigationbar.listener.ManiActivity2Fragment;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog_lkc;
 import coming.example.lkc.bottomnavigationbar.other_view.UpdataAppCreat;
+import coming.example.lkc.bottomnavigationbar.service.AutoGetNotifaction;
 import coming.example.lkc.bottomnavigationbar.unitl.ActivityCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.Head_Photo_Utility;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.NewGlideEngine;
 import coming.example.lkc.bottomnavigationbar.unitl.NotificationCreate_Unitl;
+import coming.example.lkc.bottomnavigationbar.unitl.ServiceCollector;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -100,7 +102,7 @@ public class MainActivity extends MyBaseActivity {
     public String USERNAME_LOGIN;//登录用户名
     private NetWorkReceiver netWorkReceiver;
     //头像背景
-    private ImageView head_backimg,head_backimg_change;
+    private ImageView head_backimg, head_backimg_change;
     private ManiActivity2Fragment listentr;//传入Fragment
     private Dialog dialog;
     private static final int REQUEST_CODE_CHOOSE = 23;
@@ -133,9 +135,20 @@ public class MainActivity extends MyBaseActivity {
         initReceiver();//检测网络状态
         initcircleImageView();//头像点击事件
         //通知
-        initNotifaction();
+//        initNotifaction();
+        initAutoGetNotifaction();
         //检测更新
         initUpdataapp();
+    }
+
+    private void initAutoGetNotifaction() {
+        String servicename="coming.example.lkc.bottomnavigationbar.service.AutoGetNotifaction";
+        Log.d("wode", "initAutoGetNotifaction: "+ServiceCollector.isServiceRunning(this,servicename));
+       //后台服务，判断是否运行，运行则跳过。
+        if (!ServiceCollector.isServiceRunning(this,servicename)){
+            Intent intent2AutoServic = new Intent(this, AutoGetNotifaction.class);
+            startService(intent2AutoServic);
+        }
     }
 
     private void initUpdataapp() {
@@ -175,7 +188,7 @@ public class MainActivity extends MyBaseActivity {
                     customDialog_lkc.setOnDialogMenuClick(new CustomDialog_lkc.OnDialogMenuClick() {
                         @Override
                         public void OnCameraClick(View view) {
-                            templefile = new File(Environment.getExternalStorageDirectory().getPath(), System.currentTimeMillis() + ".jpg");
+                            templefile = new File(Environment.getExternalStorageDirectory().getPath()+"/Yours/File", System.currentTimeMillis() + ".jpg");
                             Head_Photo_Utility.getPicFromCamera(MainActivity.this, templefile);
                         }
 
@@ -308,7 +321,7 @@ public class MainActivity extends MyBaseActivity {
                     } else {
                         Glide.with(this).load(user.get(0).getPath()).into(circleImageView);
                     }
-                    if (!TextUtils.isEmpty(user.get(0).getBackimgpath())){
+                    if (!TextUtils.isEmpty(user.get(0).getBackimgpath())) {
                         Glide.with(this).load(user.get(0).getBackimgpath())
                                 .transition(new DrawableTransitionOptions().crossFade())
                                 .apply(RequestOptions.bitmapTransform(new BlurTransformation(25)))
@@ -388,7 +401,7 @@ public class MainActivity extends MyBaseActivity {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         View nav_head = navigationView.getHeaderView(0);
         circleImageView = (CircleImageView) nav_head.findViewById(R.id.icon_image);
-        head_backimg_change=nav_head.findViewById(R.id.head_back_change);
+        head_backimg_change = nav_head.findViewById(R.id.head_back_change);
         head_backimg = (ImageView) nav_head.findViewById(R.id.nav_head_backimg);
         main_login = (TextView) nav_head.findViewById(R.id.maim_login);
         NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);

@@ -74,12 +74,26 @@
         <activity android:name=".SearchActivity" />
         <activity android:name=".MusicPlayer" />
         <activity android:name=".About_Version_Activity" />
-        <activity android:name=".WeatherActivity"></activity>
+        <activity android:name=".WeatherActivity" />
 
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
+        <service
+            android:name=".service.AutoGetNotifaction"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".receiver.NotifactionReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="coming.example.lkc.bottomnavigationbar.MY_NOTIF_RECEIVER" />
+            </intent-filter>
+
+        </receiver>
     </application>
 
 </manifest>
