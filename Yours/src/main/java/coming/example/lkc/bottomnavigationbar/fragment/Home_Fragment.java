@@ -1,9 +1,13 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +15,18 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import coming.example.lkc.bottomnavigationbar.HomeCardActivity;
 import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.adapter.Home_rc_Adapter;
+import coming.example.lkc.bottomnavigationbar.adapter.Home_rc_newAdapter;
 import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
+import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
 import okhttp3.Call;
@@ -29,25 +37,44 @@ import okhttp3.Response;
  * Created by lkc on 2017/7/31.
  */
 public class Home_Fragment extends Fragment {
-    private XRecyclerView recyclerView;
-    private GridLayoutManager layoutManager;
-    private Home_rc_Adapter newsAdapter;
-    private int newspage = 1;
-    private LinearLayout li;
+    private RecyclerView recyclerView;
+    private Home_rc_newAdapter newsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private int newspage = 0;
+    private List<JiSuApi_List> api_lists = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home, null);
-        recyclerView = (XRecyclerView) view.findViewById(R.id.home_recyclerView);
-        li= (LinearLayout) view.findViewById(R.id.home_linearlayout);
-        layoutManager = new GridLayoutManager(view.getContext(), 1);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setPullRefreshEnabled(true);
-        recyclerView.setArrowImageView(R.drawable.ondown);
-        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
-        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallPulse);
-        newsAdapter = new Home_rc_Adapter();
+        recyclerView = view.findViewById(R.id.home_recyclerView);
+        swipeRefreshLayout = view.findViewById(R.id.home_swiplayout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.bule, R.color.orange, R.color.teal);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        newsAdapter = new Home_rc_newAdapter(view.getContext());
+        //点击事件
+        newsAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                JiSuApi_List jiSuApi_list=api_lists.get(position);
+                Intent intent = new Intent(view.getContext(), HomeCardActivity.class);
+                intent.putExtra(HomeCardActivity.CONTENTLIST_DATA, jiSuApi_list);
+                view.getContext().startActivity(intent);
+            }
+        });
+        //recyclerView的过度动画
+//        newsAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        newsAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                if (newspage < 6) {
+                    newspage++;
+                    loadmoreNews(20 * newspage);
+                } else {
+                    newsAdapter.loadMoreEnd();
+                }
+            }
+        }, recyclerView);
         recyclerView.setAdapter(newsAdapter);
         return view;
     }
@@ -56,28 +83,27 @@ public class Home_Fragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
-            public void onRefresh() {
-                requestNews();
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
                 newspage = 1;
-            }
-
-            @Override
-            public void onLoadMore() {
-                if (newspage < 6) {
-                    loadmoreNews(20 * newspage);
-                    newspage++;
-                } else {
-                    recyclerView.setNoMore(true);
-                }
+                requestNews();
             }
         });
-        recyclerView.refresh();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                api_lists.clear();
+                newspage = 1;
+                requestNews();
+            }
+        });
     }
 
 
     private void requestNews() {
+        newsAdapter.setEnableLoadMore(false);
         String NewsUrl = "http://api.jisuapi.com/news/get?channel=头条&start=0&num=20&appkey=9a46b272586356ee";
         HttpUnitily.sendOkHttpRequest(NewsUrl, new Callback() {
             @Override
@@ -87,7 +113,8 @@ public class Home_Fragment extends Fragment {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
-                            recyclerView.refreshComplete();
+                            newsAdapter.setEnableLoadMore(true);
+                            swipeRefreshLayout.setRefreshing(false);
                         }
                     });
                 }
@@ -103,14 +130,16 @@ public class Home_Fragment extends Fragment {
                         public void run() {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status.equals("0")) {
-                                    newsAdapter.setDatalist(jiSuApi_body.result.Newslist);
+                                    api_lists.addAll(jiSuApi_body.result.Newslist);
+                                    newsAdapter.setNewData(jiSuApi_body.result.Newslist);
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
-                            }else {
+                            } else {
                                 Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                             }
-                            recyclerView.refreshComplete();
+                            newsAdapter.setEnableLoadMore(true);
+                            swipeRefreshLayout.setRefreshing(false);
 //                            OnRefrsh_Success_Dialog();
                         }
                     });
@@ -129,7 +158,8 @@ public class Home_Fragment extends Fragment {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
-                            recyclerView.loadMoreComplete();
+                            newsAdapter.loadMoreFail();
+                            newspage--;
                         }
                     });
                 }
@@ -145,12 +175,13 @@ public class Home_Fragment extends Fragment {
                         public void run() {
                             if (jiSuApi_body != null) {
                                 if (jiSuApi_body.status.equals("0")) {
-                                    newsAdapter.loadmoreDatalist(jiSuApi_body.result.Newslist);
+                                    api_lists.addAll(jiSuApi_body.result.Newslist);
+                                    newsAdapter.addData(jiSuApi_body.result.Newslist);
                                 } else {
                                     Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            recyclerView.loadMoreComplete();
+                            newsAdapter.loadMoreComplete();
                         }
                     });
                 }

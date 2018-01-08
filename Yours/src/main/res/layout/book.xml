@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#F2F2F2"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F2F2F2">
 
-        <com.liaoinstan.springview.widget.SpringView
-            android:id="@+id/springview"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/book_swiprefreshlayou"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/weixin_rc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:footer="@layout/header_recycle"
-            app:type="follow">
+            android:overScrollMode="never"
+            android:scrollbars="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/weixin_rc"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:overScrollMode="never"
-                android:scrollbars="vertical">
+        </android.support.v7.widget.RecyclerView>
 
-            </android.support.v7.widget.RecyclerView>
-        </com.liaoinstan.springview.widget.SpringView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <LinearLayout
-        android:visibility="gone"
-        android:gravity="center"
-        android:orientation="vertical"
         android:id="@+id/book_network_erro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="60dp"
@@ -37,9 +36,9 @@
             android:src="@drawable/networkerro" />
 
         <TextView
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text="网络错误点击重试" />
     </LinearLayout>
 </FrameLayout>

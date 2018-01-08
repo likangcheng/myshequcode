@@ -1,25 +1,33 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.liaoinstan.springview.container.AliFooter;
 import com.liaoinstan.springview.container.AliHeader;
 import com.liaoinstan.springview.widget.SpringView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import coming.example.lkc.bottomnavigationbar.Book_Card_Activity;
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
+import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
 import coming.example.lkc.bottomnavigationbar.other_view.GridSpacingItemDecoration;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
 import coming.example.lkc.bottomnavigationbar.unitl.Utility;
@@ -32,22 +40,39 @@ import okhttp3.Response;
  */
 public class Book_Fragment extends Fragment {
     private RecyclerView bookrecyclerView;
-    private SpringView springView;
     private Book_rc_Adapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout networkerro;
+    private List<WeiXin_Content_list> content_lists = new ArrayList<>();
     private int page = 1;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.book, null);
-        bookrecyclerView = (RecyclerView) view.findViewById(R.id.weixin_rc);
-        networkerro = (LinearLayout) view.findViewById(R.id.book_network_erro);
-        springView = (SpringView) view.findViewById(R.id.springview);
-        springView.setType(SpringView.Type.FOLLOW);
+        bookrecyclerView = view.findViewById(R.id.weixin_rc);
+        networkerro = view.findViewById(R.id.book_network_erro);
+        swipeRefreshLayout = view.findViewById(R.id.book_swiprefreshlayou);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.bule, R.color.orange, R.color.teal);
         bookrecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        adapter = new Book_rc_Adapter();
-        bookrecyclerView.addItemDecoration(new GridSpacingItemDecoration(2,getResources().getDimensionPixelSize(R.dimen.recycleview_dimen),true));
+        adapter = new Book_rc_Adapter(view.getContext());
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(view.getContext(), Book_Card_Activity.class);
+                intent.putExtra(Book_Card_Activity.WEIXIN_DATA, content_lists.get(position));
+                view.getContext().startActivity(intent);
+            }
+        });
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                Log.d("wode", "onLoadMoreRequested: "+page);
+                page++;
+                loadmoreNEWS();
+            }
+        }, bookrecyclerView);
+        bookrecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, getResources().getDimensionPixelSize(R.dimen.recycleview_dimen), true));
         bookrecyclerView.setAdapter(adapter);
         return view;
     }
@@ -55,28 +80,27 @@ public class Book_Fragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        requestWexinNEWS();
         networkerro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestWexinNEWS();
             }
         });
-        springView.setListener(new SpringView.OnFreshListener() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
-            public void onRefresh() {
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
                 requestWexinNEWS();
             }
-
+        });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onLoadmore() {
-                page++;
-                loadmoreNEWS();
+            public void onRefresh() {
+                content_lists.clear();
+                adapter.setEnableLoadMore(false);
+                requestWexinNEWS();
             }
         });
-
-        springView.setHeader(new AliHeader(getActivity(), true));
-        springView.setFooter(new AliFooter(getActivity(), false));
     }
 
     private void loadmoreNEWS() {
@@ -91,7 +115,8 @@ public class Book_Fragment extends Fragment {
                     @Override
                     public void run() {
                         Toast.makeText(getActivity(), "获取更多信息失败", Toast.LENGTH_SHORT).show();
-                        springView.onFinishFreshAndLoad();
+                        adapter.loadMoreFail();
+                        page--;
                     }
                 });
             }
@@ -105,14 +130,16 @@ public class Book_Fragment extends Fragment {
                     public void run() {
                         if (weiXinNew2 != null) {
                             if (weiXinNew2.showapi_res_code == 0) {
-                                adapter.loadmoreBookData(weiXinNew2.showapi_res_body.pagebean.contentlist);
+                                weiXinNew2.showapi_res_body.pagebean.contentlist.remove(0);
+                                content_lists.addAll(weiXinNew2.showapi_res_body.pagebean.contentlist);
+                                adapter.addData(weiXinNew2.showapi_res_body.pagebean.contentlist);
+                                adapter.loadMoreComplete();
                             } else {
                                 Toast.makeText(getActivity(), "获取更多信息失败", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Toast.makeText(getActivity(), "请检测网络是否连接正常", Toast.LENGTH_SHORT).show();
                         }
-                        springView.onFinishFreshAndLoad();
                     }
                 });
             }
@@ -133,7 +160,8 @@ public class Book_Fragment extends Fragment {
                         Toast.makeText(getActivity(), "获取信息失败请检查网络状况", Toast.LENGTH_SHORT).show();
                         networkerro.setVisibility(View.VISIBLE);
                         bookrecyclerView.setVisibility(View.GONE);
-                        springView.onFinishFreshAndLoad();
+                        adapter.setEnableLoadMore(true);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -147,7 +175,8 @@ public class Book_Fragment extends Fragment {
                     public void run() {
                         if (weiXinNew1 != null) {
                             if (weiXinNew1.showapi_res_code == 0) {
-                                adapter.setBookData(weiXinNew1.showapi_res_body.pagebean.contentlist);
+                                content_lists.addAll(weiXinNew1.showapi_res_body.pagebean.contentlist);
+                                adapter.setNewData(weiXinNew1.showapi_res_body.pagebean.contentlist);
                                 page = 1;
                             } else {
                                 Toast.makeText(getActivity(), "获取信息失败", Toast.LENGTH_SHORT).show();
@@ -157,7 +186,8 @@ public class Book_Fragment extends Fragment {
                         }
                         bookrecyclerView.setVisibility(View.VISIBLE);
                         networkerro.setVisibility(View.GONE);
-                        springView.onFinishFreshAndLoad();
+                        adapter.setEnableLoadMore(true);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }

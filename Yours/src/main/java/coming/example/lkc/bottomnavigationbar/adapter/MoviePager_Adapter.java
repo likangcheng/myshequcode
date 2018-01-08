@@ -20,7 +20,7 @@ import coming.example.lkc.bottomnavigationbar.R;
  */
 public class MoviePager_Adapter extends PagerAdapter {
     private Context mcontext;
-    private List<Integer> Title_img = new ArrayList<>(Arrays.asList(R.drawable.aa11, R.drawable.aa12, R.drawable.aa13, R.drawable.aa14, R.drawable.aa15));
+//    private List<Integer> Title_img = new ArrayList<>(Arrays.asList(R.drawable.aa11, R.drawable.aa12, R.drawable.aa13, R.drawable.aa14, R.drawable.aa15));
     private List<View> data = new ArrayList<>();
 
     public MoviePager_Adapter(Context context) {

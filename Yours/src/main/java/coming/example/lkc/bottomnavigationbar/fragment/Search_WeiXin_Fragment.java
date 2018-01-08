@@ -1,6 +1,7 @@
 package coming.example.lkc.bottomnavigationbar.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,11 +13,17 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import coming.example.lkc.bottomnavigationbar.Book_Card_Activity;
 import coming.example.lkc.bottomnavigationbar.R;
 import coming.example.lkc.bottomnavigationbar.adapter.Book_rc_Adapter;
 import coming.example.lkc.bottomnavigationbar.dao.WeiXinNew;
+import coming.example.lkc.bottomnavigationbar.dao.WeiXin_Content_list;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
 import coming.example.lkc.bottomnavigationbar.other_view.GridSpacingItemDecoration;
 import coming.example.lkc.bottomnavigationbar.unitl.HttpUnitily;
@@ -35,17 +42,25 @@ public class Search_WeiXin_Fragment extends Fragment {
     private RecyclerView recyclerView;
     private CustomDialog dialog;
     private LinearLayout no_search;
+    private List<WeiXin_Content_list> content_lists=new ArrayList<>();
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Logwrite.LOG("onCreateView");
         View view = inflater.inflate(R.layout.search_weixin_layout, container, false);
         no_search = (LinearLayout) view.findViewById(R.id.no_weixin_search);
         recyclerView = (RecyclerView) view.findViewById(R.id.search_weixin_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
-        search_weixin_adapter = new Book_rc_Adapter();
+        search_weixin_adapter = new Book_rc_Adapter(view.getContext());
+        search_weixin_adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(view.getContext(), Book_Card_Activity.class);
+                intent.putExtra(Book_Card_Activity.WEIXIN_DATA, content_lists.get(position));
+                view.getContext().startActivity(intent);
+            }
+        });
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, getResources()
                 .getDimensionPixelSize(R.dimen.recycleview_dimen), true));
         recyclerView.setAdapter(search_weixin_adapter);
@@ -86,7 +101,8 @@ public class Search_WeiXin_Fragment extends Fragment {
                         public void run() {
                             if (weiXinNew != null) {
                                 if (weiXinNew.showapi_res_body.pagebean.allNum != 0) {
-                                    search_weixin_adapter.setBookData(weiXinNew.showapi_res_body.pagebean.contentlist);
+                                    content_lists.addAll(weiXinNew.showapi_res_body.pagebean.contentlist);
+                                    search_weixin_adapter.setNewData(weiXinNew.showapi_res_body.pagebean.contentlist);
                                     recyclerView.smoothScrollToPosition(0);
                                 } else {
 //                                    Toast.makeText(getActivity(), "搜索的内容不存在", Toast.LENGTH_SHORT).show();
@@ -123,8 +139,9 @@ public class Search_WeiXin_Fragment extends Fragment {
     }
 
 
-    public void SearchString(String s,Context context) {
+    public void SearchString(String s, Context context) {
         showProgressDialog(context);
+        content_lists.clear();
         initSearch(s);
     }
 }
