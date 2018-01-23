@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +19,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import org.litepal.crud.DataSupport;
@@ -28,6 +31,7 @@ import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
 import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog;
+import coming.example.lkc.bottomnavigationbar.unitl.KeyboardStatusDetector;
 import coming.example.lkc.bottomnavigationbar.unitl.MD5;
 import coming.example.lkc.bottomnavigationbar.unitl.SharedPreferencesUnitl;
 
@@ -40,6 +44,7 @@ public class Login_User_Activity extends MyBaseActivity {
     public static final int RquestCode = 1;
     public static final String USERNAME_LOGIN = "username";
     public static final String LOGIN_STATUS = "login status";
+    private ScrollView scrollView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +88,24 @@ public class Login_User_Activity extends MyBaseActivity {
         login_register = (Button) findViewById(R.id.login_register);
         username = (EditText) findViewById(R.id.login_user);
         password = (EditText) findViewById(R.id.login_password);
+        scrollView = (ScrollView) findViewById(R.id.login_scrollview);
+        scrollView.setVerticalScrollBarEnabled(false);
+        KeyboardStatusDetector keyboardStatusDetector = new KeyboardStatusDetector();
+        keyboardStatusDetector.registerActivity(this);
+        keyboardStatusDetector.setmVisibilityListener(new KeyboardStatusDetector.KeyboardVisibilityListener() {
+            @Override
+            public void onVisibilityChanged(boolean keyboardVisible) {
+                if (keyboardVisible) {
+                    scrollView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            scrollView.scrollTo(0, scrollView.getHeight());
+                        }
+                    }, 100);
+
+                }
+            }
+        });
         View view = findViewById(R.id.login_focuse);
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);

@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -18,7 +20,7 @@ import okhttp3.Response;
  */
 public class HttpUnitily {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public static Call call;
+    private static List<Call> callList = new ArrayList<>();
 
     public static void sendOkHttpRequest(String address, okhttp3.Callback callback) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
@@ -29,8 +31,9 @@ public class HttpUnitily {
         OkHttpClient client = builder.build();
         Request request = new Request.Builder().url(address).build();
         //设置一个公用变量，当APP退出时还出现请求的话，直接释放这个call
-        call = client.newCall(request);
+        Call call = client.newCall(request);
         call.enqueue(callback);
+        addCall(call);
     }
 
     public static void sendOkHttpRequesttoJSON(String address, JSONObject jsonObject, okhttp3.Callback callback) {
@@ -41,5 +44,22 @@ public class HttpUnitily {
         RequestBody requestBody = RequestBody.create(JSON, jsonstring);
         Request request = new Request.Builder().url(address).post(requestBody).build();
         client.newCall(request).enqueue(callback);
+    }
+
+    public static void addCall(Call c) {
+        callList.add(c);
+    }
+
+    public static void removeCall(Call call) {
+        callList.remove(call);
+    }
+
+    public static void finishAllCall() {
+        for (Call call : callList) {
+            if (!call.isCanceled()) {
+                call.cancel();
+            }
+        }
+        callList.clear();
     }
 }

@@ -2,6 +2,7 @@ package coming.example.lkc.bottomnavigationbar.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.MusicPlayer;
@@ -35,7 +37,7 @@ public class Music_Fragment extends Fragment {
     private GridLayoutManager gridLayoutManager;
     private Music_rc_Adapter madapter;
     private CustomDialog dialog;//显示加载的对话框
-    private List<SingList> singlist;//音乐资源
+    private List<SingList> singlist = new ArrayList<>();//音乐资源
     private static int lastposition = -1;
 
     @Nullable
@@ -107,7 +109,7 @@ public class Music_Fragment extends Fragment {
         if (lastposition == -1 || lastposition == position) {
             lastposition = position;
             Intent intent = new Intent(getActivity(), MusicPlayer.class);
-            intent.putExtra("MUSIC_DATA", (Serializable) singlist);
+            intent.putParcelableArrayListExtra("MUSIC_DATA", (ArrayList<SingList>) singlist);
             intent.putExtra("MUSIC_DATA_INT", position);
             intent.putExtra("FLAG", 1);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -119,7 +121,7 @@ public class Music_Fragment extends Fragment {
             broadcastintent.putExtra("MUSIC_DATA_NEWPOSITION", position);
             getActivity().sendBroadcast(broadcastintent);
             Intent intent = new Intent(getActivity(), MusicPlayer.class);
-            intent.putExtra("MUSIC_DATA", (Serializable) singlist);
+            intent.putParcelableArrayListExtra("MUSIC_DATA", (ArrayList<SingList>) singlist);
             intent.putExtra("MUSIC_DATA_INT", position);
             intent.putExtra("FLAG", 1);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

@@ -142,10 +142,10 @@ public class MainActivity extends MyBaseActivity {
     }
 
     private void initAutoGetNotifaction() {
-        String servicename="coming.example.lkc.bottomnavigationbar.service.AutoGetNotifaction";
-        Log.d("wode", "initAutoGetNotifaction: "+ServiceCollector.isServiceRunning(this,servicename));
-       //后台服务，判断是否运行，运行则跳过。
-        if (!ServiceCollector.isServiceRunning(this,servicename)){
+        String servicename = "coming.example.lkc.bottomnavigationbar.service.AutoGetNotifaction";
+        Log.d("wode", "initAutoGetNotifaction: " + ServiceCollector.isServiceRunning(this, servicename));
+        //后台服务，判断是否运行，运行则跳过。
+        if (!ServiceCollector.isServiceRunning(this, servicename)) {
             Intent intent2AutoServic = new Intent(this, AutoGetNotifaction.class);
             startService(intent2AutoServic);
         }
@@ -188,7 +188,7 @@ public class MainActivity extends MyBaseActivity {
                     customDialog_lkc.setOnDialogMenuClick(new CustomDialog_lkc.OnDialogMenuClick() {
                         @Override
                         public void OnCameraClick(View view) {
-                            templefile = new File(Environment.getExternalStorageDirectory().getPath()+"/Yours/File", System.currentTimeMillis() + ".jpg");
+                            templefile = new File(Environment.getExternalStorageDirectory().getPath() + "/Yours/File", System.currentTimeMillis() + ".jpg");
                             Head_Photo_Utility.getPicFromCamera(MainActivity.this, templefile);
                         }
 
@@ -630,7 +630,7 @@ public class MainActivity extends MyBaseActivity {
             drawerLayout.closeDrawers();
         } else {
             if (new Date().getTime() - lastPressTime < 2000) {
-                HttpUnitily.call.cancel();
+                HttpUnitily.finishAllCall();
                 ActivityCollector.finishAll();
             } else {
                 lastPressTime = new Date().getTime();//重置lastPressTime

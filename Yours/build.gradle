@@ -36,7 +36,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.melnykov:floatingactionbutton:1.2.0'
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'org.litepal.android:core:1.4.1'
     compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
@@ -46,13 +45,13 @@ dependencies {
     compile 'com.zhihu.android:matisse:0.5.0-alpha4'
     compile 'com.truizlop.sectionedrecyclerview:library:1.0.0'
     compile 'com.wang.avi:library:1.0.0'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.qianwen:update-app:3.3.8'
     compile 'com.qianwen:okhttp-utils:3.8.0'
     compile 'org.adw.library:discrete-seekbar:1.0.1'
     compile 'com.romandanylyk:pageindicatorview:0.1.1'
     compile 'jp.wasabeef:glide-transformations:3.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.youth.banner:banner:1.4.10'
     testCompile 'junit:junit:4.12'
 }
 configurations.all {

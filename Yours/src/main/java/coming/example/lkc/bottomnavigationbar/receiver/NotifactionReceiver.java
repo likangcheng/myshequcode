@@ -59,6 +59,7 @@ public class NotifactionReceiver extends BroadcastReceiver {
                 try {
                     Bitmap bitmap = GlideApp.with(context).asBitmap().load(weiXinContentList.contentImg).into(120, 120).get();
                     unitl.sendNotification(pendingIntent, title, bitmap, content);
+                    Log.d("wode", "onResponse: ");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {

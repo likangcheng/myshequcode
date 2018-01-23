@@ -2,6 +2,7 @@ package coming.example.lkc.bottomnavigationbar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -62,8 +63,7 @@ public class CollectionActivity extends MyBaseActivity {
                         }
                     }
                     Intent intent = new Intent(CollectionActivity.this, MusicPlayer.class);
-                    List<SingList> singLists = collection2singlist(datalist);
-                    intent.putExtra("MUSIC_DATA", (Serializable) singLists);
+                    intent.putParcelableArrayListExtra("MUSIC_DATA", (ArrayList<SingList>) collection2singlist(datalist));
                     intent.putExtra("MUSIC_DATA_INT", position);
                     intent.putExtra("FLAG", 2);
                     startActivity(intent);

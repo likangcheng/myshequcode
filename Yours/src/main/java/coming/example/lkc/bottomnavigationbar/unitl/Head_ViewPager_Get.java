@@ -1,89 +1,59 @@
 package coming.example.lkc.bottomnavigationbar.unitl;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.rd.PageIndicatorView;
-import com.rd.animation.AnimationType;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
+import com.youth.banner.loader.ImageLoader;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import coming.example.lkc.bottomnavigationbar.R;
-import coming.example.lkc.bottomnavigationbar.adapter.MoviePager_Adapter;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 
 /**
  * Created by 李康成 on 2018/1/8.
  */
 
 public class Head_ViewPager_Get {
-    private static int Viewpager_flag = 0;
-    private static final int VIEWPAGER_TIME = 3500;
-    private static Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    viewPager.setCurrentItem(Viewpager_flag = (Viewpager_flag + 1) % 5);
-                    handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-    private static MoviePager_Adapter adapter;
-    private static ViewPager viewPager;
+    private Banner banner;
+    private List<String> list=new ArrayList<>(Arrays.asList("冰雪节神秘礼物大放送","无限火力雪球大作战正式启动"
+            ,"冰雪节皮肤50%优惠","武器大师竞技场之冬季擂台","英雄联盟搞笑狂欢周开启"));
 
 
-    public static View getView(Context context, List<String> pic, RecyclerView recyclerView) {
+    public View getView(final Context context, List<String> pic, RecyclerView recyclerView) {
         View view = LayoutInflater.from(context).inflate(R.layout.head_view_page, (ViewGroup) recyclerView.getParent(), false);
-        viewPager = view.findViewById(R.id.new_head_viewpager);
-        PageIndicatorView pageIndicatorView = view.findViewById(R.id.new_pageIndicatorView);
-        adapter = new MoviePager_Adapter(context);
-        viewPager.setAdapter(adapter);
-        pageIndicatorView.setAnimationType(AnimationType.WORM);
-        pageIndicatorView.setViewPager(viewPager);
-        handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Viewpager_flag = position;
-                handler.removeMessages(0);
-                handler.sendEmptyMessageDelayed(0, VIEWPAGER_TIME);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        adapter.setDate(pic);
+        banner = view.findViewById(R.id.banner);
+        banner.setImageLoader(new MyImageLoader());
+        banner.setImages(pic);
+        banner.setBannerStyle(BannerConfig.NUM_INDICATOR_TITLE);
+        banner.setBannerAnimation(Transformer.ZoomOutSlide);
+        banner.setBannerTitles(list);
+        //设置自动轮播，默认为true
+        banner.isAutoPlay(true);
+        //设置轮播时间
+        banner.setDelayTime(3500);
+        banner.start();
         return view;
     }
 
-    public static void setData(List<String> pic) {
-        adapter.setDate(pic);
+    public class MyImageLoader extends ImageLoader {
+
+        @Override
+        public void displayImage(Context context, Object path, ImageView imageView) {
+            GlideApp.with(context).load(path).into(imageView);
+        }
     }
 }

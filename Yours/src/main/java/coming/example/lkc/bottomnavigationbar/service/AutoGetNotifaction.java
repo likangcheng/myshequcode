@@ -4,11 +4,14 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
+import coming.example.lkc.bottomnavigationbar.MusicPlayer;
+import coming.example.lkc.bottomnavigationbar.receiver.NotifactionReceiver;
 
 
 /**
@@ -27,12 +30,13 @@ public class AutoGetNotifaction extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (startId != 1) {
+        if (startId == 1) {
 //            GetWxJSON(startId);
-            Intent intent2receiver = new Intent("coming.example.lkc.bottomnavigationbar.MY_NOTIF_RECEIVER");
-            sendBroadcast(intent2receiver);
+            RegisterReceiver();
+            Log.d("wode", "onStartCommand: ");
         }
-        Log.d("wode", "onStartCommand: 更新一次" + startId);
+        Intent intent2receiver = new Intent("coming.example.lkc.bottomnavigationbar.MY_NOTIF_RECEIVER");
+        sendBroadcast(intent2receiver);
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         int anHour = 2 * 60 * 60 * 1000;//两小时
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
@@ -47,6 +51,13 @@ public class AutoGetNotifaction extends Service {
             manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void RegisterReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("coming.example.lkc.bottomnavigationbar.MY_NOTIF_RECEIVER");
+        NotifactionReceiver receiver = new NotifactionReceiver();
+        registerReceiver(receiver, intentFilter);
     }
 
     @Override

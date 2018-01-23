@@ -153,7 +153,7 @@ public class Book_Card_Activity extends MyBaseActivity implements View.OnClickLi
     }
 
     private void initdata() {
-        data = (WeiXin_Content_list) getIntent().getSerializableExtra(WEIXIN_DATA);
+        data = getIntent().getParcelableExtra(WEIXIN_DATA);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_weixin);
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_weixin);
         setSupportActionBar(toolbar);

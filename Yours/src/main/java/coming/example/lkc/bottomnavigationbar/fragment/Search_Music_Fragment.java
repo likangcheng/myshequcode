@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -77,7 +78,7 @@ public class Search_Music_Fragment extends Fragment implements View.OnClickListe
                     }
                 }
                 Intent intent = new Intent(getActivity(), MusicPlayer.class);
-                intent.putExtra("MUSIC_DATA", (Serializable) singlist);
+                intent.putExtra("MUSIC_DATA", (Parcelable) singlist);
                 intent.putExtra("MUSIC_DATA_INT", Position);
                 intent.putExtra("FLAG", 3);
                 getActivity().startActivity(intent);

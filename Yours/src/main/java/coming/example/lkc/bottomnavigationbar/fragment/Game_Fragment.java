@@ -14,10 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.liaoinstan.springview.container.MeituanFooter;
-import com.liaoinstan.springview.container.MeituanHeader;
-import com.liaoinstan.springview.widget.SpringView;
-import com.truizlop.sectionedrecyclerview.SectionedSpanSizeLookup;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +48,7 @@ public class Game_Fragment extends Fragment {
     private String picurl = "https://raw.githubusercontent.com/likangcheng/myshequcode/master/json/picture";
     private List<GameMultiItem> gameMultiItems = new ArrayList<>();
     private int page = 0;
+    private Head_ViewPager_Get headview=new Head_ViewPager_Get();
     private boolean loadmore_first = true;
 
     @Nullable
@@ -73,7 +70,7 @@ public class Game_Fragment extends Fragment {
             public void run() {
                 game_swip.setRefreshing(true);
                 requestNews();
-                getpic(0);
+                getpic();
             }
         });
         game_swip.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -83,7 +80,6 @@ public class Game_Fragment extends Fragment {
                 game_rc_new_adapter.setEnableLoadMore(false);
                 loadmore_first = true;
                 requestNews();
-                getpic(1);
             }
         });
 
@@ -177,12 +173,11 @@ public class Game_Fragment extends Fragment {
         });
     }
 
-    private void getpic(final int flag) {
+    private void getpic() {
 
         HttpUnitily.sendOkHttpRequest(picurl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Toast.makeText(getActivity(), "广告数据异常", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -199,13 +194,9 @@ public class Game_Fragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (flag == 0) {
-                                game_rc_new_adapter.removeAllHeaderView();
-                                game_rc_new_adapter.addHeaderView(Head_ViewPager_Get.getView(getActivity(), picstring, game_recyclerview));
-                                game_recyclerview.setAdapter(game_rc_new_adapter);
-                            } else {
-                                Head_ViewPager_Get.setData(picstring);
-                            }
+                            game_rc_new_adapter.removeAllHeaderView();
+                            game_rc_new_adapter.addHeaderView(headview.getView(getActivity(), picstring, game_recyclerview));
+                            game_recyclerview.setAdapter(game_rc_new_adapter);
                         }
                     });
                 } catch (JSONException e) {
@@ -251,5 +242,20 @@ public class Game_Fragment extends Fragment {
         game_recyclerview.setAdapter(game_rc_new_adapter);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
 }

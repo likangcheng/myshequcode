@@ -16,7 +16,7 @@
 
     <style name="Book_card_activity" parent="AppTheme"></style>
 
-    <style name="Login_Activity" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Login_Activity" parent="AppTheme">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

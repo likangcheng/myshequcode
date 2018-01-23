@@ -1,47 +1,36 @@
 package coming.example.lkc.bottomnavigationbar;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.TextInputLayout;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import coming.example.lkc.bottomnavigationbar.dao.Users;
-import coming.example.lkc.bottomnavigationbar.other_view.CustomDialog_lkc;
 import coming.example.lkc.bottomnavigationbar.unitl.MD5;
 
 public class Register_User extends MyBaseActivity {
-    private EditText username, password, password_2;
+    private TextInputEditText username, password, password_2;
     private Button regiset_button;
     private Animation shake;
     private static final String USER_PARTTENR = "^[A-Za-z][A-Za-z1-9_-]+$";
     private Pattern pattern = Pattern.compile(USER_PARTTENR);
     public static final String USERNAME_RESULT = "username";
     public static final String PASSWORD_RESULT = "password";
-    private TextInputLayout userinput, passinput;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,15 +66,15 @@ public class Register_User extends MyBaseActivity {
                     Register_Dialog();
                 } else if (queryUsername(user_name)) {
                     username.startAnimation(shake);
-                    userinput.setError("用户名已存在");
+                    username.setError("用户名已存在");
                 } else if (!validateUser(user_name)) {
                     username.startAnimation(shake);
-                    userinput.setError("用户名必须字母开头且不含非法字符");
+                    username.setError("用户名必须字母开头且不含非法字符");
                 } else if (!pass_word.equals(pass_word_2)) {
                     password.startAnimation(shake);
-                    passinput.setError("密码不一致");
+                    password.setError("密码不一致");
                 } else if (!validatePassword(pass_word)) {
-                    passinput.setError("密码过于简单");
+                    password.setError("密码过于简单");
                     password.startAnimation(shake);
                 }
             }
@@ -93,12 +82,10 @@ public class Register_User extends MyBaseActivity {
     }
 
     private void initView() {
-        username = (EditText) findViewById(R.id.register_username);
-        password = (EditText) findViewById(R.id.register_password1);
-        password_2 = (EditText) findViewById(R.id.register_password2);
+        username = (TextInputEditText) findViewById(R.id.register_username);
+        password = (TextInputEditText) findViewById(R.id.register_password1);
+        password_2 = (TextInputEditText) findViewById(R.id.register_password2);
         regiset_button = (Button) findViewById(R.id.register_in);
-        userinput = (TextInputLayout) findViewById(R.id.user_input);
-        passinput = (TextInputLayout) findViewById(R.id.pass_input);
         View view = findViewById(R.id.foucuse_view);
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);

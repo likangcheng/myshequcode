@@ -33,6 +33,7 @@ public class MusicService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.d("wode", "onDestroy: musicservice");
         count = 1;
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
@@ -108,9 +109,9 @@ public class MusicService extends Service {
                 mediaPlayer.reset();
                 try {
                     if (!TextUtils.isEmpty(singlist.musicurl)) {
-                        mediaPlayer.setDataSource(singlist.musicurl);
+                        mediaPlayer.setDataSource("http://sc1.111ttt.cn:8282/2017/1/11m/11/304112004168.m4a?tflag=1516246976&pin=f2438b03e1e6906c91ad1cb845bc4f31&ip=59.55.129.100#.mp3");
                     } else {
-                        mediaPlayer.setDataSource(singlist.m4a);
+                        mediaPlayer.setDataSource("http://sc1.111ttt.cn:8282/2017/1/11m/11/304112004168.m4a?tflag=1516246976&pin=f2438b03e1e6906c91ad1cb845bc4f31&ip=59.55.129.100#.mp3");
                     }
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mediaPlayer.prepareAsync();//异步加载

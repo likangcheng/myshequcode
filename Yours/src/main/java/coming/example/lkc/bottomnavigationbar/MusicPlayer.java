@@ -255,7 +255,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         regtoWX(this);//验证微信ID
         //获取音频资源
-        singLists = (List<SingList>) getIntent().getSerializableExtra("MUSIC_DATA");
+        singLists = getIntent().getParcelableArrayListExtra("MUSIC_DATA");
         MUSIC_POSITION = getIntent().getIntExtra("MUSIC_DATA_INT", 0);
         Start_flag = getIntent().getIntExtra("FLAG", 0);
         seekBar = (DiscreteSeekBar) findViewById(R.id.seekbar_1);
@@ -538,6 +538,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
             unregisterReceiver(receiver);
             receiver = null;
         }
+        Log.d("wode", "onDestroy: musicplayer ");
         unbindService(connection);
         stopService(new Intent(this, MusicService.class));
     }

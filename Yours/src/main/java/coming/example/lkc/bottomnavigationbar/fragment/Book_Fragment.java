@@ -15,9 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.liaoinstan.springview.container.AliFooter;
-import com.liaoinstan.springview.container.AliHeader;
-import com.liaoinstan.springview.widget.SpringView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +40,6 @@ public class Book_Fragment extends Fragment {
     private Book_rc_Adapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout networkerro;
-    private List<WeiXin_Content_list> content_lists = new ArrayList<>();
     private int page = 1;
 
     @Nullable
@@ -58,16 +54,16 @@ public class Book_Fragment extends Fragment {
         adapter = new Book_rc_Adapter(view.getContext());
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(BaseQuickAdapter baseadapter, View view, int position) {
                 Intent intent = new Intent(view.getContext(), Book_Card_Activity.class);
-                intent.putExtra(Book_Card_Activity.WEIXIN_DATA, content_lists.get(position));
+                intent.putExtra(Book_Card_Activity.WEIXIN_DATA, adapter.getData().get(position));
                 view.getContext().startActivity(intent);
             }
         });
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                Log.d("wode", "onLoadMoreRequested: "+page);
+                Log.d("wode", "onLoadMoreRequested: " + page);
                 page++;
                 loadmoreNEWS();
             }
@@ -83,6 +79,7 @@ public class Book_Fragment extends Fragment {
         networkerro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
                 requestWexinNEWS();
             }
         });
@@ -96,7 +93,6 @@ public class Book_Fragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                content_lists.clear();
                 adapter.setEnableLoadMore(false);
                 requestWexinNEWS();
             }
@@ -131,7 +127,6 @@ public class Book_Fragment extends Fragment {
                         if (weiXinNew2 != null) {
                             if (weiXinNew2.showapi_res_code == 0) {
                                 weiXinNew2.showapi_res_body.pagebean.contentlist.remove(0);
-                                content_lists.addAll(weiXinNew2.showapi_res_body.pagebean.contentlist);
                                 adapter.addData(weiXinNew2.showapi_res_body.pagebean.contentlist);
                                 adapter.loadMoreComplete();
                             } else {
@@ -175,7 +170,6 @@ public class Book_Fragment extends Fragment {
                     public void run() {
                         if (weiXinNew1 != null) {
                             if (weiXinNew1.showapi_res_code == 0) {
-                                content_lists.addAll(weiXinNew1.showapi_res_body.pagebean.contentlist);
                                 adapter.setNewData(weiXinNew1.showapi_res_body.pagebean.contentlist);
                                 page = 1;
                             } else {
