@@ -14,6 +14,7 @@ import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_List;
 
 /**
  * Created by 李康成 on 2018/1/5.
+ * 由于第三方Json格式形成不了自定义布局的RCview，所以使用此工具类将数据转换成一定布局
  */
 
 public class GameDataServer {

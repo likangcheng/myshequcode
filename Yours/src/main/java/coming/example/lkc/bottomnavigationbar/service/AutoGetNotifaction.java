@@ -16,8 +16,10 @@ import coming.example.lkc.bottomnavigationbar.receiver.NotifactionReceiver;
 
 /**
  * Created by 李康成 on 2017/12/22.
+ * 每隔2小时启动弹出通知的服务，4.3以上失效
  */
 public class AutoGetNotifaction extends Service {
+    NotifactionReceiver receiver;
 
     public AutoGetNotifaction() {
     }
@@ -38,7 +40,7 @@ public class AutoGetNotifaction extends Service {
         Intent intent2receiver = new Intent("coming.example.lkc.bottomnavigationbar.MY_NOTIF_RECEIVER");
         sendBroadcast(intent2receiver);
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour = 2 * 60 * 60 * 1000;//两小时
+        int anHour = 1 * 60 * 60 * 1000;//1分钟
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
         Intent i = new Intent(this, AutoGetNotifaction.class);
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
@@ -56,15 +58,19 @@ public class AutoGetNotifaction extends Service {
     private void RegisterReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("coming.example.lkc.bottomnavigationbar.MY_NOTIF_RECEIVER");
-        NotifactionReceiver receiver = new NotifactionReceiver();
+        receiver = new NotifactionReceiver();
         registerReceiver(receiver, intentFilter);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("wode", "onDestroy: ");
-        Intent i = new Intent(this, AutoGetNotifaction.class);
-        startService(i);
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+//        Log.d("wode", "onDestroy: ");
+//        Intent i = new Intent(this, AutoGetNotifaction.class);
+//        startService(i);
     }
 }

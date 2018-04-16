@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 
 /**
  * Created by Vector on 2016/8/12 0012.
+ * 加载Progress工具类
  */
 public class CProgressDialogUtils {
     private static final String TAG = CProgressDialogUtils.class.getSimpleName();

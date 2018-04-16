@@ -14,6 +14,7 @@ import coming.example.lkc.bottomnavigationbar.R;
 
 /**
  * Created by lkc on 2017/9/5.
+ * 自定义Dialog
  */
 public class CustomDialog_lkc implements View.OnClickListener {
     private Dialog dialog;

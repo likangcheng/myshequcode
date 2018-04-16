@@ -102,7 +102,6 @@ public class Login_User_Activity extends MyBaseActivity {
                             scrollView.scrollTo(0, scrollView.getHeight());
                         }
                     }, 100);
-
                 }
             }
         });

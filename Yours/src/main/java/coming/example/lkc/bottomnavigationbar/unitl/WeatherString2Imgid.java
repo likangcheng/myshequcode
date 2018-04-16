@@ -4,6 +4,7 @@ import coming.example.lkc.bottomnavigationbar.R;
 
 /**
  * Created by 李康成 on 2017/11/7.
+ * 文字转图片
  */
 
 public class WeatherString2Imgid {

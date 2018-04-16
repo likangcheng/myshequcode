@@ -17,6 +17,7 @@ import okhttp3.Response;
 
 /**
  * Created by lkc on 2017/7/31.
+ * 网络请求类
  */
 public class HttpUnitily {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -36,6 +37,12 @@ public class HttpUnitily {
         addCall(call);
     }
 
+    /**
+     * 带Json的POST
+     * @param address 请求地址
+     * @param jsonObject Json对象
+     * @param callback 请求线程
+     */
     public static void sendOkHttpRequesttoJSON(String address, JSONObject jsonObject, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Log.d("wode", "sendOkHttpRequesttoJSON: ");

@@ -71,7 +71,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
  * Created by lkc on 2017/10/11.
  */
 
-public class MusicPlayer extends MyBaseActivity implements View.OnClickListener {
+public class  MusicPlayer extends MyBaseActivity implements View.OnClickListener {
     private ImageView mp_backimg;
     private List<SingList> singLists;//音乐资源文件
     private CircleImageView mp_icon;
@@ -205,7 +205,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.music_player_layout);
-        initFrist();//准备工作初始化
+        initFirst();//准备工作初始化
         initToolbar();
         initmp_backimg();
         initseekBar();
@@ -249,7 +249,7 @@ public class MusicPlayer extends MyBaseActivity implements View.OnClickListener 
 
     }
 
-    private void initFrist() {
+    private void initFirst() {
         Intent intent = new Intent(this, MusicService.class);
         startService(intent);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);

@@ -9,6 +9,7 @@ import coming.example.lkc.bottomnavigationbar.R;
 
 /**
  * Created by 李康成 on 2017/11/21.
+ * AlertDIalog
  */
 
 public class AlertDIalog {

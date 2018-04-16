@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Created by 李康成 on 2017/11/16.
+ * 启动项控制类
  */
 
 public class ActivityCollector {

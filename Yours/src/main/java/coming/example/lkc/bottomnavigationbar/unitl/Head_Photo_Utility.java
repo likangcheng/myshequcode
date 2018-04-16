@@ -17,6 +17,7 @@ import java.io.IOException;
 
 /**
  * Created by 李康成 on 2017/12/21.
+ * 头像照片
  */
 
 public class Head_Photo_Utility {

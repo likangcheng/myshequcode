@@ -10,6 +10,7 @@ import java.util.Map;
 
 /**
  * Created by lkc on 2017/10/23.
+ * 第一次启动以及调用SharedPreferences内部存储的方法
  */
 
 public class SharedPreferencesUnitl {

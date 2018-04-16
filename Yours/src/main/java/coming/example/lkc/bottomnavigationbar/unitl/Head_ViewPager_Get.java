@@ -25,6 +25,7 @@ import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 
 /**
  * Created by 李康成 on 2018/1/8.
+ * 首页滚动Banner
  */
 
 public class Head_ViewPager_Get {

@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 
 /**
  * Created by lkc on 2017/10/16.
+ * Tablayout 下方横条变小
  */
 
 public class Tablayout_Width_Utility {

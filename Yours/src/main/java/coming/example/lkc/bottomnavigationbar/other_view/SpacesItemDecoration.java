@@ -6,6 +6,7 @@ import android.view.View;
 
 /**
  * Created by 李康成 on 2017/11/2.
+ * RcView 间距
  */
 
 public class SpacesItemDecoration extends RecyclerView.ItemDecoration {

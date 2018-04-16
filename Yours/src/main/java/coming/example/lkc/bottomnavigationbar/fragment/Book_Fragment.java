@@ -187,5 +187,4 @@ public class Book_Fragment extends Fragment {
             }
         });
     }
-
 }

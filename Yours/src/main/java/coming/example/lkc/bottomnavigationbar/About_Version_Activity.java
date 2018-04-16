@@ -39,6 +39,7 @@ public class About_Version_Activity extends MyBaseActivity {
         setContentView(R.layout.activity_aboutversion_layout);
         regtoWX(this);
         TextView tv = (TextView) findViewById(R.id.yours_version);
+        tv.setTextIsSelectable(true);
         PackageManager packageManager = getPackageManager();
         PackageInfo packInfo = null;
         try {

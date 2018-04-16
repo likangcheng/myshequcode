@@ -19,6 +19,10 @@ import java.io.IOException;
 import coming.example.lkc.bottomnavigationbar.dao.SingList;
 import coming.example.lkc.bottomnavigationbar.listener.MusicPlayOrPause;
 
+/**
+ * Created by 李康成.
+ * 音乐后台播放以及播放主要服务
+ */
 public class MusicService extends Service {
     private static MediaPlayer mediaPlayer;
     private static int count = 0;//1为暂停,0为播放

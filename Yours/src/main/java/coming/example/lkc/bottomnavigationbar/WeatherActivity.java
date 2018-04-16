@@ -174,6 +174,9 @@ public class WeatherActivity extends MyBaseActivity {
                 case 68:
                     Toast.makeText(WeatherActivity.this, "网络连接失败时，查找本地离线定位时对应的返回结果", Toast.LENGTH_SHORT).show();
                     break;
+                default:
+                    Toast.makeText(WeatherActivity.this, "定位未知错误", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }

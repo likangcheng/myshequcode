@@ -7,9 +7,11 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
  */
 
 public class GameMultiItem implements MultiItemEntity {
+    //ItemType 分别时头、项、尾
     public static final int HEADER = 1;
     public static final int ITEM = 2;
     public static final int FOOTER = 3;
+    //SpanSize 占用的比例
     public static final int ONE_SIZE = 1;
     public static final int TWO_SIZE = 2;
     public static final int TREE_SIZE = 3;

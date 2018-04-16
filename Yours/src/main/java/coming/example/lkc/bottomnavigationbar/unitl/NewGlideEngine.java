@@ -12,6 +12,7 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 
 /**
  * Created by 李康成 on 2017/11/24.
+ * 知乎相册框架重写的读取相册方式
  */
 
 public class NewGlideEngine extends GlideEngine {
