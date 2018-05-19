@@ -30,8 +30,8 @@ import coming.example.lkc.bottomnavigationbar.dao.JiSuApi_Body;
 
 public class Head_ViewPager_Get {
     private Banner banner;
-    private List<String> list=new ArrayList<>(Arrays.asList("冰雪节神秘礼物大放送","无限火力雪球大作战正式启动"
-            ,"冰雪节皮肤50%优惠","武器大师竞技场之冬季擂台","英雄联盟搞笑狂欢周开启"));
+    private List<String> list = new ArrayList<>(Arrays.asList("冰雪节神秘礼物大放送", "无限火力雪球大作战正式启动"
+            , "冰雪节皮肤50%优惠", "武器大师竞技场之冬季擂台", "英雄联盟搞笑狂欢周开启"));
 
 
     public View getView(final Context context, List<String> pic, RecyclerView recyclerView) {

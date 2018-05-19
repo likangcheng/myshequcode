@@ -146,8 +146,8 @@ public class MainActivity extends MyBaseActivity {
         Log.d("wode", "initAutoGetNotifaction: " + ServiceCollector.isServiceRunning(this, servicename));
         //后台服务，判断是否运行，运行则跳过。
         if (!ServiceCollector.isServiceRunning(this, servicename)) {
-            Intent intent2AutoServic = new Intent(this, AutoGetNotifaction.class);
-            startService(intent2AutoServic);
+            Intent intent2AutoService = new Intent(this, AutoGetNotifaction.class);
+            startService(intent2AutoService);
         }
     }
 
